@@ -1,0 +1,1051 @@
+<mvc:View
+    xmlns:networkgraph="sap.suite.ui.commons.networkgraph"
+    controllerName="hmelpaper.controller.Transfer"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:table="sap.ui.table"
+    xmlns:upload="sap.m.upload"
+    xmlns:Tool="sap.m.Toolbar"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+>
+    <Page
+        class="sapUiResponsiveContentPadding"
+        showHeader="false"
+    >
+        <SplitApp
+            id="splitAppDemo"
+            initialDetail="serviceChargeDetail"
+            initialMaster="masterPage"
+            class="customSplitApp"
+        >
+            <!-- DETAIL PAGES -->
+            <detailPages>
+                <!-- Service Charge Calculation Detail -->
+                <Page
+                    id="DetailTrade"
+                    title="Trade"
+                    backgroundDesign="Solid"
+                >
+                    <content>
+                        <VBox class="sapUiMediumMargin">
+                            <Title
+                                text="Trade"
+                                level="H4"
+                                class="sapUiSmallMarginBottom"
+                            />
+                            <table:Table
+                                id="tabletrade"
+                               rows="{path:'oDataTradeEntry>/TradeEntry', parameters: { expand: ['counterpart','trader','strategy'] }}"
+
+                                selectionMode="None"
+                                width="100%"
+                                enableColumnReordering="true"
+                                enableCellFilter="true"
+                                navigationMode="Scrollbar"
+                            >
+                                <table:columns>
+                                    <table:Column
+                                        label="Trade Number"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>TRADE_NO}" />
+                                        </table:template>
+                                    </table:Column>
+ 
+                                    <table:Column
+                                        label="Counter Parts"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                           <Text text="{Counterpart/CTPRTNAME}" />
+                                        </table:template>
+                                    </table:Column>
+ 
+                                    <table:Column
+                                        label="Trader"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>trader/TRDRNAME}" />
+                                        </table:template>
+                                    </table:Column>
+ 
+                                    <table:Column
+                                        label="Trade Date"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>TRADE_DAT}" />
+                                        </table:template>
+                                    </table:Column>
+ 
+                                    <table:Column
+                                        label="Commodity"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text
+                                                text="{oDataTradeEntry>commodity/CMDTYNAME}"
+                                            />
+                                        </table:template>
+                                    </table:Column>
+ 
+                                    <table:Column
+                                        label="Delivery Terms"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>deliveryTerms/DLVTRMNAME}" />
+                                        </table:template>
+                                    </table:Column>
+ 
+                                    <table:Column
+                                        label="Delivery Schedule"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>ZSCHEDULE}" />
+                                        </table:template>
+                                    </table:Column>
+ 
+                                    <table:Column
+                                        label="Delivery Location"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>location/LOCNAME}" />
+                                        </table:template>
+                                    </table:Column>
+ 
+                                    <table:Column
+                                        label="Delivery Period"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>Period}" />
+                                        </table:template>
+                                    </table:Column>
+ 
+                                    <table:Column
+                                        label="Trade Type"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>TRADETYPENAME}" />
+                                        </table:template>
+                                    </table:Column>
+                                </table:columns>
+                            </table:Table>
+                        </VBox>
+                    </content>
+                </Page>
+
+                <!-- Invoice Creation Detail -->
+                <Page
+                    id="VehicleDetail"
+                    title="Vehicle"
+                    backgroundDesign="Solid"
+                >
+                    <content>
+                        <VBox class="sapUiMediumMargin">
+                            <Title
+                                text="Vehicle"
+                                level="H4"
+                                class="sapUiSmallMarginBottom"
+                            />
+
+                            <table:Table
+                            
+                                id="resultTable"
+                              rows="{path:'oDataTradeEntry>/TradeEntry', parameters: { expand: ['transferFrom','transferTo','transferLocation','transferOperator','transferStrategy'] }}"
+                                selectionMode="None"
+                                width="100%"
+                                enableColumnReordering="true"
+                                enableCellFilter="true"
+                                navigationMode="Scrollbar"
+                            >
+                                 	
+                                 <table:columns>
+                                    <table:Column
+                                        label="From"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                         <Text text="{oDataTradeEntry>transferFrom/FROMNAME}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="To"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>transferTo/TRANSFRTO}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="Location"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>TransferLocation/TRNLCATION}" />
+                                        </table:template>
+                                    </table:Column>
+                                     <table:Column
+                                        label="Operator"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>transferOperator/TRNOPERATR}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="Lifting Strategy"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>transferStrategy/TRNLFTSTGY}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="Effective Date"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text
+                                                text="{path: 'oDataTradeEntry>EFFTVEDATE', formatter: '.formatDate'}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="Transfer Commencement"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>TNSFRCMCNT}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="Transfer Completion"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>TNSFRCMPLN}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="Application Date"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>TRNAPPLDAT}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="Status"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>TNSFRSTID}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="Transfer num"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>TRANSFERNUM}" />
+                                        </table:template>
+                                    </table:Column>
+
+                                    <table:Column
+                                        label="MOT"
+                                        width="10rem"
+                                        hAlign="Center"
+                                    >
+                                        <table:template>
+                                            <Text text="{oDataTradeEntry>ZTRANSMOT}" />
+                                        </table:template>
+                                    </table:Column>
+                                </table:columns>
+                            </table:Table>
+                        </VBox>
+                    </content>
+                </Page>
+            </detailPages>
+
+            <!-- MASTER PAGES -->
+            <masterPages>
+                <Page
+                    id="masterPage"
+                    title="Transfer FOB Cargo"
+                    backgroundDesign="List"
+                >
+                    <content>
+                        <VBox class="sapUiMediumMargin">
+                            <List itemPress=".onListItemPress">
+                                <items>
+                                    <StandardListItem
+                                        title="Trade"
+                                        type="Active"
+                                        custom:to="DetailTrade"
+                                    />
+                                    <StandardListItem
+                                        title="Vehicle"
+                                        type="Active"
+                                        custom:to="VehicleDetail"
+                                    />
+                                </items>
+                            </List>
+                        </VBox>
+                    </content>
+                </Page>
+            </masterPages>
+        </SplitApp>
+        <IconTabBar
+            id="idIconTabBarMulti"
+            expanded="true"
+            class="sapUiResponsiveContentPadding"
+
+        >
+            <items>
+                <IconTabFilter
+                    text="Transfer"
+                    key="TransferFormtab"
+                >
+                    <l:VerticalLayout
+                        class="sapUiContentPadding equalColumns"
+                        width="100%"
+                    >
+                        <FlexBox renderType="Bare">
+                            <Panel
+                                id="pnl2"
+                                headerText="Transfer From"
+                                class="sapUiTinyMarginEnd"
+                            >
+                                <VBox>
+                                    <!-- ================= Trade Info Section ================= -->
+                                    <Panel
+                                        headerText="Trade Info"
+                                        class="sapUiNoContentPadding sapUiTinyMarginBottom"
+                                    >
+                                        <f:SimpleForm
+                                            editable="true"
+                                            layout="ResponsiveGridLayout"
+                                            labelSpanXL="4"
+                                            labelSpanL="3"
+                                            labelSpanM="4"
+                                            labelSpanS="12"
+                                            columnsXL="2"
+                                            columnsL="1"
+                                            columnsM="1"
+                                            columnsS="1"
+                                        >
+                                            <f:content>
+                                                <!-- Trade Number -->
+                                                <Label text="Trade Number" />
+                                                <ComboBox
+                                                    id="transferFromTradeNumberCombo"
+                                                    selectedKey="{SelectedTradeNumber>/TRADE_NO}"
+                                                    items="{ path: '/TradeEntry', sorter: { path: 'TRADE_NO' }}"
+                                                >
+                                                    <core:Item
+                                                        key="{TRADE_NO}"
+                                                        text="{TRADE_NO}"
+                                                    />
+                                                </ComboBox>
+
+                                                <!-- Counterpart -->
+                                                <Label text="Counterpart" />
+                                                <Input
+                                                    value="{oDataTradeEntry>counterpart/CTPRTNAME}"
+                                                />
+
+                                                <!-- Section -->
+                                                <Label text="Section" />
+                                                <Input
+                                                    id="transferFromSection"
+                                                    value="{oDataTradeEntry>transferSection/SECTNNAME}"
+                                                />
+                                            </f:content>
+                                        </f:SimpleForm>
+                                    </Panel>
+
+                                    <!-- ================= Quantities Section ================= -->
+                                    <Panel
+                                        headerText="Quantities"
+                                        class="sapUiNoContentPadding sapUiTinyMarginBottom"
+                                    >
+                                        <f:SimpleForm
+                                            editable="true"
+                                            layout="ResponsiveGridLayout"
+                                        >
+                                            <f:content>
+                                                <!-- Open Qty -->
+                                                <Label text="Open Qty" />
+                                                <Input
+                                                    id="transferFromOpenQty"
+                                                    value="{oDataTradeEntry>OPENQTY}"
+                                                >
+                                                    <layoutData>
+                                                        <l:GridData
+                                                            span="XL2 L1 M3 S4"
+                                                        />
+                                                    </layoutData>
+                                                </Input>
+                                                <Input
+                                                    id="transferFromOpenQty1"
+                                                    value="{oDataTradeEntry>OPENQTY}"
+                                                />
+
+                                                <!-- Contract Qty -->
+                                                <Label text="Contract Qty" />
+                                                <Input
+                                                    id="transferFromContractQty"
+                                                    value="{oDataTradeEntry>CQUANTITY}"
+                                                >
+                                                    <layoutData>
+                                                        <l:GridData
+                                                            span="XL2 L1 M3 S4"
+                                                        />
+                                                    </layoutData>
+                                                </Input>
+                                                <Input
+                                                    id="transferFromContractQty1"
+                                                    value="{oDataTradeEntry>QTYUNITID}"
+                                                />
+
+                                                <!-- Commodity -->
+                                                <Label text="Commodity" />
+                                                <Input
+                                                    id="transferFromCommodity"
+                                                    value="{oDataTradeEntry>commodity/CMDTYNAME}"
+                                                />
+
+                                                <!-- Group 1 -->
+                                                <Label text="Group 1" />
+                                                <Input
+                                                    id="transferFromGroup1"
+                                                    value="{oDataTradeEntry>transferGroup1/GRP1NAME}"
+                                                />
+
+                                                <!-- Group 2 -->
+                                                <Label text="Group 2" />
+                                                <Input
+                                                    id="transferFromGroup2"
+                                                    value="{oDataTradeEntry>transferGroup2/GRP2NAME}"
+                                                />
+
+                                                <!-- Scheduled Qty -->
+                                                <Label text="Scheduled Qty" />
+                                                <Input
+                                                    id="transferFromScheduledQty"
+                                                    value="{oDataTradeEntry>SCHEDLDQTY}"
+                                                >
+                                                    <layoutData>
+                                                        <l:GridData
+                                                            span="XL2 L1 M3 S4"
+                                                        />
+                                                    </layoutData>
+                                                </Input>
+                                                <Input
+                                                    id="transferFromScheduledQty1"
+                                                    value="{oDataTradeEntry>schedulequom/UOMNAME}"
+                                                />
+
+                                                <!-- Nominal Qty -->
+                                                <Label text="Nominal Qty" />
+                                                <VBox>
+                                                    <l:Grid
+                                                        defaultSpan="XL6 L6 M6 S12"
+                                                    >
+                                                        <Input
+                                                            id="transferFromnominalQty1"
+                                                            value="{oDataTradeEntry>NOMINALQTY}"
+                                                        />
+                                                        <Input
+                                                            id="transferFromnominalQtyUOM"
+                                                            value="{oDataTradeEntry>nominalquom/UOMNAME}"
+                                                        />
+                                                    </l:Grid>
+                                                    <l:Grid
+                                                        defaultSpan="XL6 L6 M6 S12"
+                                                    >
+                                                        <RadioButtonGroup
+                                                            id="groupF"
+                                                            columns="2"
+                                                        >
+                                                            <buttons>
+                                                                <RadioButton
+                                                                    text="Multiply"
+                                                                    selected="true"
+                                                                />
+                                                                <RadioButton
+                                                                    text="Divide by"
+                                                                />
+                                                            </buttons>
+                                                        </RadioButtonGroup>
+                                                        <Input
+                                                            id="transferFromMultiplyDivide"
+                                                            value="{oDataTradeEntry>}"
+                                                        />
+                                                    </l:Grid>
+                                                </VBox>
+
+                                                <!-- Invoice Qty -->
+                                                <Label text="Invoice Qty" />
+                                                <HBox alignItems="Center">
+                                                    <Input
+                                                        id="transferFromInvoiceQty"
+                                                        value="{oDataTradeEntry>INVOICEQTY}"
+                                                        width="150px"
+                                                        class="sapUiTinyMarginEnd"
+                                                    />
+                                                    <ComboBox
+                                                        id="transferFromInvoiceQtyUomCombo"
+                                                        selectedKey="{oDataTradeEntry>INVQTYUOMID}"
+                                                        width="120px"
+                                                        items="{ path: '/InvoiceQuantityUOM', sorter: { path: 'IVQYUOMNAME' }}"
+                                                        class="sapUiTinyMarginEnd"
+                                                    >
+                                                        <core:Item
+                                                            key="{ID}"
+                                                            text="{IVQYUOMNAME}"
+                                                        />
+                                                    </ComboBox>
+                                                    <Button
+                                                        text="Calculator"
+                                                        press="onPress"
+                                                        width="100px"
+                                                    />
+                                                </HBox>
+                                            </f:content>
+                                        </f:SimpleForm>
+                                    </Panel>
+
+                                    <!-- ================= Pricing Section ================= -->
+                                    <Panel
+                                        headerText="Pricing"
+                                        class="sapUiNoContentPadding sapUiTinyMarginBottom"
+                                    >
+                                        <f:SimpleForm
+                                            editable="true"
+                                            layout="ResponsiveGridLayout"
+                                        >
+                                            <f:content>
+                                                <!-- Override -->
+                                                <Label text="Override" />
+                                                <CheckBox
+                                                    id="transferFromOverrideCheckbox"
+                                                    selected="{oDataTradeEntry>TRNOVERIDE}"
+                                                />
+
+                                                <!-- Override Price -->
+                                                <Label text="Override Price" />
+                                                <Input
+                                                    id="transferFromOverridePrice"
+                                                    value="{oDataTradeEntry>TRNOVRDPRC}"
+                                                />
+
+                                                <!-- Overridden Price Currency -->
+                                                <Label
+                                                    text="Overridden Price Currency"
+                                                />
+                                                <ComboBox
+                                                    id="transferFromOverridePriceCcyCombo"
+                                                    selectedKey="{oDataTradeEntry>TRNOVCRRCY}"
+                                                    items="{ path: '/PaymentCurrency', sorter: { path: 'PYMTCURNAME' }}"
+                                                >
+                                                    <core:Item
+                                                        key="{ID}"
+                                                        text="{PYMTCURNAME}"
+                                                    />
+                                                </ComboBox>
+
+                                                <!-- Base Price -->
+                                                <Label text="Base Price" />
+                                                <HBox alignItems="Center">
+                                                    <Input
+                                                        id="transferFromBasePrice"
+                                                        value="{oDataTradeEntry>TRBASEPRIC}"
+                                                        width="150px"
+                                                        class="sapUiTinyMarginEnd"
+                                                    />
+                                                    <Select
+                                                        id="transferFromBasePriceCurrencySelect"
+                                                        selectedKey="{oDataTradeEntry>TRBPRICECY}"
+                                                        width="120px"
+                                                        items="{ path: '/PaymentCurrency', sorter: { path: 'PYMTCURNAME' }}"
+                                                        class="sapUiTinyMarginEnd"
+                                                    >
+                                                        <core:Item
+                                                            key="{ID}"
+                                                            text="{PYMTCURNAME}"
+                                                        />
+                                                    </Select>
+                                                    <Select
+                                                        id="transferFromBasePriceUomSelect"
+                                                        selectedKey="{oDataTradeEntry>TRBPRICEUM}"
+                                                        width="120px"
+                                                        items="{ path: '/UOM', sorter: { path: 'UOMNAME' }}"
+                                                    >
+                                                        <core:Item
+                                                            key="{ID}"
+                                                            text="{UOMNAME}"
+                                                        />
+                                                    </Select>
+                                                </HBox>
+
+                                                <!-- Settlement Amount -->
+                                                <Label
+                                                    text="Settlement Amount"
+                                                />
+                                                <HBox alignItems="Center">
+                                                    <Input
+                                                        id="transferFromSettlementAmount"
+                                                        value="{oDataTradeEntry>TRSTLMAMNT}"
+                                                        width="200px"
+                                                        class="sapUiTinyMarginEnd"
+                                                    />
+                                                    <ComboBox
+                                                        id="transferFromSettlementAmountUomCombo"
+                                                        selectedKey="{oDataTradeEntry>STLMTUUM}"
+                                                        width="150px"
+                                                        items="{ path: '/SettlementUOM', sorter: { path: 'STLUUMNAME' }}"
+                                                        class="sapUiTinyMarginEnd"
+                                                    >
+                                                        <core:Item
+                                                            key="{STLMTUUM}"
+                                                            text="{STLUUMNAME}"
+                                                        />
+                                                    </ComboBox>
+                                                    <Button
+                                                        icon="sap-icon://refresh"
+                                                        tooltip="Refresh Settlement Amount"
+                                                        press="onRefreshSettlementAmount"
+                                                        width="40px"
+                                                    />
+                                                </HBox>
+
+                                                <!-- Override FX -->
+                                                <Label text="Override FX" />
+                                                <CheckBox
+                                                    id="transferFromOverrideFxCheckbox"
+                                                    selected="{oDataTradeEntry>TROVRIDFXF}"
+                                                />
+
+                                                <!-- Overridden FX -->
+                                                <Label text="Overridden FX" />
+                                                <Input
+                                                    id="transferFromOverriddenFx"
+                                                    value="{oDataTradeEntry>TROVRIDEFX}"
+                                                />
+                                            </f:content>
+                                        </f:SimpleForm>
+                                    </Panel>
+
+                                    <!-- ================= Other Section ================= -->
+                                    <Panel
+                                        headerText="Other"
+                                        class="sapUiNoContentPadding"
+                                    >
+                                        <f:SimpleForm
+                                            editable="true"
+                                            layout="ResponsiveGridLayout"
+                                        >
+                                            <f:content>
+                                                <!-- Ticket Number -->
+                                                <Label text="Ticket Number" />
+                                                <Input
+                                                    id="transferFromTicketNumber"
+                                                    value="{oDataTradeEntry>TRNTKTNUMB}"
+                                                />
+
+                                                <!-- Tax Region -->
+                                                <Label text="Tax Region" />
+                                                <Input
+                                                    id="transferFromTaxRegion"
+                                                    value="{oDataTradeEntry>taxRegion/TAXREGNAME}"
+                                                />
+                                            </f:content>
+                                        </f:SimpleForm>
+                                    </Panel>
+                                </VBox>
+                            </Panel>
+
+                            <Panel
+                                id="pnl3"
+                                headerText="Transfer To"
+                                class="sapUiTinyMarginEnd"
+                            >
+                                <VBox>
+                                    <!-- ================= Vehicle & Cargo Section ================= -->
+                                    <Panel
+                                        headerText="Vehicle &amp; Cargo"
+                                        class="sapUiNoContentPadding sapUiTinyMarginBottom"
+                                    >
+                                        <f:SimpleForm
+                                            editable="true"
+                                            layout="ResponsiveGridLayout"
+                                            labelSpanXL="4"
+                                            labelSpanL="3"
+                                            labelSpanM="4"
+                                            labelSpanS="12"
+                                            columnsXL="2"
+                                            columnsL="1"
+                                            columnsM="1"
+                                            columnsS="1"
+                                        >
+                                            <f:content>
+                                                <!-- Vehicle -->
+                                                <Label text="Vehicle" />
+                                                <ComboBox
+                                                    id="transferToVehicleCombo"
+                                                    selectedKey="{oDataTradeEntry>VEHICLEID}"
+                                                    items="{ path: '/Vehicle', sorter: { path: 'ID' } }"
+                                                >
+                                                    <core:Item
+                                                        key="{ID}"
+                                                        text="{VEHCLENAME}"
+                                                    />
+                                                </ComboBox>
+
+                                                <!-- MOT -->
+                                                <Label text="MOT" />
+                                                <Input
+                                                    id="transferToMot"
+                                                    value="{oDataTradeEntry>transportMot/MOTNAME}"
+                                                />
+
+                                                <!-- Name -->
+                                                <Label text="Name" />
+                                                <Input
+                                                    id="transferToName"
+                                                    value="{oDataTradeEntry>vehicle/VEHCLENAME}"
+                                                />
+
+                                                <!-- Cargo -->
+                                                <Label text="Cargo" />
+                                                <ComboBox
+                                                    id="transferToCargoCombo"
+                                                    selectedKey="{oDataTradeEntry>TRNFCARGO}"
+                                                    items="{ path: '/TransportCargo', sorter: { path: 'CARGONAME' } }"
+                                                >
+                                                    <core:Item
+                                                        key="{TRNFCARGO}"
+                                                        text="{CARGONAME}"
+                                                    />
+                                                </ComboBox>
+
+                                                <!-- Cargo Name -->
+                                                <Label text="Name" />
+                                                <Input
+                                                    id="transferToCargoName"
+                                                    value="{oDataTradeEntry>transferCargo/CARGONAME}"
+                                                />
+
+                                                <!-- Reset Date -->
+                                                <Label text="Reset Date" />
+                                                <DatePicker
+                                                    id="transferToResetDate"
+                                                    placeholder="Reset Date"
+                                                    value="{ path: 'oDataTradeEntry>TRNSRESTDT',
+                                 type: 'sap.ui.model.odata.type.DateTimeOffset',
+                                 formatOptions: { style: 'long', UTC: true }}"
+                                                    valueFormat="dd-MM-yyyy"
+                                                    displayFormat="long"
+                                                    change=".handleChange"
+                                                />
+                                            </f:content>
+                                        </f:SimpleForm>
+                                    </Panel>
+
+                                    <!-- ================= Commodity Section ================= -->
+                                    <Panel
+                                        headerText="Commodity"
+                                        class="sapUiNoContentPadding sapUiTinyMarginBottom"
+                                    >
+                                        <f:SimpleForm
+                                            editable="true"
+                                            layout="ResponsiveGridLayout"
+                                        >
+                                            <f:content>
+                                                <Label text="Commodity" />
+                                                <Input
+                                                    id="transferToCommodity"
+                                                    value="{oDataTradeEntry>commodity/CMDTYNAME}"
+                                                />
+
+                                                <Label text="Group 1" />
+                                                <Input
+                                                    id="transferToGroup1"
+                                                    value="{oDataTradeEntry>transferGroup1/GRP1NAME}"
+                                                />
+
+                                                <Label text="Group 2" />
+                                                <Input
+                                                    id="transferToGroup2"
+                                                    value="{oDataTradeEntry>transferGroup2/GRP2NAME}"
+                                                />
+                                            </f:content>
+                                        </f:SimpleForm>
+                                    </Panel>
+
+                                    <!-- ================= Quantity Section ================= -->
+                                    <Panel
+                                        headerText="Quantities"
+                                        class="sapUiNoContentPadding sapUiTinyMarginBottom"
+                                    >
+                                        <f:SimpleForm
+                                            editable="true"
+                                            layout="ResponsiveGridLayout"
+                                        >
+                                            <f:content>
+                                                <!-- Converted Qty -->
+                                                <Label text="Converted Qty" />
+                                                <Input
+                                                    id="transferToConvertedQty"
+                                                    value="{oDataTradeEntry>TRCONVDQTY}"
+                                                >
+                                                    <layoutData>
+                                                        <l:GridData
+                                                            span="XL2 L1 M3 S4"
+                                                        />
+                                                    </layoutData>
+                                                </Input>
+                                                <Input
+                                                    id="transferToConvertedQty1"
+                                                    value="{oDataTradeEntry>convertedqtyuom/UOMNAME}"
+                                                />
+
+                                                <!-- Cargo Qty -->
+                                                <Label text="Cargo Qty" />
+                                                <Input
+                                                    id="transferToCargoQty"
+                                                    value="{oDataTradeEntry>TRCARGOQTY}"
+                                                >
+                                                    <layoutData>
+                                                        <l:GridData
+                                                            span="XL2 L1 M3 S4"
+                                                        />
+                                                    </layoutData>
+                                                </Input>
+                                                <Input
+                                                    id="transferToCargoQty1"
+                                                    value="{oDataTradeEntry>cargoqtyuom/UOMNAME}"
+                                                />
+
+                                                <!-- Gain/Loss -->
+                                                <Label text="Gain/Loss" />
+                                                <Input
+                                                    id="transferToGainLoss"
+                                                    value="{oDataTradeEntry>TRGAINLOSS}"
+                                                >
+                                                    <layoutData>
+                                                        <l:GridData
+                                                            span="XL2 L1 M3 S4"
+                                                        />
+                                                    </layoutData>
+                                                </Input>
+                                                <Input
+                                                    id="transferToGainLoss1"
+                                                    value="{oDataTradeEntry>gainlossuom/UOMNAME}"
+                                                />
+
+                                                <!-- Packaging -->
+                                                <Label text="Packaging" />
+                                                <Input
+                                                    id="transferToPackaging"
+                                                    value="{oDataTradeEntry>TRPACKAGIN}"
+                                                >
+                                                    <layoutData>
+                                                        <l:GridData
+                                                            span="XL2 L1 M3 S4"
+                                                        />
+                                                    </layoutData>
+                                                </Input>
+                                                <Input
+                                                    id="transferToPackaging1"
+                                                    value="{oDataTradeEntry>packaginguom/UOMNAME}"
+                                                />
+                                            </f:content>
+                                        </f:SimpleForm>
+                                    </Panel>
+
+                                    <!-- ================= Other Section ================= -->
+                                    <Panel
+                                        headerText="Other"
+                                        class="sapUiNoContentPadding"
+                                    >
+                                        <f:SimpleForm
+                                            editable="true"
+                                            layout="ResponsiveGridLayout"
+                                        >
+                                            <f:content>
+                                                <!-- Custom Duty Status -->
+                                                <Label
+                                                    text="Custom Duty Status"
+                                                />
+                                                <ComboBox
+                                                    id="transferToCustomDutyStatusCombo"
+                                                    selectedKey="{oDataTradeEntry>TRCUSDUTST}"
+                                                    items="{ path: '/CustomDutyStatus', sorter: { path: 'CUSTDUTST' } }"
+                                                >
+                                                    <core:Item
+                                                        key="{TRCUSDUTST}"
+                                                        text="{CUSTDUTST}"
+                                                    />
+                                                </ComboBox>
+
+                                                <!-- Transfer At -->
+                                                <Label text="Transfer At" />
+                                                <ComboBox
+                                                    id="transferToTransferAtCombo"
+                                                    selectedKey="{oDataTradeEntry>TRANSFERAT}"
+                                                    items="{ path: '/TransferAt', sorter: { path: 'TRANATNAME' } }"
+                                                >
+                                                    <core:Item
+                                                        key="{TRANSFERAT}"
+                                                        text="{TRANATNAME}"
+                                                    />
+                                                </ComboBox>
+                                            </f:content>
+                                        </f:SimpleForm>
+                                    </Panel>
+                                </VBox>
+                            </Panel>
+                        </FlexBox>
+                    </l:VerticalLayout>
+                </IconTabFilter>
+
+                <!-- <IconTabFilter text="UDF" key="Udftab">
+    <l:VerticalLayout class="sapUiContentPadding" width="100%">
+        <FlexBox renderType="Bare" width="100%" justifyContent="SpaceBetween">
+
+            <Panel headerText="From UDF" width="48%">
+    <f:SimpleForm
+        id="frm5"
+        editable="true"
+        layout="ResponsiveGridLayout"
+        labelSpanXL="4"
+        labelSpanL="4"
+        labelSpanM="4"
+        labelSpanS="12"
+        adjustLabelSpan="false"
+        emptySpanXL="0"
+        emptySpanL="0"
+        emptySpanM="0"
+        emptySpanS="0"
+        columnsXL="2"
+        columnsL="2"
+        columnsM="2"
+        columnsS="1">
+
+        <f:content>
+
+            
+           <Title text="Field" class="sapUiSmallMarginBottom sapUiBoldText sapUiLargeMarginBegin field" />
+            <Title text="Value" class="sapUiSmallMarginBottom sapUiBoldText" />
+
+           
+            <Label text="Quantity" />
+            <Input id="inp44" value="{oDataTradeEntry>quantity}" width="70%" class="sapUiSmallMarginBegin"/>
+
+          
+            <Label text="Temp in Celsius" />
+            <Input id="inp55" value="{oDataTradeEntry>temperature}" width="70%" class="sapUiSmallMarginBegin"/>
+
+           
+            <Label text="Title Transfer Date" />
+            <Input id="inp63" value="{oDataTradeEntry>titleTransferDate}" width="70%" class="sapUiSmallMarginBegin" />
+
+        </f:content>
+    </f:SimpleForm>
+</Panel>
+
+
+         <Panel headerText="To UDF" width="48%">
+  <f:SimpleForm
+        id="frm6"
+        editable="true"
+        layout="ResponsiveGridLayout"
+        labelSpanXL="4"
+        labelSpanL="4"
+        labelSpanM="4"
+        labelSpanS="12"
+        adjustLabelSpan="false"
+        emptySpanXL="0"
+        emptySpanL="0"
+        emptySpanM="0"
+        emptySpanS="0"
+        columnsXL="2"
+        columnsL="2"
+        columnsM="2"
+        columnsS="1">
+
+        <f:content>
+
+            
+            <Title text="Field" class="sapUiSmallMarginBottom sapUiBoldText sapUiLargeMarginBegin field" />
+            <Title text="Value" class="sapUiSmallMarginBottom sapUiBoldText" />
+
+           
+            <Label text="Quantity" />
+            <Input id="inp56" value="{oDataTradeEntry>UDFQUANTY}" width="70%" class="sapUiSmallMarginBegin"/>
+
+            
+            <Label text="Temp in Celsius" />
+            <Input id="inp57" value="{oDataTradeEntry>UDFTEMPCE}" width="70%" class="sapUiSmallMarginBegin" />
+
+          
+            <Label text="Title Transfer Date" />
+            <Input id="inp66" value="{oDataTradeEntry>UDFTRNDAT}" width="70%"  class="sapUiSmallMarginBegin"/>
+
+        </f:content>
+    </f:SimpleForm>
+</Panel>
+
+
+
+
+        </FlexBox>
+    </l:VerticalLayout>
+</IconTabFilter> -->
+            </items>
+        </IconTabBar>
+    </Page>
+</mvc:View>

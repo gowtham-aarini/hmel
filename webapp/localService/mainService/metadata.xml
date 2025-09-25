@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="HMELTradingService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotation Term="Core.Links">
+                <Collection>
+                    <Record>
+                        <PropertyValue Property="rel" String="author"/>
+                        <PropertyValue Property="href" String="https://cap.cloud.sap"/>
+                    </Record>
+                </Collection>
+            </Annotation>
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="TradeEntry" EntityType="HMELTradingService.TradeEntry">
+                    <NavigationPropertyBinding Path="tradingType" Target="TradingType"/>
+                    <NavigationPropertyBinding Path="counterpart" Target="Counterpart"/>
+                    <NavigationPropertyBinding Path="titleTerms" Target="TitleTerms"/>
+                    <NavigationPropertyBinding Path="location" Target="Location"/>
+                    <NavigationPropertyBinding Path="priceMarker" Target="PriceMarker"/>
+                    <NavigationPropertyBinding Path="trader" Target="Trader"/>
+                    <NavigationPropertyBinding Path="roundingRule" Target="RoundingRule"/>
+                    <NavigationPropertyBinding Path="pricingType" Target="PricingType"/>
+                    <NavigationPropertyBinding Path="pricingRule" Target="PricingRule"/>
+                    <NavigationPropertyBinding Path="pricingUom" Target="PricingUOM"/>
+                    <NavigationPropertyBinding Path="paymentTerms" Target="PaymentTerm"/>
+                    <NavigationPropertyBinding Path="paymentTermsRule" Target="PaymentTermsRule"/>
+                    <NavigationPropertyBinding Path="paymentCurrency" Target="PaymentCurrency"/>
+                    <NavigationPropertyBinding Path="creditTerms" Target="CreditTerms"/>
+                    <NavigationPropertyBinding Path="mtmCurve" Target="MTMCurve"/>
+                    <NavigationPropertyBinding Path="gtc" Target="GTC"/>
+                    <NavigationPropertyBinding Path="instrument" Target="Instrument"/>
+                    <NavigationPropertyBinding Path="commodity" Target="Commodity"/>
+                    <NavigationPropertyBinding Path="buyOrSell" Target="BuyOrSell"/>
+                    <NavigationPropertyBinding Path="quantityUnit" Target="QuantityUnit"/>
+                    <NavigationPropertyBinding Path="strategy" Target="Strategy"/>
+                    <NavigationPropertyBinding Path="settledPriceCurve1" Target="SettledPriceCurve1"/>
+                    <NavigationPropertyBinding Path="mtmCurve1" Target="MTMCurve1"/>
+                    <NavigationPropertyBinding Path="mtmCurve2" Target="MTMCurve2"/>
+                    <NavigationPropertyBinding Path="settlementDate1" Target="SettlementDate1"/>
+                    <NavigationPropertyBinding Path="mandatePriceUom" Target="MandatePriceUOM"/>
+                    <NavigationPropertyBinding Path="attachments" Target="Attachments"/>
+                    <NavigationPropertyBinding Path="uom" Target="UOM"/>
+                    <NavigationPropertyBinding Path="vehicle" Target="Vehicle"/>
+                    <NavigationPropertyBinding Path="transferStatus" Target="TransferStatus"/>
+                    <NavigationPropertyBinding Path="grnQtyUom" Target="GRNQuantityUOM"/>
+                    <NavigationPropertyBinding Path="invoiceQtyUom" Target="InvoiceQuantityUOM"/>
+                    <NavigationPropertyBinding Path="outturnQtyUnit" Target="OutturnQuantityUnit"/>
+                    <NavigationPropertyBinding Path="costTypeSeparateLine" Target="CostTypeSeparateLine"/>
+                    <NavigationPropertyBinding Path="costTypeUom" Target="CostTypeUOM"/>
+                    <NavigationPropertyBinding Path="costTypeCurrency" Target="CostTypeCurrency"/>
+                    <NavigationPropertyBinding Path="costTypeEstFinal" Target="CostTypeEstFinal"/>
+                    <NavigationPropertyBinding Path="deliveryTerms" Target="DeliveryTerms"/>
+                    <NavigationPropertyBinding Path="deliveryLoad" Target="DeliveryLoad"/>
+                </EntitySet>
+                <EntitySet Name="TradingType" EntityType="HMELTradingService.TradingType"/>
+                <EntitySet Name="Counterpart" EntityType="HMELTradingService.Counterpart"/>
+                <EntitySet Name="TitleTerms" EntityType="HMELTradingService.TitleTerms"/>
+                <EntitySet Name="Location" EntityType="HMELTradingService.Location"/>
+                <EntitySet Name="PriceMarker" EntityType="HMELTradingService.PriceMarker"/>
+                <EntitySet Name="RoundingRule" EntityType="HMELTradingService.RoundingRule"/>
+                <EntitySet Name="PricingType" EntityType="HMELTradingService.PricingType"/>
+                <EntitySet Name="PricingRule" EntityType="HMELTradingService.PricingRule"/>
+                <EntitySet Name="PricingUOM" EntityType="HMELTradingService.PricingUOM"/>
+                <EntitySet Name="PaymentTerm" EntityType="HMELTradingService.PaymentTerm"/>
+                <EntitySet Name="PaymentTermsRule" EntityType="HMELTradingService.PaymentTermsRule"/>
+                <EntitySet Name="PaymentCurrency" EntityType="HMELTradingService.PaymentCurrency"/>
+                <EntitySet Name="CreditTerms" EntityType="HMELTradingService.CreditTerms"/>
+                <EntitySet Name="MTMCurve" EntityType="HMELTradingService.MTMCurve"/>
+                <EntitySet Name="GTC" EntityType="HMELTradingService.GTC"/>
+                <EntitySet Name="Instrument" EntityType="HMELTradingService.Instrument"/>
+                <EntitySet Name="Commodity" EntityType="HMELTradingService.Commodity"/>
+                <EntitySet Name="BuyOrSell" EntityType="HMELTradingService.BuyOrSell"/>
+                <EntitySet Name="QuantityUnit" EntityType="HMELTradingService.QuantityUnit"/>
+                <EntitySet Name="Strategy" EntityType="HMELTradingService.Strategy"/>
+                <EntitySet Name="SettledPriceCurve1" EntityType="HMELTradingService.SettledPriceCurve1"/>
+                <EntitySet Name="MTMCurve1" EntityType="HMELTradingService.MTMCurve1"/>
+                <EntitySet Name="MTMCurve2" EntityType="HMELTradingService.MTMCurve2"/>
+                <EntitySet Name="SettlementDate1" EntityType="HMELTradingService.SettlementDate1"/>
+                <EntitySet Name="MandatePriceUOM" EntityType="HMELTradingService.MandatePriceUOM"/>
+                <EntitySet Name="Attachments" EntityType="HMELTradingService.Attachments"/>
+                <EntitySet Name="UOM" EntityType="HMELTradingService.UOM"/>
+                <EntitySet Name="Vehicle" EntityType="HMELTradingService.Vehicle"/>
+                <EntitySet Name="TransferStatus" EntityType="HMELTradingService.TransferStatus"/>
+                <EntitySet Name="GRNQuantityUOM" EntityType="HMELTradingService.GRNQuantityUOM"/>
+                <EntitySet Name="InvoiceQuantityUOM" EntityType="HMELTradingService.InvoiceQuantityUOM"/>
+                <EntitySet Name="OutturnQuantityUnit" EntityType="HMELTradingService.OutturnQuantityUnit"/>
+                <EntitySet Name="CostTypeSeparateLine" EntityType="HMELTradingService.CostTypeSeparateLine"/>
+                <EntitySet Name="CostTypeUOM" EntityType="HMELTradingService.CostTypeUOM"/>
+                <EntitySet Name="CostTypeCurrency" EntityType="HMELTradingService.CostTypeCurrency"/>
+                <EntitySet Name="CostTypeEstFinal" EntityType="HMELTradingService.CostTypeEstFinal"/>
+                <EntitySet Name="Trader" EntityType="HMELTradingService.Trader"/>
+                <EntitySet Name="DeliveryTerms" EntityType="HMELTradingService.DeliveryTerms"/>
+                <EntitySet Name="DeliveryLoad" EntityType="HMELTradingService.DeliveryLoad"/>
+            </EntityContainer>
+            <EntityType Name="TradeEntry">
+                <Key>
+                    <PropertyRef Name="TRADE_NO"/>
+                </Key>
+                <Property Name="TRADE_NO" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="ZSCHEDULE" Type="Edm.String" MaxLength="100"/>
+                <Property Name="DEAL_DATE" Type="Edm.String" MaxLength="8"/>
+                <Property Name="END_DATE" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PRICE" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="API" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="TRADER_ID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="TRADE_DAT" Type="Edm.String" MaxLength="8"/>
+                <Property Name="TRADTYPID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="CNTRPRTID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="TTLTRMSID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="ZLOCATION" Type="Edm.String" MaxLength="16"/>
+                <Property Name="START_DAT" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PCMRKRID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="RNDGRLID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="RNDGNMBR" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="PRCGTPID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="PRCGRLID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="PRCPRDSD" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PRCPRDED" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PRCFRML1" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="PRCFRML2" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="PRCFRML3" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="PRCUOMID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="PYMTRMSID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="PYMTRMDYS" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="PYMTRMRID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="OPENCREDIT" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="PRCSDATLAG1" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PRCEDATLAG1" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PRCSDATLAG2" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PRCEDATLAG2" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PRCRNDNGOFF" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="SETLDPRCCRV2" Type="Edm.String" MaxLength="100"/>
+                <Property Name="UNDPHYTRADE" Type="Edm.String" MaxLength="100"/>
+                <Property Name="SETLMNTDAT2" Type="Edm.String" MaxLength="8"/>
+                <Property Name="MNDTEPRICE" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="TRANSFERNUM" Type="Edm.String" MaxLength="10"/>
+                <Property Name="TNSFRCMCNT" Type="Edm.String" MaxLength="8"/>
+                <Property Name="TNSFRCMPLN" Type="Edm.String" MaxLength="8"/>
+                <Property Name="EFFTVEDATE" Type="Edm.String" MaxLength="8"/>
+                <Property Name="SCHEDLDQTY" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="VSLNORDATE" Type="Edm.String" MaxLength="8"/>
+                <Property Name="DEMRGEDAYS" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="DEMRGERATE" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="GRNQTY" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="INVOICEQTY" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="OTRNQTYPAYMT" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="SPCFCGRVITY" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="PMTCURRID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="CRDTRMSID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="MTMCRVEID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="GTCID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="INMTTYPID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="BUYSELLID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="QTYUNITID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="STRATEGYID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="SETDPCCRV1ID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="MTMCURVE1ID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="MTMCURVE2ID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="SETLMTDAT1ID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="MDNTPCUOMID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="ATTCHMNTSID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="UOMID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="VEHICLEID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="TNSFRSTID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="DEMRGRTUOM" Type="Edm.String" MaxLength="10"/>
+                <Property Name="GRNQTYUOMID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="INVQTYUOMID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="OURNQTYUNTID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="CTSEPERATLID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="COSTYPEUOMID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="COSTYPECURID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="COSTYPETFLID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="COMMDTID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="DELVTRMSID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="DELVLOADID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="DELVDCHRID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="TRADTYPMID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="AQUANTITY" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="CQUANTITY" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="ORIGPOINT" Type="Edm.String" MaxLength="250"/>
+                <Property Name="COUNTRY" Type="Edm.String" MaxLength="250"/>
+                <Property Name="DECLAREDBY" Type="Edm.String" MaxLength="12"/>
+                <Property Name="DECLAREDAT" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PRICEDISC" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="MTMFACTOR" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="MEANQUANT" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="MINQUANT" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="MAXQUANT" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="TOLERNBPCT" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="TOLERNAPCT" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="TOLERNOPTN" Type="Edm.String" MaxLength="250"/>
+                <Property Name="PRICEPREC" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="COSTVALUE" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="LCVALUE" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="LCOPDAT" Type="Edm.String" MaxLength="8"/>
+                <Property Name="CSTSTDATE" Type="Edm.String" MaxLength="8"/>
+                <Property Name="CSTENDATE" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PRCFXDRAT" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="INPUTDATE" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PAYDUEDAT" Type="Edm.String" MaxLength="8"/>
+                <Property Name="PAYROLLDD" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="STLMTNDAY" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="STLMNTLEV" Type="Edm.String" MaxLength="1"/>
+                <Property Name="CONTCONFM" Type="Edm.String" MaxLength="200"/>
+                <Property Name="CONFMAPPR" Type="Edm.String" MaxLength="1"/>
+                <Property Name="EVTSTADAT" Type="Edm.String" MaxLength="8"/>
+                <Property Name="EVTENDDAT" Type="Edm.String" MaxLength="8"/>
+                <Property Name="EVTESTDAT" Type="Edm.String" MaxLength="8"/>
+                <Property Name="EVTPRCING" Type="Edm.String" MaxLength="1"/>
+                <Property Name="EVTPAYMNT" Type="Edm.String" MaxLength="1"/>
+                <Property Name="EVTTTLTNF" Type="Edm.String" MaxLength="1"/>
+                <Property Name="ORIGLCTIN" Type="Edm.String" MaxLength="16"/>
+                <Property Name="COSTBASIS" Type="Edm.String" MaxLength="16"/>
+                <Property Name="BASEDONPL" Type="Edm.String" MaxLength="16"/>
+                <Property Name="COSTSTATS" Type="Edm.String" MaxLength="16"/>
+                <Property Name="COSTSCHED" Type="Edm.String" MaxLength="16"/>
+                <Property Name="STLMTCRID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="COST_REVE" Type="Edm.String" MaxLength="16"/>
+                <Property Name="COMPANY" Type="Edm.String" MaxLength="16"/>
+                <Property Name="PAYMNTTRM" Type="Edm.String" MaxLength="16"/>
+                <Property Name="PRICEINDX" Type="Edm.String" MaxLength="16"/>
+                <Property Name="PRCURRID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="STLMTUUM" Type="Edm.String" MaxLength="16"/>
+                <Property Name="STLMNTPAY" Type="Edm.Decimal" Precision="18" Scale="3"/>
+                <Property Name="PAMTASIGN" Type="Edm.String" MaxLength="16"/>
+                <Property Name="APPLAWID" Type="Edm.String" MaxLength="16"/>
+                <Property Name="CONFTRADR" Type="Edm.String" MaxLength="16"/>
+                <Property Name="CONTEVENT" Type="Edm.String" MaxLength="16"/>
+                <Property Name="LCCODE" Type="Edm.String" MaxLength="16"/>
+                <NavigationProperty Name="tradingType" Type="HMELTradingService.TradingType">
+                    <ReferentialConstraint Property="TRADTYPID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="counterpart" Type="HMELTradingService.Counterpart">
+                    <ReferentialConstraint Property="CNTRPRTID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="titleTerms" Type="HMELTradingService.TitleTerms">
+                    <ReferentialConstraint Property="TTLTRMSID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="location" Type="HMELTradingService.Location">
+                    <ReferentialConstraint Property="ZLOCATION" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="priceMarker" Type="HMELTradingService.PriceMarker">
+                    <ReferentialConstraint Property="PCMRKRID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="trader" Type="HMELTradingService.Trader">
+                    <ReferentialConstraint Property="TRADER_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="roundingRule" Type="HMELTradingService.RoundingRule">
+                    <ReferentialConstraint Property="RNDGRLID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="pricingType" Type="HMELTradingService.PricingType">
+                    <ReferentialConstraint Property="PRCGTPID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="pricingRule" Type="HMELTradingService.PricingRule">
+                    <ReferentialConstraint Property="PRCGRLID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="pricingUom" Type="HMELTradingService.PricingUOM">
+                    <ReferentialConstraint Property="PRCUOMID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="paymentTerms" Type="HMELTradingService.PaymentTerm">
+                    <ReferentialConstraint Property="PYMTRMSID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="paymentTermsRule" Type="HMELTradingService.PaymentTermsRule">
+                    <ReferentialConstraint Property="PYMTRMRID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="paymentCurrency" Type="HMELTradingService.PaymentCurrency">
+                    <ReferentialConstraint Property="PMTCURRID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="creditTerms" Type="HMELTradingService.CreditTerms">
+                    <ReferentialConstraint Property="CRDTRMSID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="mtmCurve" Type="HMELTradingService.MTMCurve">
+                    <ReferentialConstraint Property="MTMCRVEID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="gtc" Type="HMELTradingService.GTC">
+                    <ReferentialConstraint Property="GTCID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="instrument" Type="HMELTradingService.Instrument">
+                    <ReferentialConstraint Property="INMTTYPID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="commodity" Type="HMELTradingService.Commodity">
+                    <ReferentialConstraint Property="COMMDTID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="buyOrSell" Type="HMELTradingService.BuyOrSell">
+                    <ReferentialConstraint Property="BUYSELLID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="quantityUnit" Type="HMELTradingService.QuantityUnit">
+                    <ReferentialConstraint Property="QTYUNITID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="strategy" Type="HMELTradingService.Strategy">
+                    <ReferentialConstraint Property="STRATEGYID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="settledPriceCurve1" Type="HMELTradingService.SettledPriceCurve1">
+                    <ReferentialConstraint Property="SETDPCCRV1ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="mtmCurve1" Type="HMELTradingService.MTMCurve1">
+                    <ReferentialConstraint Property="MTMCURVE1ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="mtmCurve2" Type="HMELTradingService.MTMCurve2">
+                    <ReferentialConstraint Property="MTMCURVE2ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="settlementDate1" Type="HMELTradingService.SettlementDate1">
+                    <ReferentialConstraint Property="SETLMTDAT1ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="mandatePriceUom" Type="HMELTradingService.MandatePriceUOM">
+                    <ReferentialConstraint Property="MDNTPCUOMID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="attachments" Type="HMELTradingService.Attachments">
+                    <ReferentialConstraint Property="ATTCHMNTSID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="uom" Type="HMELTradingService.UOM">
+                    <ReferentialConstraint Property="UOMID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="vehicle" Type="HMELTradingService.Vehicle">
+                    <ReferentialConstraint Property="VEHICLEID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="transferStatus" Type="HMELTradingService.TransferStatus">
+                    <ReferentialConstraint Property="TNSFRSTID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="grnQtyUom" Type="HMELTradingService.GRNQuantityUOM">
+                    <ReferentialConstraint Property="GRNQTYUOMID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="invoiceQtyUom" Type="HMELTradingService.InvoiceQuantityUOM">
+                    <ReferentialConstraint Property="INVQTYUOMID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="outturnQtyUnit" Type="HMELTradingService.OutturnQuantityUnit">
+                    <ReferentialConstraint Property="OURNQTYUNTID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="costTypeSeparateLine" Type="HMELTradingService.CostTypeSeparateLine">
+                    <ReferentialConstraint Property="CTSEPERATLID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="costTypeUom" Type="HMELTradingService.CostTypeUOM">
+                    <ReferentialConstraint Property="COSTYPEUOMID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="costTypeCurrency" Type="HMELTradingService.CostTypeCurrency">
+                    <ReferentialConstraint Property="COSTYPECURID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="costTypeEstFinal" Type="HMELTradingService.CostTypeEstFinal">
+                    <ReferentialConstraint Property="COSTYPETFLID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="deliveryTerms" Type="HMELTradingService.DeliveryTerms">
+                    <ReferentialConstraint Property="DELVTRMSID" ReferencedProperty="DLVTRMID"/>
+                </NavigationProperty>
+                <NavigationProperty Name="deliveryLoad" Type="HMELTradingService.DeliveryLoad">
+                    <ReferentialConstraint Property="DELVLOADID" ReferencedProperty="DLVLOADID"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="TradingType">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="TRADENAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="TRADESTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="Counterpart">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="CTPRTNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="CTPRTSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="TitleTerms">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="TTLTRMNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="TTKTRMSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="Location">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="LOCNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="LOCSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="PriceMarker">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="PRCMRKNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="PRCMRKSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="RoundingRule">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="RNDRULNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="RNDRULSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="PricingType">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="PRCTYPNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="PRCTYPSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="PricingRule">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="PRCRLNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="PRCRLSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="PricingUOM">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="PRCUOMNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="PRCUOMSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="PaymentTerm">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="PMTRMNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="PMTRMSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="PaymentTermsRule">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="NAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="STATUS" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="PaymentCurrency">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="PYMTCURNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="PYMTCURSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="CreditTerms">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="CRDTRMNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="CRDTRMSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="MTMCurve">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="MTMCRVNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="MTMCRVSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="GTC">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="GTCNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="GTCSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="Instrument">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="INSTRNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="INSTRSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="Commodity">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="CMDTYNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="CMDTYSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="BuyOrSell">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="BOSNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="BOSSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="QuantityUnit">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="QTYUNTNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="QTYUNTSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="Strategy">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="STRGYNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="STRGYSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="SettledPriceCurve1">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="STPCRVNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="STPCRVSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="MTMCurve1">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="MTMCR1NAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="MTMCR1STAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="MTMCurve2">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="MTMCR2NAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="MTMCR2STAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="SettlementDate1">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="SETDAT1NAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="SETDAT1STAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="MandatePriceUOM">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="MNDPUNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="MNDPUSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="Attachments">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="ATCHMTNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="ATCHMTSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="UOM">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="UOMNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="UOMSTATUS" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="Vehicle">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="VEHCLENAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="VEHCLESTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="TransferStatus">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="TRSNFRNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="TRSNFRSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="GRNQuantityUOM">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="GRQTUOMNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="GRQTUOMSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="InvoiceQuantityUOM">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="IVQYUOMNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="IVQYUOMSTATUS" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="OutturnQuantityUnit">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="OTRNQYUNAME" Type="Edm.String" MaxLength="10"/>
+                <Property Name="OTRNQYUSTATUS" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="CostTypeSeparateLine">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="CSTSLNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="CSTSLSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="CostTypeUOM">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="CTUOMNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="CTUOMSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="CostTypeCurrency">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="CSTCURNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="CSTCURSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="CostTypeEstFinal">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="CSTFINNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="CSTFINSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="Trader">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="TRDRNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="TRDRSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="DeliveryTerms">
+                <Key>
+                    <PropertyRef Name="DLVTRMID"/>
+                </Key>
+                <Property Name="DLVTRMID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="DLVTRMNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="DLVTRMSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+            <EntityType Name="DeliveryLoad">
+                <Key>
+                    <PropertyRef Name="DLVLOADID"/>
+                </Key>
+                <Property Name="DLVLOADID" Type="Edm.String" MaxLength="16" Nullable="false"/>
+                <Property Name="DLVLOADNAME" Type="Edm.String" MaxLength="200"/>
+                <Property Name="DLVLOADSTAT" Type="Edm.String" MaxLength="20"/>
+            </EntityType>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,24 @@
+{
+  "generationParameters": {
+    "generationDate": "Thu Sep 11 2025 09:57:18 GMT+0000 (Coordinated Universal Time)",
+    "generatorPlatform": "SAP Business Application Studio",
+    "serviceType": "SAP System (ABAP On-Premise)",
+    "metadataFilename": "",
+    "serviceUrl": "https://aarini-development-development-tradingapphmel-srv.cfapps.eu10-004.hana.ondemand.com/odata/v4/hmeltrading/",
+    "appName": "hmelpaper",
+    "appTitle": "Transfer FOB",
+    "appDescription": "Transfer FOB",
+    "appNamespace": "",
+    "ui5Theme": "sap_horizon",
+    "ui5Version": "1.140.0",
+    "enableCodeAssist": false,
+    "enableEslint": false,
+    "enableTypeScript": false,
+    "showMockDataInfo": true,
+    "generatorVersion": "1.18.6",
+    "template": "Basic V4",
+    "generatorName": "SAP Fiori Application Generator",
+    "entityRelatedConfig": [],
+    "launchText": "To launch the generated application, run the following from the generated application root folder:\n\n```\n    npm start\n```"
+  }
+}

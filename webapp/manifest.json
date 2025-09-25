@@ -1,0 +1,191 @@
+{
+  "_version": "1.76.0",
+  "sap.app": {
+    "id": "hmelpaper",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.18.6",
+      "toolsId": "85c3c5a7-4428-4798-8015-843cbc4f8806"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/hmeltrading/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "hmelpaper-create": {
+          "semanticObject": "hmelpaper",
+          "action": "create",
+          "title": "{{hmelpaper-create.flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.140.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "hmelpaper.i18n.i18n"
+        }
+      },
+      "oDataTradeEntry": {
+        "dataSource": "mainService",
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+      },
+    "": {
+      "dataSource": "mainService",
+      "preload": true,
+       "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true
+        }
+    }
+  },
+  "resources": {
+    "css": [
+      {
+        "uri": "css/style.css"
+      }
+    ]
+  },
+  "routing": {
+    "config": {
+      "routerClass": "sap.m.routing.Router",
+      "controlAggregation": "pages",
+      "controlId": "app",
+      "transition": "slide",
+      "type": "View",
+      "viewType": "XML",
+      "path": "hmelpaper.view",
+      "async": true,
+      "viewPath": "hmelpaper.view"
+    },
+    "routes": [
+      {
+        "name": "RoutePaperTrade",
+        "pattern": "PaperTrade/{tradeNumber}",
+        "target": [
+          "TargetPaperTrade"
+        ]
+      },
+      {
+        "name": "RoutePaperTradeNew",
+        "pattern": "PaperTrade",
+        "target": [
+          "TargetPaperTradeNew"
+        ]
+      },
+      {
+        "name": "RouteOverview",
+        "pattern": ":?query:",
+        "target": [
+          "TargetOverview"
+        ]
+      },
+       {
+        "name": "RouteTransfer",
+        "pattern": "Transfer/{tradeNumber}",
+        "target": [
+          "TargetTransfer"
+        ]
+      },
+      {
+        "name": "RouteTransferNew",
+        "pattern": "Transfer",
+        "target": [
+          "TargetTransferNew"
+        ]
+      }
+    ],
+    "targets": {
+      "TargetPaperTrade": {
+        "id": "PaperTrade",
+        "name": "PaperTrade"
+      },
+      "TargetPaperTradeNew": {
+        "id": "PaperTrade",
+        "name": "PaperTrade"
+      },
+      "TargetOverview": {
+        "id": "Overview",
+        "name": "Overview"
+      },
+       "TargetTransfer": {
+        "id": "Transfer",
+        "name": "Transfer"
+      },
+      "TargetTransferNew": {
+        "id": "Transfer",
+        "name": "Transfer"
+      }
+      
+
+    }
+  },
+  "rootView": {
+    "viewName": "hmelpaper.view.App",
+    "type": "XML",
+    "id": "App",
+    "async": true
+  }
+},
+"sap.cloud": {
+  "public": true,
+  "service": "hmelpaper"
+}
+}
