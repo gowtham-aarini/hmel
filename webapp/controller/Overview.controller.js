@@ -52,7 +52,7 @@ sap.ui.define([
                 const sPath = `/TradeEntry('${oData.TRADE_NO}')`;
                 const oBindingContext = oODATAModel.bindContext(sPath);
                 oBindingContext.requestObject().then(oEntity => {
-                    console.log("Single trade:", oEntity);
+                    console.log(":", oEntity);
                 }).catch(err => {
                     console.error("Error fetching entity", err);
                 });
@@ -83,7 +83,9 @@ sap.ui.define([
                         path: oItem.getName(),
                         operator: FilterOperator.EQ,
                         value1: oControl.getValue().trim()
+                        
                     }));
+                  
                 }
             });
 
@@ -94,6 +96,39 @@ sap.ui.define([
 
             this._updateLabels();
         },
+     onClear: function () {
+    var oFilterBar = this.byId("tradeFilterBar");
+    var aFilterItems = oFilterBar.getFilterGroupItems();
+
+    aFilterItems.forEach(function (oItem) {
+        var oControl = oItem.getControl();
+        if (oControl) {
+            if (oControl.setValue) {
+                oControl.setValue("");
+            }
+            if (oControl.setSelectedKeys) {
+                oControl.setSelectedKeys([]); 
+            }
+            if (oControl.setSelectedKey) {
+                oControl.setSelectedKey(""); 
+            }
+            if (oControl.setDateValue) {
+                oControl.setDateValue(null); 
+            }
+        }
+    });
+
+    var oTable = this.byId("dashboardTable"); 
+    var oBinding = oTable.getBinding("rows");
+    if (oBinding) {
+        oBinding.filter([]); 
+    }
+
+    oTable.setFirstVisibleRow(0);
+
+    console.log("Filters cleared, table reset to first page with full data.");
+},
+
 
         onFilterChange: function () {
             if (this.oSmartVariantManagement) {
@@ -131,9 +166,10 @@ sap.ui.define([
 
             var oTable = this.byId("dashboardTable");
             if (oTable) {
-                oTable.setShowOverlay(true);
+                oTable.setShowOverlay(false);
             }
         }
 
     });
 });
+ 
