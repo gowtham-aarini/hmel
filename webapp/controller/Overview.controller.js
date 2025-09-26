@@ -73,29 +73,111 @@ sap.ui.define([
         },
 
         // ===== FilterBar / Variant Management Methods =====
-        onSearch: function () {
-            var aFilters = [];
+//       onSearch: function () {
+//     const aFilters = [];
+//     const oFilterBar = this.byId("tradeFilterBar");
 
-            this.oFilterBar.getFilterGroupItems().forEach(function (oItem) {
-                var oControl = oItem.getControl();
-                if (oControl && oControl.getValue && oControl.getValue().trim() !== "") {
-                    aFilters.push(new Filter({
-                        path: oItem.getName(),
-                        operator: FilterOperator.EQ,
-                        value1: oControl.getValue().trim()
-                        
-                    }));
-                  
-                }
-            });
+//     oFilterBar.getFilterGroupItems().forEach(function (oItem) {
+//         const oControl = oItem.getControl();
+//         if (!oControl) { return; }
 
-            var oTable = this.byId("dashboardTable");
-            if (oTable && oTable.getBinding("rows")) {
-                oTable.getBinding("rows").filter(aFilters, "Application");
-            }
+//         let vValue;
 
-            this._updateLabels();
-        },
+//         // Input
+//         if (oControl.getValue && oControl.getValue().trim() !== "") {
+//             vValue = oControl.getValue().trim();
+//             aFilters.push(new sap.ui.model.Filter({
+//                 path: oItem.getName(),
+//                 operator: sap.ui.model.FilterOperator.Contains,
+//                 value1: vValue
+//             }));
+//         }
+
+//         // MultiComboBox
+//         else if (oControl.getSelectedKeys && oControl.getSelectedKeys().length) {
+//             const aKeys = oControl.getSelectedKeys();
+//             aFilters.push(new sap.ui.model.Filter({
+//                 filters: aKeys.map(function (k) {
+//                     return new sap.ui.model.Filter(oItem.getName(),
+//                         sap.ui.model.FilterOperator.EQ, k);
+//                 }),
+//                 and: false
+//             }));
+//         }
+
+//         // DatePicker
+//         else if (oControl.getDateValue && oControl.getDateValue() !== null) {
+//             const oDate = oControl.getDateValue();
+//             // Format to OData YYYYMMDD or YYYY-MM-DD depending on your service
+//             const sDate = sap.ui.core.format.DateFormat
+//                 .getDateInstance({ pattern: "yyyyMMdd" }).format(oDate);
+//             aFilters.push(new sap.ui.model.Filter({
+//                 path: oItem.getName(),
+//                 operator: sap.ui.model.FilterOperator.EQ,
+//                 value1: sDate
+//             }));
+//         }
+//     });
+
+//     const oTable = this.byId("dashboardTable");
+//     const oBinding = oTable && oTable.getBinding("rows");
+//     if (oBinding) {
+//         oBinding.filter(aFilters, "Application");
+//     }
+// },
+onSearch: function () {
+    const aFilters = [];
+    const oFilterBar = this.byId("tradeFilterBar");
+
+    oFilterBar.getFilterGroupItems().forEach(function (oItem) {
+        const oControl = oItem.getControl();
+        if (!oControl) { return; }
+
+        // Input
+        if (oControl.getValue && oControl.getValue().trim() !== "") {
+            aFilters.push(new sap.ui.model.Filter({
+                path: oItem.getName(),
+                operator: sap.ui.model.FilterOperator.Contains,
+                value1: oControl.getValue().trim()
+            }));
+        }
+
+        // MultiComboBox
+        else if (oControl.getSelectedKeys && oControl.getSelectedKeys().length) {
+            const aKeys = oControl.getSelectedKeys();
+            aFilters.push(new sap.ui.model.Filter({
+                filters: aKeys.map(function (k) {
+                    return new sap.ui.model.Filter({
+                        path: oItem.getName(),    // now points to ID field
+                        operator: sap.ui.model.FilterOperator.EQ,
+                        value1: k
+                    });
+                }),
+                and: false
+            }));
+        }
+
+        // DatePicker
+        else if (oControl.getDateValue && oControl.getDateValue() !== null) {
+            const sDate = sap.ui.core.format.DateFormat
+                .getDateInstance({ pattern: "yyyyMMdd" })
+                .format(oControl.getDateValue());
+            aFilters.push(new sap.ui.model.Filter({
+                path: oItem.getName(),
+                operator: sap.ui.model.FilterOperator.EQ,
+                value1: sDate
+            }));
+        }
+    });
+
+   const oTable = this.byId("dashboardTable");
+const oBinding = oTable.getBinding("rows");
+if (oBinding) {
+    oBinding.filter(aFilters, "Application");
+    oTable.setVisibleRowCount(oBinding.getLength());  // Adjust row count
+}
+
+},
      onClear: function () {
     var oFilterBar = this.byId("tradeFilterBar");
     var aFilterItems = oFilterBar.getFilterGroupItems();

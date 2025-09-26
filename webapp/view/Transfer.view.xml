@@ -39,7 +39,7 @@
                             />
                             <table:Table
                                 id="tabletrade"
-                               rows="{path:'oDataTradeEntry>/TradeEntry', parameters: { expand: ['counterpart','trader','strategy'] }}"
+                               rows="{path:'oDataTradeEntry>/TradeEntry', parameters: { expand: ['counterpart','trader','strategy','deliveryTerms'] }}"
 
                                 selectionMode="None"
                                 width="100%"

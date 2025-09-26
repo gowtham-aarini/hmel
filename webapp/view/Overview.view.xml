@@ -14,21 +14,20 @@
     xmlns:sap.ui.dt="sap.ui.dt"
     xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 >
-
     <f:DynamicPage busyIndicatorDelay="500">
         <f:title>
             <f:DynamicPageTitle>
                 <f:heading>
                     <svm:SmartVariantManagement
-                       id="svm"
-                       selectionKey="STANDARD"
-                      showExecuteOnSelection="true" />
+                        id="svm"
+                        selectionKey="STANDARD"
+                        showExecuteOnSelection="true"
+                    />
                 </f:heading>
 
                 <f:expandedContent>
                     <Label
                         id="expandedLabel"
-                        
                         text="No filters active"
                     />
                 </f:expandedContent>
@@ -58,7 +57,8 @@
                         search=".onSearch"
                         filterChange=".onFilterChange"
                         afterVariantLoad=".onAfterVariantLoad"
-                        showClearOnFB="true" clear=".onClear"
+                        showClearOnFB="true"
+                        clear=".onClear"
                     >
                         <fb:filterGroupItems>
                             <fb:FilterGroupItem
@@ -112,7 +112,7 @@
                                 </fb:control>
                             </fb:FilterGroupItem>
                             <fb:FilterGroupItem
-                                name="/ID"
+                                name="TRADE_DAT"
                                 label="Trade Date"
                                 groupName="General"
                                 visibleInFilterBar="true"
@@ -131,14 +131,13 @@
                                 </fb:control>
                             </fb:FilterGroupItem>
                             <fb:FilterGroupItem
-                                name="Commodity/ID"
+                                name="commodity/ID"
                                 label="Commodity"
                                 groupName="General"
                                 visibleInFilterBar="true"
                             >
                                 <fb:control>
                                     <MultiComboBox
-                                        name="Commodity"
                                         selectionChange=".onSelectionChange"
                                         items="{ path: 'oDataTradeEntry>/Commodity' }"
                                     >
@@ -149,9 +148,9 @@
                                     </MultiComboBox>
                                 </fb:control>
                             </fb:FilterGroupItem>
-                           
+
                             <fb:FilterGroupItem
-                                name="deliveryTerms/ID"
+                                name="deliveryTerms/DLVTRMID"
                                 label="Delivery Terms"
                                 groupName="General"
                                 visibleInFilterBar="true"
@@ -168,8 +167,9 @@
                                     </MultiComboBox>
                                 </fb:control>
                             </fb:FilterGroupItem>
+
                             <fb:FilterGroupItem
-                                name="Location/ID"
+                                name="location/ID"
                                 label="Delivery Location"
                                 groupName="General"
                                 visibleInFilterBar="true"
@@ -182,6 +182,25 @@
                                         <core:Item
                                             key="{oDataTradeEntry>ID}"
                                             text="{oDataTradeEntry>LOCNAME}"
+                                        />
+                                    </MultiComboBox>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+
+                            <fb:FilterGroupItem
+                                name="TradeMain/TRADEID"
+                                label="Trade Type"
+                                groupName="General"
+                                visibleInFilterBar="true"
+                            >
+                                <fb:control>
+                                    <MultiComboBox
+                                        items="{path: 'oDataTradeEntry>/TradeMain'}"
+                                        selectionChange=".onSelectionChange"
+                                    >
+                                        <core:Item
+                                            key="{oDataTradeEntry>TRADEID}"
+                                            text="{oDataTradeEntry>TRADETYPENAME}"
                                         />
                                     </MultiComboBox>
                                 </fb:control>
@@ -210,7 +229,7 @@
                             </fb:FilterGroupItem>
 
                             <fb:FilterGroupItem
-                                name="Period/ZPERIODID"
+                                name="Period/PERIDNAME"
                                 label="Delivery Period"
                                 groupName="General"
                                 visibleInFilterBar="true"
@@ -230,30 +249,6 @@
                                     </MultiComboBox>
                                 </fb:control>
                             </fb:FilterGroupItem>
-
-                            <fb:FilterGroupItem
-                                name="TradeMain/TRADEID"
-                                label="Trade Type"
-                                groupName="General"
-                                visibleInFilterBar="true"
-                            >
-                                <fb:control>
-                                    <MultiComboBox
-                                        items="{
-                path: 'oDataTradeEntry>/TradeMain',
-                parameters: { $select: 'TRADEID,TRADETYPENAME' }
-            }"
-                                        selectionChange=".onSelectionChange"
-                                    >
-                                        <core:Item
-                                            key="{oDataTradeEntry>TRADEID}"
-                                            text="{oDataTradeEntry>TRADETYPENAME}"
-                                        />
-                                    </MultiComboBox>
-                                </fb:control>
-                            </fb:FilterGroupItem>
-                           
-                           
                         </fb:filterGroupItems>
                     </fb:FilterBar>
                 </f:content>
@@ -261,16 +256,19 @@
         </f:header>
         <f:content>
             <ui:Table
-                visible="true"
-                id="dashboardTable"
-                enableBusyIndicator="true"
-                busyIndicatorSize="Medium"
-                rows="{ path: '/TradeEntry', parameters: { '$expand': 'counterpart,trader,commodity,deliveryTerms' } }"
-                selectionMode="None"
-                sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
-                rowActionCount="1"
-                width="100%"
-            >
+    visible="true"
+    id="dashboardTable"
+    enableBusyIndicator="true"
+    busyIndicatorSize="Medium"
+    rows="{ path: '/TradeEntry', parameters: { '$expand': 'counterpart,trader,commodity,deliveryTerms' } }"
+    selectionMode="None"
+    sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
+    rowActionCount="1"
+    width="100%"
+    visibleRowCountMode="Auto"
+    minAutoRowCount="1"
+>
+
                 <ui:extension>
                     <OverflowToolbar>
                         <Title
