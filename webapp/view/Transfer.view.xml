@@ -509,6 +509,7 @@
                                                             id="groupF"
                                                             columns="2"
                                                         >
+                                                        
                                                             <buttons>
                                                                 <RadioButton
                                                                     text="Multiply"
@@ -1047,5 +1048,18 @@
 </IconTabFilter> -->
             </items>
         </IconTabBar>
+
+          <footer>
+			<OverflowToolbar id="otbFooter">
+				<ToolbarSpacer/>
+                <Button type="Accept" text="Edit" icon="sap-icon://save" press="onPressEdit" visible="{appModel>/IsEditEnabled}">
+					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" /></layoutData>
+				</Button>
+				<Button type="Accept" text="Save" icon="sap-icon://save" press="onPressSave">
+					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" /></layoutData>
+				</Button>			
+
+			</OverflowToolbar>
+		</footer>
     </Page>
 </mvc:View>

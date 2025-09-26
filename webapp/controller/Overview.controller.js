@@ -73,143 +73,144 @@ sap.ui.define([
         },
 
         // ===== FilterBar / Variant Management Methods =====
-//       onSearch: function () {
-//     const aFilters = [];
-//     const oFilterBar = this.byId("tradeFilterBar");
+        //       onSearch: function () {
+        //     const aFilters = [];
+        //     const oFilterBar = this.byId("tradeFilterBar");
 
-//     oFilterBar.getFilterGroupItems().forEach(function (oItem) {
-//         const oControl = oItem.getControl();
-//         if (!oControl) { return; }
+        //     oFilterBar.getFilterGroupItems().forEach(function (oItem) {
+        //         const oControl = oItem.getControl();
+        //         if (!oControl) { return; }
 
-//         let vValue;
+        //         let vValue;
 
-//         // Input
-//         if (oControl.getValue && oControl.getValue().trim() !== "") {
-//             vValue = oControl.getValue().trim();
-//             aFilters.push(new sap.ui.model.Filter({
-//                 path: oItem.getName(),
-//                 operator: sap.ui.model.FilterOperator.Contains,
-//                 value1: vValue
-//             }));
-//         }
+        //         // Input
+        //         if (oControl.getValue && oControl.getValue().trim() !== "") {
+        //             vValue = oControl.getValue().trim();
+        //             aFilters.push(new sap.ui.model.Filter({
+        //                 path: oItem.getName(),
+        //                 operator: sap.ui.model.FilterOperator.Contains,
+        //                 value1: vValue
+        //             }));
+        //         }
 
-//         // MultiComboBox
-//         else if (oControl.getSelectedKeys && oControl.getSelectedKeys().length) {
-//             const aKeys = oControl.getSelectedKeys();
-//             aFilters.push(new sap.ui.model.Filter({
-//                 filters: aKeys.map(function (k) {
-//                     return new sap.ui.model.Filter(oItem.getName(),
-//                         sap.ui.model.FilterOperator.EQ, k);
-//                 }),
-//                 and: false
-//             }));
-//         }
+        //         // MultiComboBox
+        //         else if (oControl.getSelectedKeys && oControl.getSelectedKeys().length) {
+        //             const aKeys = oControl.getSelectedKeys();
+        //             aFilters.push(new sap.ui.model.Filter({
+        //                 filters: aKeys.map(function (k) {
+        //                     return new sap.ui.model.Filter(oItem.getName(),
+        //                         sap.ui.model.FilterOperator.EQ, k);
+        //                 }),
+        //                 and: false
+        //             }));
+        //         }
 
-//         // DatePicker
-//         else if (oControl.getDateValue && oControl.getDateValue() !== null) {
-//             const oDate = oControl.getDateValue();
-//             // Format to OData YYYYMMDD or YYYY-MM-DD depending on your service
-//             const sDate = sap.ui.core.format.DateFormat
-//                 .getDateInstance({ pattern: "yyyyMMdd" }).format(oDate);
-//             aFilters.push(new sap.ui.model.Filter({
-//                 path: oItem.getName(),
-//                 operator: sap.ui.model.FilterOperator.EQ,
-//                 value1: sDate
-//             }));
-//         }
-//     });
+        //         // DatePicker
+        //         else if (oControl.getDateValue && oControl.getDateValue() !== null) {
+        //             const oDate = oControl.getDateValue();
+        //             // Format to OData YYYYMMDD or YYYY-MM-DD depending on your service
+        //             const sDate = sap.ui.core.format.DateFormat
+        //                 .getDateInstance({ pattern: "yyyyMMdd" }).format(oDate);
+        //             aFilters.push(new sap.ui.model.Filter({
+        //                 path: oItem.getName(),
+        //                 operator: sap.ui.model.FilterOperator.EQ,
+        //                 value1: sDate
+        //             }));
+        //         }
+        //     });
 
-//     const oTable = this.byId("dashboardTable");
-//     const oBinding = oTable && oTable.getBinding("rows");
-//     if (oBinding) {
-//         oBinding.filter(aFilters, "Application");
-//     }
-// },
-onSearch: function () {
-    const aFilters = [];
-    const oFilterBar = this.byId("tradeFilterBar");
+        //     const oTable = this.byId("dashboardTable");
+        //     const oBinding = oTable && oTable.getBinding("rows");
+        //     if (oBinding) {
+        //         oBinding.filter(aFilters, "Application");
+        //     }
+        // },
+        onSearch: function () {
+            const aFilters = [];
+            const oFilterBar = this.byId("tradeFilterBar");
 
-    oFilterBar.getFilterGroupItems().forEach(function (oItem) {
-        const oControl = oItem.getControl();
-        if (!oControl) { return; }
+            oFilterBar.getFilterGroupItems().forEach(function (oItem) {
+                const oControl = oItem.getControl();
+                if (!oControl) { return; }
 
-        // Input
-        if (oControl.getValue && oControl.getValue().trim() !== "") {
-            aFilters.push(new sap.ui.model.Filter({
-                path: oItem.getName(),
-                operator: sap.ui.model.FilterOperator.Contains,
-                value1: oControl.getValue().trim()
-            }));
-        }
+                // Input
+                if (oControl.getValue && oControl.getValue().trim() !== "") {
+                    aFilters.push(new sap.ui.model.Filter({
+                        path: oItem.getName(),
+                        operator: sap.ui.model.FilterOperator.Contains,
+                        value1: oControl.getValue().trim()
+                    }));
+                }
 
-        // MultiComboBox
-        else if (oControl.getSelectedKeys && oControl.getSelectedKeys().length) {
-            const aKeys = oControl.getSelectedKeys();
-            aFilters.push(new sap.ui.model.Filter({
-                filters: aKeys.map(function (k) {
-                    return new sap.ui.model.Filter({
-                        path: oItem.getName(),    // now points to ID field
+                // MultiComboBox
+                else if (oControl.getSelectedKeys && oControl.getSelectedKeys().length) {
+                    const aKeys = oControl.getSelectedKeys();
+                    aFilters.push(new sap.ui.model.Filter({
+                        filters: aKeys.map(function (k) {
+                            return new sap.ui.model.Filter({
+                                path: oItem.getName(),    // now points to ID field
+                                operator: sap.ui.model.FilterOperator.EQ,
+                                value1: k
+                            });
+                        }),
+                        and: false
+                    }));
+                }
+
+                // DatePicker
+                else if (oControl.getDateValue && oControl.getDateValue() !== null) {
+                    const sDate = sap.ui.core.format.DateFormat
+                        .getDateInstance({ pattern: "yyyyMMdd" })
+                        .format(oControl.getDateValue());
+                    aFilters.push(new sap.ui.model.Filter({
+                        path: oItem.getName(),
                         operator: sap.ui.model.FilterOperator.EQ,
-                        value1: k
-                    });
-                }),
-                and: false
-            }));
-        }
+                        value1: sDate
+                    }));
+                }
+            });
 
-        // DatePicker
-        else if (oControl.getDateValue && oControl.getDateValue() !== null) {
-            const sDate = sap.ui.core.format.DateFormat
-                .getDateInstance({ pattern: "yyyyMMdd" })
-                .format(oControl.getDateValue());
-            aFilters.push(new sap.ui.model.Filter({
-                path: oItem.getName(),
-                operator: sap.ui.model.FilterOperator.EQ,
-                value1: sDate
-            }));
-        }
-    });
-
-   const oTable = this.byId("dashboardTable");
-const oBinding = oTable.getBinding("rows");
-if (oBinding) {
-    oBinding.filter(aFilters, "Application");
-    oTable.setVisibleRowCount(oBinding.getLength());  // Adjust row count
-}
-
-},
-     onClear: function () {
-    var oFilterBar = this.byId("tradeFilterBar");
-    var aFilterItems = oFilterBar.getFilterGroupItems();
-
-    aFilterItems.forEach(function (oItem) {
-        var oControl = oItem.getControl();
-        if (oControl) {
-            if (oControl.setValue) {
-                oControl.setValue("");
+            const oTable = this.byId("dashboardTable");
+            const oBinding = oTable.getBinding("rows");
+            if (oBinding) {
+                oBinding.filter(aFilters, "Application");
+                oTable.setVisibleRowCount(oBinding.getLength());  
+                
             }
-            if (oControl.setSelectedKeys) {
-                oControl.setSelectedKeys([]); 
-            }
-            if (oControl.setSelectedKey) {
-                oControl.setSelectedKey(""); 
-            }
-            if (oControl.setDateValue) {
-                oControl.setDateValue(null); 
-            }
-        }
-    });
 
-    var oTable = this.byId("dashboardTable"); 
-    var oBinding = oTable.getBinding("rows");
-    if (oBinding) {
-        oBinding.filter([]); 
-    }
+        },
+        onClear: function () {
+            var oFilterBar = this.byId("tradeFilterBar");
+            var aFilterItems = oFilterBar.getFilterGroupItems();
 
-    oTable.setFirstVisibleRow(0);
+            aFilterItems.forEach(function (oItem) {
+                var oControl = oItem.getControl();
+                if (oControl) {
+                    if (oControl.setValue) {
+                        oControl.setValue("");
+                    }
+                    if (oControl.setSelectedKeys) {
+                        oControl.setSelectedKeys([]);
+                    }
+                    if (oControl.setSelectedKey) {
+                        oControl.setSelectedKey("");
+                    }
+                    if (oControl.setDateValue) {
+                        oControl.setDateValue(null);
+                    }
+                }
+            });
 
-    console.log("Filters cleared, table reset to first page with full data.");
-},
+            var oTable = this.byId("dashboardTable");
+            var oBinding = oTable.getBinding("rows");
+            if (oBinding) {
+                oBinding.filter([]);
+            }
+
+            oTable.setFirstVisibleRow(0);
+
+            console.log("Filters cleared, table reset to first page with full data.");
+        },
 
 
         onFilterChange: function () {
@@ -254,4 +255,3 @@ if (oBinding) {
 
     });
 });
- 
