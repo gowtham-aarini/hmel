@@ -26,6 +26,10 @@
   color: #0070f2 !important; /* SAP blue */
   font-weight: bold !important;
 }
+.sapMPanel .sapMPanelHeadingDiv>.sapMPanelHdr, .sapMPanelWrappingDiv, .sapMPanelWrappingDivTb {
+    border-bottom: .0625rem solid #fff;
+    background: #fff;
+}
 
 
 

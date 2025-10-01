@@ -118,6 +118,7 @@ sap.ui.define([
                 this.byId("createSaveBtn").setEnabled(false);
             }
         },
+
         onPressSave: function (oEvent) {
             var sAction = oEvent.getSource().data("action")
             var appModel = this.getView().getModel("appModel");
@@ -213,9 +214,9 @@ sap.ui.define([
                 "Schedldqty": oView.byId("transferFromScheduledQty") ? oView.byId("transferFromScheduledQty").getValue() || "0.000" : "0.000",
                 "Demrgedays": "0.000",
                 "Demrgerate": "0.000",
-                "Grnqty":"0.000",
+                "Grnqty": "0.000",
                 "Invoiceqty": oView.byId("transferFromInvoiceQty") ? oView.byId("transferFromInvoiceQty").getValue() || "0.000" : "0.000",
-                "Otrnqtypaymt":"0.000",
+                "Otrnqtypaymt": "0.000",
                 "Api": "0.000",
                 "Spcfcgrvity": "0.000",
                 "Tolernbpct": "0.000",
@@ -248,24 +249,24 @@ sap.ui.define([
                 "Mtmcrveid": "",
                 "Applawid": "",
                 "Gtcid": "",
-                "Inmttypid":"",
+                "Inmttypid": "",
                 "Buysellid": "",
                 "Qtyunitid": oView.byId("transferFromContractQty1") ? oView.byId("transferFromContractQty1").getValue() || "" : "",
                 "Strategyid": "",
                 "Setdpccrv1id": "",
-                "Setldprccrv2":"",
+                "Setldprccrv2": "",
                 "Mtmcurve1id": "",
                 "Mtmcurve2id": "",
                 "Undphytrade": "",
                 "Setlmtdat1id": "",
-                "Mdntpcuomid":"",
+                "Mdntpcuomid": "",
                 "Attchmntsid": "",
                 "Transfernum": "",
                 "Uomid": "",
                 "Vehicleid": oView.byId("transferToVehicleCombo") ? oView.byId("transferToVehicleCombo").getSelectedKey() || "" : "",
                 "Tnsfrstid": "",
                 "Demrgrtuom": "",
-                "Grnqtyuomid":"",
+                "Grnqtyuomid": "",
                 "Invqtyuomid": oView.byId("transferFromInvoiceQtyUomCombo") ? oView.byId("transferFromInvoiceQtyUomCombo").getSelectedKey() || "" : "",
                 "Ournqtyuntid": "",
                 "Ctseperatlid": "",
@@ -309,7 +310,7 @@ sap.ui.define([
         },
 
         postS4hana: function (oSavePayload) {
-            var oModel = this.getOwnerComponent().getModel("oDataTradeEntry");
+            var oModel = this.getOwnerComponent().getModel("s4HanaModel");
             var sServiceUrl = oModel.sServiceUrl + "/ZTM_TRADE_ENTRYSet";
 
             function getCsrfToken(sServiceUrl) {
@@ -338,7 +339,7 @@ sap.ui.define([
                 contentType: "application/json",
                 data: JSON.stringify(oSavePayload),
                 headers: {
-                    "X-CSRF-Token": getCsrfToken(sServiceUrl) // Fetch CSRF token dynamically
+                    "X-CSRF-Token": getCsrfToken(sServiceUrl)
                 },
                 success: function (oData) {
                     sap.m.MessageToast.show("Successfully!");
@@ -348,6 +349,39 @@ sap.ui.define([
                     sap.m.MessageBox.error("Error: " + jqXHR.responseText);
                 }
             });
+        },
+        onchangetradeno: function (oEvent) {
+            // Get selected key from ComboBox
+            const sTradeNo = this.byId("topTradeNumberCombo").getSelectedKey();
+
+            if (!sTradeNo) {
+                console.warn("No Trade Number selected");
+                return;
+            }
+
+            // Create JSON model with selected Trade No
+            const oSelModel = new sap.ui.model.json.JSONModel({
+                TRADE_NO: sTradeNo
+            });
+            this.getOwnerComponent().setModel(oSelModel, "SelectedTradeNumber");
+
+            // Get OData V4 model
+            const oODATAModel = this.getOwnerComponent().getModel("oDataTradeEntry");
+            if (oODATAModel) {
+                // Build entity path using selected key
+                const sPath = `/TradeEntry('${sTradeNo}')`;
+
+                const oBindingContext = oODATAModel.bindContext(sPath);
+                oBindingContext.requestObject().then(SelectedTradeNumber => {
+                    // Store the fetched entity in the same model if needed
+                    oSelModel.setData(SelectedTradeNumber);
+
+                    // Print to console
+                    console.log("Fetched TradeEntry entity:", SelectedTradeNumber);
+                }).catch(err => {
+                    console.error("Error fetching entity", err);
+                });
+            }
         },
     });
 });

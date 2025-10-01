@@ -1,4 +1,4 @@
-<mvc:View
+<!-- <mvc:View
     controllerName="hmelpaper.controller.Overview"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
@@ -260,7 +260,7 @@
     id="dashboardTable"
     enableBusyIndicator="true"
     busyIndicatorSize="Medium"
-    rows="{ path: '/TradeEntry', parameters: { '$expand': 'counterpart,trader,commodity,deliveryTerms' } }"
+    rows="{ path: '/TradeEntry', parameters: { '$expand': 'counterpart,trader,commodity,deliveryTerms,tradeMain' } }"
     selectionMode="None"
     sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
     rowActionCount="1"
@@ -407,11 +407,11 @@
                     >
                         <Label text="Trade Type" />
                         <ui:template>
-                            <Text text="{TradeMain/TRADETYPENAME}" />
+                            <Text text="{tradeMain/TRADETYPENAME}" />
                         </ui:template>
                     </ui:Column>
                 </ui:columns>
             </ui:Table>
         </f:content>
     </f:DynamicPage>
-</mvc:View>
+</mvc:View> -->

@@ -7,6 +7,7 @@
     "applicationVersion": {
       "version": "0.0.1"
     },
+    
     "title": "{{appTitle}}",
     "description": "{{appDescription}}",
     "resources": "resources.json",
@@ -79,6 +80,15 @@
        "appModel": {
         "type": "sap.ui.model.json.JSONModel"
       },
+       "s4HanaModel": {
+        "dataSource": "s4HanaService",
+        "preload": true,
+        "settings": {
+          "useBatch": true,
+          "defaultBindingMode": "TwoWay",
+          "defaultCountMode": "Inline"
+        }
+      },
       "oDataTradeEntry": {
         "dataSource": "mainService",
         "type": "sap.ui.model.odata.v4.ODataModel",
@@ -106,80 +116,75 @@
       }
     ]
   },
-  "routing": {
-    "config": {
-      "routerClass": "sap.m.routing.Router",
-      "controlAggregation": "pages",
-      "controlId": "app",
-      "transition": "slide",
-      "type": "View",
-      "viewType": "XML",
-      "path": "hmelpaper.view",
-      "async": true,
-      "viewPath": "hmelpaper.view"
-    },
-    "routes": [
-      {
-        "name": "RoutePaperTrade",
-        "pattern": "PaperTrade/{tradeNumber}",
-        "target": [
-          "TargetPaperTrade"
-        ]
-      },
-      {
-        "name": "RoutePaperTradeNew",
-        "pattern": "PaperTrade",
-        "target": [
-          "TargetPaperTradeNew"
-        ]
-      },
-      {
-        "name": "RouteOverview",
-        "pattern": ":?query:",
-        "target": [
-          "TargetOverview"
-        ]
-      },
-       {
-        "name": "RouteTransfer",
-        "pattern": "Transfer/{tradeNumber}",
-        "target": [
-          "TargetTransfer"
-        ]
-      },
-      {
-        "name": "RouteTransferNew",
-        "pattern": "Transfer",
-        "target": [
-          "TargetTransferNew"
-        ]
-      }
-    ],
-    "targets": {
-      "TargetPaperTrade": {
-        "id": "PaperTrade",
-        "name": "PaperTrade"
-      },
-      "TargetPaperTradeNew": {
-        "id": "PaperTrade",
-        "name": "PaperTrade"
-      },
-      "TargetOverview": {
-        "id": "Overview",
-        "name": "Overview"
-      },
-       "TargetTransfer": {
-        "id": "Transfer",
-        "name": "Transfer"
-      },
-      "TargetTransferNew": {
-        "id": "Transfer",
-        "name": "Transfer"
-      }
-      
-
-    }
+ "routing": {
+  "config": {
+    "routerClass": "sap.m.routing.Router",
+    "controlAggregation": "pages",
+    "controlId": "app",
+    "transition": "slide",
+    "type": "View",
+    "viewType": "XML",
+    "path": "hmelpaper.view",
+    "async": true,
+    "viewPath": "hmelpaper.view"
   },
+  "routes": [
+    {
+      "name": "RouteTransferDefault",
+      "pattern": "",
+      "target": [
+        "TargetTransferNew"
+      ]
+    },
+    {
+      "name": "RoutePaperTrade",
+      "pattern": "PaperTrade/{tradeNumber}",
+      "target": [
+        "TargetPaperTrade"
+      ]
+    },
+    {
+      "name": "RoutePaperTradeNew",
+      "pattern": "PaperTrade",
+      "target": [
+        "TargetPaperTradeNew"
+      ]
+    },
+    {
+      "name": "RouteTransfer",
+      "pattern": "Transfer/{tradeNumber}",
+      "target": [
+        "TargetTransfer"
+      ]
+    },
+    {
+      "name": "RouteTransferNew",
+      "pattern": "Transfer",
+      "target": [
+        "TargetTransferNew"
+      ]
+    }
+  ],
+  "targets": {
+    "TargetPaperTrade": {
+      "id": "PaperTrade",
+      "name": "PaperTrade"
+    },
+    "TargetPaperTradeNew": {
+      "id": "PaperTrade",
+      "name": "PaperTrade"
+    },
+    "TargetTransfer": {
+      "id": "Transfer",
+      "name": "Transfer"
+    },
+    "TargetTransferNew": {
+      "id": "Transfer",
+      "name": "Transfer"
+    }
+  }
+}
+,
   "rootView": {
     "viewName": "hmelpaper.view.App",
     "type": "XML",
