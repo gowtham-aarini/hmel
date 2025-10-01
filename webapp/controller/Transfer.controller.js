@@ -350,6 +350,39 @@ sap.ui.define([
                 }
             });
         },
+        // onchangetradeno: function (oEvent) {
+        //     // Get selected key from ComboBox
+        //     const sTradeNo = this.byId("topTradeNumberCombo").getSelectedKey();
+
+        //     if (!sTradeNo) {
+        //         console.warn("No Trade Number selected");
+        //         return;
+        //     }
+
+        //     // Create JSON model with selected Trade No
+        //     const oSelModel = new sap.ui.model.json.JSONModel({
+        //         TRADE_NO: sTradeNo
+        //     });
+        //     this.getOwnerComponent().setModel(oSelModel, "SelectedTradeNumber");
+
+        //     // Get OData V4 model
+        //     const oODATAModel = this.getOwnerComponent().getModel("oDataTradeEntry");
+        //     if (oODATAModel) {
+        //         // Build entity path using selected key
+        //         const sPath = `/TradeEntry('${sTradeNo}')`;
+
+        //         const oBindingContext = oODATAModel.bindContext(sPath);
+        //         oBindingContext.requestObject().then(SelectedTradeNumber => {
+        //             // Store the fetched entity in the same model if needed
+        //             oSelModel.setData(SelectedTradeNumber);
+
+        //             // Print to console
+        //             console.log("Fetched TradeEntry entity:", SelectedTradeNumber);
+        //         }).catch(err => {
+        //             console.error("Error fetching entity", err);
+        //         });
+        //     }
+        // },
         onchangetradeno: function (oEvent) {
             // Get selected key from ComboBox
             const sTradeNo = this.byId("topTradeNumberCombo").getSelectedKey();
@@ -371,7 +404,10 @@ sap.ui.define([
                 // Build entity path using selected key
                 const sPath = `/TradeEntry('${sTradeNo}')`;
 
-                const oBindingContext = oODATAModel.bindContext(sPath);
+                const oBindingContext = oODATAModel.bindContext(sPath, null, {
+                    $expand: "counterpart"   // ✅ added expand
+                });
+
                 oBindingContext.requestObject().then(SelectedTradeNumber => {
                     // Store the fetched entity in the same model if needed
                     oSelModel.setData(SelectedTradeNumber);
@@ -383,5 +419,6 @@ sap.ui.define([
                 });
             }
         },
+
     });
 });

@@ -219,12 +219,16 @@
                                                     <Select
                                                         id="transferFromTradeNumberCombo"
                                                         width="20rem"
+                                                        items="{
+        path: 'oDataTradeEntry>/TradeEntry',
+        sorter: { path: 'TRADE_NO' }
+    }"
                                                         selectedKey="{SelectedTradeNumber>/TRADE_NO}"
-                                                        items="{ path: '/TradeEntry', sorter: { path: 'TRADE_NO' }}"
+                                                        change=".onchangetradeno"
                                                     >
                                                         <core:Item
-                                                            key="{TRADE_NO}"
-                                                            text="{TRADE_NO}"
+                                                            key="{oDataTradeEntry>TRADE_NO}"
+                                                            text="{oDataTradeEntry>TRADE_NO}"
                                                         />
                                                     </Select>
 
@@ -233,7 +237,7 @@
 
                                                     <Input
                                                         width="20rem"
-                                                        value="{SelectedTradeNumber>/CNTRPRTID}"
+                                                        value="{SelectedTradeNumber>/counterpart/CTPRTNAME}"
                                                     />
 
                                                     <!-- Section -->
