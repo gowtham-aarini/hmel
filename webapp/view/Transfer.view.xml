@@ -144,7 +144,7 @@
                     <ui:Column width="10rem">
                         <Label text="Status" />
                         <ui:template>
-                         <!-- <Text text="{SelectedTradeNumber>/STATUS}" /> -->
+                          <!-- <Text text="{SelectedTradeNumber>/TNSFRSTID}" /> -->
                             <ComboBox
                                 width="100%"
                                 selectedKey="{SelectedTradeNumber>transferStatus/TRSNFRNAME}"
@@ -217,7 +217,7 @@
                                             >
                                                 <f:content>
                                                     <!-- Trade Number -->
-                                                    <Label
+                                                    <!-- <Label
                                                         text="Trade Number"
                                                     />
                                                     <ComboBox
@@ -234,10 +234,10 @@
                                                             key="{TRADE_NO}"
                                                             text="{TRADE_NO}"
                                                         />
-                                                    </ComboBox>
+                                                    </ComboBox> -->
 
                                                     <!-- Counterpart -->
-                                                    <Label text="Counterpart" />
+                                                    <Label text="Counterparty" />
 
                                                     <Input
                                                         width="20rem"
