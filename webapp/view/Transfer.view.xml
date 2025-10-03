@@ -8,7 +8,8 @@
     xmlns:core="sap.ui.core"
     xmlns:ui="sap.ui.table"
 >
-    <Page>
+    <Page
+    busyIndicatorDelay="500">
         <content>
             <HBox
                 class="sapUiSmallMargin"
@@ -37,7 +38,7 @@
                 selectionMode="Single"
             >
                 <ui:rowMode>
-                    <rowmodes:Fixed rowCount="5" />
+                    <rowmodes:Fixed />
                 </ui:rowMode>
                 <ui:columns>
                     <ui:Column width="10rem">
@@ -89,23 +90,24 @@
                         <ui:template>
                             <Select
                                 width="100%"
-                                items="{oDataTradeEntry>/TransportOperator}"
+                                items="{SelectedTradeNumber>/TransportOperator}"
                             >
                                 <core:Item
-                                    key="{oDataTradeEntry>TRNOPERATR}"
-                                    text="{oDataTradeEntry>TRNOPERATR}"
+                                    key="{SelectedTradeNumber>TRNOPERATR}"
+                                    text="{SelectedTradeNumber>TRNOPERATR}"
                                 />
                             </Select>
                         </ui:template>
                     </ui:Column>
 
                     <ui:Column width="12rem">
-                        <Label text="Living Stable" />
+                        <Label text="Lifting Strategy" />
                         <ui:template>
-                            <Select width="100%">
+                            <Select width="100%"
+                             items="{SelectedTradeNumber>/TransportStrategy}">
                                 <core:Item
-                                    key="{LivingStable}"
-                                    text="{LivingStable}"
+                                    key="{SelectedTradeNumber>TRNLFTSTGY}"
+                                    text="{SelectedTradeNumber>STRGYNAME}"
                                 />
                             </Select>
                         </ui:template>
@@ -114,28 +116,28 @@
                     <ui:Column width="12rem">
                         <Label text="Effective Date" />
                         <ui:template>
-                            <DatePicker value="{EffectiveDate}" />
+                            <DatePicker value="{SelectedTradeNumber>/EFFTVEDATE}" />
                         </ui:template>
                     </ui:Column>
 
                     <ui:Column width="15rem">
-                        <Label text="Transfer Committed" />
+                        <Label text="Transfer Commencement" />
                         <ui:template>
-                            <DatePicker value="{TransferCommitted}" />
+                            <DatePicker value="{SelectedTradeNumber>/TNSFRCMCNT}" />
                         </ui:template>
                     </ui:Column>
 
                     <ui:Column width="15rem">
-                        <Label text="Transfer Completed" />
+                        <Label text="Transfer Completion" />
                         <ui:template>
-                            <DatePicker value="{TransferCompleted}" />
+                            <DatePicker value="{SelectedTradeNumber>/TNSFRCMPLN}" />
                         </ui:template>
                     </ui:Column>
 
                     <ui:Column width="12rem">
-                        <Label text="Application" />
+                        <Label text="Application Date" />
                         <ui:template>
-                            <DatePicker value="{Application}" />
+                            <DatePicker value="{SelectedTradeNumber>/TRNAPPLDAT}" />
                         </ui:template>
                     </ui:Column>
 
@@ -144,21 +146,22 @@
                         <ui:template>
                             <ComboBox
                                 width="100%"
-                                items="{oDataTradeEntry>/TransferStatus}"
-                                selectedKey="{oDataTradeEntry>transferStatus/TRSNFRNAME}"
+                                selectedKey="{SelectedTradeNumber>/transferStatus/TNSFRSTID}"
+                                items="{SelectedTradeNumber>/TransferStatus}"
+                               
                             >
                                 <core:Item
-                                    key="{oDataTradeEntry>ID}"
-                                    text="{oDataTradeEntry>TRSNFRNAME}"
+                                    key="{SelectedTradeNumber>ID}"
+                                    text="{SelectedTradeNumber>TRSNFRNAME}"
                                 />
                             </ComboBox>
                         </ui:template>
                     </ui:Column>
 
                     <ui:Column width="10rem">
-                        <Label text="Transfer..." />
+                        <Label text="Transfer num" />
                         <ui:template>
-                            <Text text="{oDataTradeEntry>TRANSFERNUM}" />
+                            <Text text="{SelectedTradeNumber>/TRANSFERNUM}" />
                         </ui:template>
                     </ui:Column>
 
@@ -166,7 +169,7 @@
                         <Label text="MOT" />
                         <ui:template>
                             <Text
-                                text="{oDataTradeEntry>transportMot/MOTNAME}"
+                                text="{SelectedTradeNumber>/transportMot/MOTNAME}"
                             />
                         </ui:template>
                     </ui:Column>
@@ -216,21 +219,21 @@
                                                     <Label
                                                         text="Trade Number"
                                                     />
-                                                    <Select
+                                                    <ComboBox
                                                         id="transferFromTradeNumberCombo"
                                                         width="20rem"
-                                                        items="{
-        path: 'oDataTradeEntry>/TradeEntry',
-        sorter: { path: 'TRADE_NO' }
-    }"
                                                         selectedKey="{SelectedTradeNumber>/TRADE_NO}"
-                                                        change=".onchangetradeno"
+                                                        items="{
+                                                        path: '/TradeEntry',
+                                                         sorter: { path: 'TRADE_NO' }
+    }"
+                                                        
                                                     >
                                                         <core:Item
-                                                            key="{oDataTradeEntry>TRADE_NO}"
-                                                            text="{oDataTradeEntry>TRADE_NO}"
+                                                            key="{TRADE_NO}"
+                                                            text="{TRADE_NO}"
                                                         />
-                                                    </Select>
+                                                    </ComboBox>
 
                                                     <!-- Counterpart -->
                                                     <Label text="Counterpart" />
@@ -245,7 +248,7 @@
                                                     <Input
                                                         id="transferFromSection"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>transferSection/SECTNNAME}"
+                                                        value="{SelectedTradeNumber>/transferSection/SECTNNAME}"
                                                     />
                                                 </f:content>
                                             </f:SimpleForm>
@@ -266,7 +269,7 @@
                                                     <Input
                                                         id="transferFromOpenQty"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>OPENQTY}"
+                                                        value="{SelectedTradeNumber>/OPENQTY}"
                                                     >
                                                         <layoutData>
                                                             <l:GridData
@@ -277,7 +280,7 @@
                                                     <Input
                                                         id="transferFromOpenQty1"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>OPENQTY}"
+                                                        value="{SelectedTradeNumber>/openquomqty/UOMNAME}"
                                                     />
 
                                                     <!-- Contract Qty -->
@@ -287,7 +290,7 @@
                                                     <Input
                                                         id="transferFromContractQty"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>CQUANTITY}"
+                                                        value="{SelectedTradeNumber>/CQUANTITY}"
                                                     >
                                                         <layoutData>
                                                             <l:GridData
@@ -298,7 +301,7 @@
                                                     <Input
                                                         id="transferFromContractQty1"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>QTYUNITID}"
+                                                        value="{SelectedTradeNumber>/quantityUnit/QTYUNTNAME}"
                                                     />
 
                                                     <!-- Commodity -->
@@ -306,7 +309,7 @@
                                                     <Input
                                                         id="transferFromCommodity"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>commodity/CMDTYNAME}"
+                                                        value="{SelectedTradeNumber>/commodity/CMDTYNAME}"
                                                     />
 
                                                     <!-- Group 1 -->
@@ -314,7 +317,7 @@
                                                     <Input
                                                         id="transferFromGroup1"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>transferGroup1/GRP1NAME}"
+                                                        value="{SelectedTradeNumber>/transferGroup1/GRP1NAME}"
                                                     />
 
                                                     <!-- Group 2 -->
@@ -322,7 +325,7 @@
                                                     <Input
                                                         id="transferFromGroup2"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>transferGroup2/GRP2NAME}"
+                                                        value="{SelectedTradeNumber>/transferGroup2/GRP2NAME}"
                                                     />
 
                                                     <!-- Scheduled Qty -->
@@ -332,7 +335,7 @@
                                                     <Input
                                                         id="transferFromScheduledQty"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>SCHEDLDQTY}"
+                                                        value="{SelectedTradeNumber>/SCHEDLDQTY}"
                                                     >
                                                         <layoutData>
                                                             <l:GridData
@@ -343,7 +346,7 @@
                                                     <Input
                                                         id="transferFromScheduledQty1"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>schedulequom/UOMNAME}"
+                                                        value="{SelectedTradeNumber>/schedulequom/UOMNAME}"
                                                     />
 
                                                     <!-- Nominal Qty -->
@@ -354,13 +357,13 @@
                                                         >
                                                             <Input
                                                                 id="transferFromnominalQty1"
-                                                                width="20rem"
-                                                                value="{oDataTradeEntry>NOMINALQTY}"
+                                                                width="10rem"
+                                                                value="{SelectedTradeNumber>/NOMINALQTY}"
                                                             />
                                                             <Input
                                                                 id="transferFromnominalQtyUOM"
                                                                 width="20rem"
-                                                                value="{oDataTradeEntry>nominalquom/UOMNAME}"
+                                                                value="{SelectedTradeNumber>/nominalquom/UOMNAME}"
                                                             />
                                                         </l:Grid>
                                                         <l:Grid
@@ -383,7 +386,7 @@
                                                             <Input
                                                                 id="transferFromMultiplyDivide"
                                                                 width="20rem"
-                                                                value="{oDataTradeEntry>}"
+                                                                value="{SelectedTradeNumber>}"
                                                             />
                                                         </l:Grid>
                                                     </VBox>
@@ -393,13 +396,13 @@
                                                     <HBox alignItems="Center">
                                                         <Input
                                                             id="transferFromInvoiceQty"
-                                                            value="{oDataTradeEntry>INVOICEQTY}"
+                                                            value="{SelectedTradeNumber>/INVOICEQTY}"
                                                             width="150px"
                                                             class="sapUiTinyMarginEnd"
                                                         />
                                                         <ComboBox
                                                             id="transferFromInvoiceQtyUomCombo"
-                                                            selectedKey="{oDataTradeEntry>INVQTYUOMID}"
+                                                            selectedKey="{SelectedTradeNumber>/INVQTYUOMID}"
                                                             width="120px"
                                                             items="{ path: '/InvoiceQuantityUOM', sorter: { path: 'IVQYUOMNAME' }}"
                                                             class="sapUiTinyMarginEnd"
@@ -434,7 +437,7 @@
                                                     <CheckBox
                                                         id="transferFromOverrideCheckbox"
                                                         width="20rem"
-                                                        selected="{oDataTradeEntry>TRNOVERIDE}"
+                                                        selected="{}"
                                                     />
 
                                                     <!-- Override Price -->
@@ -444,7 +447,7 @@
                                                     <Input
                                                         id="transferFromOverridePrice"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>TRNOVRDPRC}"
+                                                        value="{SelectedTradeNumber>/TRNOVRDPRC}"
                                                     />
 
                                                     <!-- Overridden Price Currency -->
@@ -454,7 +457,7 @@
                                                     <ComboBox
                                                         id="transferFromOverridePriceCcyCombo"
                                                         width="20rem"
-                                                        selectedKey="{oDataTradeEntry>TRNOVCRRCY}"
+                                                        selectedKey="{SelectedTradeNumber>/TRNOVCRRCY}"
                                                         items="{ path: '/PaymentCurrency', sorter: { path: 'PYMTCURNAME' }}"
                                                     >
                                                         <core:Item
@@ -468,13 +471,13 @@
                                                     <HBox alignItems="Center">
                                                         <Input
                                                             id="transferFromBasePrice"
-                                                            value="{oDataTradeEntry>TRBASEPRIC}"
+                                                            value="{SelectedTradeNumber>/TRBASEPRIC}"
                                                             width="150px"
                                                             class="sapUiTinyMarginEnd"
                                                         />
                                                         <Select
                                                             id="transferFromBasePriceCurrencySelect"
-                                                            selectedKey="{oDataTradeEntry>TRBPRICECY}"
+                                                            selectedKey="{SelectedTradeNumber>/TRBPRICECY}"
                                                             width="120px"
                                                             items="{ path: '/PaymentCurrency', sorter: { path: 'PYMTCURNAME' }}"
                                                             class="sapUiTinyMarginEnd"
@@ -486,7 +489,7 @@
                                                         </Select>
                                                         <Select
                                                             id="transferFromBasePriceUomSelect"
-                                                            selectedKey="{oDataTradeEntry>TRBPRICEUM}"
+                                                            selectedKey="{SelectedTradeNumber>/TRBPRICEUM}"
                                                             width="120px"
                                                             items="{ path: '/UOM', sorter: { path: 'UOMNAME' }}"
                                                         >
@@ -504,13 +507,13 @@
                                                     <HBox alignItems="Center">
                                                         <Input
                                                             id="transferFromSettlementAmount"
-                                                            value="{oDataTradeEntry>TRSTLMAMNT}"
+                                                            value="{SelectedTradeNumber>/TRSTLMAMNT}"
                                                             width="200px"
                                                             class="sapUiTinyMarginEnd"
                                                         />
                                                         <ComboBox
                                                             id="transferFromSettlementAmountUomCombo"
-                                                            selectedKey="{oDataTradeEntry>STLMTUUM}"
+                                                            selectedKey="{SelectedTradeNumber>/STLMTUUM}"
                                                             width="150px"
                                                             items="{ path: '/SettlementUOM', sorter: { path: 'STLUUMNAME' }}"
                                                             class="sapUiTinyMarginEnd"
@@ -533,7 +536,7 @@
                                                     <CheckBox
                                                         id="transferFromOverrideFxCheckbox"
                                                         width="20rem"
-                                                        selected="{oDataTradeEntry>TROVRIDFXF}"
+                                                        selected="{}"
                                                     />
 
                                                     <!-- Overridden FX -->
@@ -543,7 +546,7 @@
                                                     <Input
                                                         id="transferFromOverriddenFx"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>TROVRIDEFX}"
+                                                        value="{SelectedTradeNumber>/TROVRIDEFX}"
                                                     />
                                                 </f:content>
                                             </f:SimpleForm>
@@ -566,7 +569,7 @@
                                                     <Input
                                                         id="transferFromTicketNumber"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>TRNTKTNUMB}"
+                                                        value="{SelectedTradeNumber>/TRNTKTNUMB}"
                                                     />
 
                                                     <!-- Tax Region -->
@@ -574,7 +577,7 @@
                                                     <Input
                                                         id="transferFromTaxRegion"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>taxRegion/TAXREGNAME}"
+                                                        value="{SelectedTradeNumber>/taxRegion/TAXREGNAME}"
                                                     />
                                                 </f:content>
                                             </f:SimpleForm>
@@ -611,7 +614,7 @@
                                                     <ComboBox
                                                         id="transferToVehicleCombo"
                                                         width="20rem"
-                                                        selectedKey="{oDataTradeEntry>VEHICLEID}"
+                                                        selectedKey="{SelectedTradeNumber>/VEHICLEID}"
                                                         items="{ path: '/Vehicle', sorter: { path: 'ID' } }"
                                                     >
                                                         <core:Item
@@ -625,7 +628,7 @@
                                                     <Input
                                                         id="transferToMot"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>transportMot/MOTNAME}"
+                                                        value="{SelectedTradeNumber>/transportMot/MOTNAME}"
                                                     />
 
                                                     <!-- Name -->
@@ -633,7 +636,7 @@
                                                     <Input
                                                         id="transferToName"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>vehicle/VEHCLENAME}"
+                                                        value="{SelectedTradeNumber>/vehicle/VEHCLENAME}"
                                                     />
 
                                                     <!-- Cargo -->
@@ -641,7 +644,7 @@
                                                     <ComboBox
                                                         id="transferToCargoCombo"
                                                         width="20rem"
-                                                        selectedKey="{oDataTradeEntry>TRNFCARGO}"
+                                                        selectedKey="{SelectedTradeNumber>/TRNFCARGO}"
                                                         items="{ path: '/TransportCargo', sorter: { path: 'CARGONAME' } }"
                                                     >
                                                         <core:Item
@@ -655,7 +658,7 @@
                                                     <Input
                                                         id="transferToCargoName"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>transferCargo/CARGONAME}"
+                                                        value="{SelectedTradeNumber>/transferCargo/CARGONAME}"
                                                     />
 
                                                     <!-- Reset Date -->
@@ -664,7 +667,7 @@
                                                         id="transferToResetDate"
                                                         width="20rem"
                                                         placeholder="Reset Date"
-                                                        value="{ path: 'oDataTradeEntry>TRNSRESTDT',
+                                                        value="{ path: 'SelectedTradeNumber>/TRNSRESTDT',
                                  type: 'sap.ui.model.odata.type.DateTimeOffset',
                                  formatOptions: { style: 'long', UTC: true }}"
                                                         valueFormat="dd-MM-yyyy"
@@ -689,21 +692,21 @@
                                                     <Input
                                                         id="transferToCommodity"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>commodity/CMDTYNAME}"
+                                                        value="{SelectedTradeNumber>/commodity/CMDTYNAME}"
                                                     />
 
                                                     <Label text="Group 1" />
                                                     <Input
                                                         id="transferToGroup1"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>transferGroup1/GRP1NAME}"
+                                                        value="{SelectedTradeNumber>/transferGroup1/GRP1NAME}"
                                                     />
 
                                                     <Label text="Group 2" />
                                                     <Input
                                                         id="transferToGroup2"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>transferGroup2/GRP2NAME}"
+                                                        value="{SelectedTradeNumber>/transferGroup2/GRP2NAME}"
                                                     />
                                                 </f:content>
                                             </f:SimpleForm>
@@ -726,7 +729,7 @@
                                                     <Input
                                                         id="transferToConvertedQty"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>TRCONVDQTY}"
+                                                        value="{SelectedTradeNumber>/TRCONVDQTY}"
                                                     >
                                                         <layoutData>
                                                             <l:GridData
@@ -737,7 +740,7 @@
                                                     <Input
                                                         id="transferToConvertedQty1"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>convertedqtyuom/UOMNAME}"
+                                                        value="{SelectedTradeNumber>/convertedqtyuom/UOMNAME}"
                                                     />
 
                                                     <!-- Cargo Qty -->
@@ -745,7 +748,7 @@
                                                     <Input
                                                         id="transferToCargoQty"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>TRCARGOQTY}"
+                                                        value="{SelectedTradeNumber>/TRCARGOQTY}"
                                                     >
                                                         <layoutData>
                                                             <l:GridData
@@ -756,7 +759,7 @@
                                                     <Input
                                                         id="transferToCargoQty1"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>cargoqtyuom/UOMNAME}"
+                                                        value="{SelectedTradeNumber>/cargoqtyuom/UOMNAME}"
                                                     />
 
                                                     <!-- Gain/Loss -->
@@ -764,7 +767,7 @@
                                                     <Input
                                                         id="transferToGainLoss"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>TRGAINLOSS}"
+                                                        value="{SelectedTradeNumber>/TRGAINLOSS}"
                                                     >
                                                         <layoutData>
                                                             <l:GridData
@@ -775,7 +778,7 @@
                                                     <Input
                                                         id="transferToGainLoss1"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>gainlossuom/UOMNAME}"
+                                                        value="{SelectedTradeNumber>/TRGNLOSUOM}"
                                                     />
 
                                                     <!-- Packaging -->
@@ -783,7 +786,7 @@
                                                     <Input
                                                         id="transferToPackaging"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>TRPACKAGIN}"
+                                                        value="{SelectedTradeNumber>/TRPACKAGIN}"
                                                     >
                                                         <layoutData>
                                                             <l:GridData
@@ -794,7 +797,7 @@
                                                     <Input
                                                         id="transferToPackaging1"
                                                         width="20rem"
-                                                        value="{oDataTradeEntry>packaginguom/UOMNAME}"
+                                                        value="{SelectedTradeNumber>/TRPACKAUOM}"
                                                     />
                                                 </f:content>
                                             </f:SimpleForm>
@@ -817,7 +820,7 @@
                                                     <ComboBox
                                                         id="transferToCustomDutyStatusCombo"
                                                         width="20rem"
-                                                        selectedKey="{oDataTradeEntry>TRCUSDUTST}"
+                                                        selectedKey="{SelectedTradeNumber>/TRCUSDUTST}"
                                                         items="{ path: '/CustomDutyStatus', sorter: { path: 'CUSTDUTST' } }"
                                                     >
                                                         <core:Item
@@ -831,7 +834,7 @@
                                                     <ComboBox
                                                         id="transferToTransferAtCombo"
                                                         width="20rem"
-                                                        selectedKey="{oDataTradeEntry>TRANSFERAT}"
+                                                        selectedKey="{SelectedTradeNumber>/TRANSFERAT}"
                                                         items="{ path: '/TransferAt', sorter: { path: 'TRANATNAME' } }"
                                                     >
                                                         <core:Item

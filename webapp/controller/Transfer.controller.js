@@ -6,10 +6,27 @@ sap.ui.define([
     "use strict";
 
     return Controller.extend("hmelpaper.controller.Transfer", {
-        onInit: function () {
-            this.getOwnerComponent().getRouter()
-                .getRoute("RouteTransfer")
-                .attachPatternMatched(this._onObjectMatched, this);
+        onInit() {
+            this.getTradeEntryData();
+            this.getOwnerComponent().getModel("appModel").setProperty("/IsEditMode", false); 
+        },
+
+        getTradeEntryData: function () {
+            var oAppModel = this.getOwnerComponent().getModel("appModel");
+            var oModel = this.getOwnerComponent().getModel();
+            var sPath = `/TradeEntry`;
+            var oContextBinding = oModel.bindContext(sPath, undefined, undefined);
+            var oBusyDialog = new sap.m.BusyDialog();
+            oBusyDialog.open();
+            oContextBinding.requestObject().then(function (oData) {
+                oBusyDialog.close();
+                var tradeDetails = oData.value || [];
+                oAppModel.setProperty("/", tradeDetails[0]);
+                oAppModel.refresh();
+            }.bind(this)).catch(function (oError) {
+                oBusyDialog.close();
+                console.error("Error fetching project data: ", oError);
+            });
         },
 
 
@@ -405,12 +422,13 @@ sap.ui.define([
                 const sPath = `/TradeEntry('${sTradeNo}')`;
 
                 const oBindingContext = oODATAModel.bindContext(sPath, null, {
-                    $expand: "counterpart"   // ✅ added expand
+                    $expand: "counterpart,transferSection,openquomqty,quantityUnit,commodity,transferGroup1,transferGroup2,schedulequom,nominalquom,taxRegion,transportMot,vehicle,transferCargo,convertedqtyuom,cargoqtyuom" // added expand
                 });
 
                 oBindingContext.requestObject().then(SelectedTradeNumber => {
                     // Store the fetched entity in the same model if needed
                     oSelModel.setData(SelectedTradeNumber);
+                    
 
                     // Print to console
                     console.log("Fetched TradeEntry entity:", SelectedTradeNumber);
