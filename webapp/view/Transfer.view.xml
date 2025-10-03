@@ -146,7 +146,7 @@
                         <ui:template>
                             <ComboBox
                                 width="100%"
-                                selectedKey="{SelectedTradeNumber>/transferStatus/TNSFRSTID}"
+                                selectedKey="{SelectedTradeNumber>/transferStatus/TRSNFRNAME}"
                                 items="{SelectedTradeNumber>/TransferStatus}"
                                
                             >
