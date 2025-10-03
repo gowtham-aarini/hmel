@@ -367,48 +367,20 @@ sap.ui.define([
                 }
             });
         },
-        // onchangetradeno: function (oEvent) {
-        //     // Get selected key from ComboBox
-        //     const sTradeNo = this.byId("topTradeNumberCombo").getSelectedKey();
 
-        //     if (!sTradeNo) {
-        //         console.warn("No Trade Number selected");
-        //         return;
-        //     }
-
-        //     // Create JSON model with selected Trade No
-        //     const oSelModel = new sap.ui.model.json.JSONModel({
-        //         TRADE_NO: sTradeNo
-        //     });
-        //     this.getOwnerComponent().setModel(oSelModel, "SelectedTradeNumber");
-
-        //     // Get OData V4 model
-        //     const oODATAModel = this.getOwnerComponent().getModel("oDataTradeEntry");
-        //     if (oODATAModel) {
-        //         // Build entity path using selected key
-        //         const sPath = `/TradeEntry('${sTradeNo}')`;
-
-        //         const oBindingContext = oODATAModel.bindContext(sPath);
-        //         oBindingContext.requestObject().then(SelectedTradeNumber => {
-        //             // Store the fetched entity in the same model if needed
-        //             oSelModel.setData(SelectedTradeNumber);
-
-        //             // Print to console
-        //             console.log("Fetched TradeEntry entity:", SelectedTradeNumber);
-        //         }).catch(err => {
-        //             console.error("Error fetching entity", err);
-        //         });
-        //     }
-        // },
         onchangetradeno: function (oEvent) {
+            // Show busy indicator
+            this.getView().setBusy(true);
+
             // Get selected key from ComboBox
             const sTradeNo = this.byId("topTradeNumberCombo").getSelectedKey();
 
             if (!sTradeNo) {
                 console.warn("No Trade Number selected");
+                this.getView().setBusy(false); // hide busy indicator
                 return;
             }
-
+            
             // Create JSON model with selected Trade No
             const oSelModel = new sap.ui.model.json.JSONModel({
                 TRADE_NO: sTradeNo
@@ -422,19 +394,25 @@ sap.ui.define([
                 const sPath = `/TradeEntry('${sTradeNo}')`;
 
                 const oBindingContext = oODATAModel.bindContext(sPath, null, {
-                    $expand: "counterpart,transferSection,openquomqty,quantityUnit,commodity,transferGroup1,transferGroup2,schedulequom,nominalquom,taxRegion,transportMot,vehicle,transferCargo,convertedqtyuom,cargoqtyuom" // added expand
+                    $expand: "counterpart,transferSection,openquomqty,quantityUnit,commodity,transferGroup1,transferGroup2,schedulequom,nominalquom,taxRegion,transportMot,vehicle,transferCargo,convertedqtyuom,cargoqtyuom"
                 });
 
                 oBindingContext.requestObject().then(SelectedTradeNumber => {
                     // Store the fetched entity in the same model if needed
                     oSelModel.setData(SelectedTradeNumber);
-                    
+
+                    // Hide busy indicator after data is fetched
+                    this.getView().setBusy(false);
 
                     // Print to console
                     console.log("Fetched TradeEntry entity:", SelectedTradeNumber);
                 }).catch(err => {
                     console.error("Error fetching entity", err);
+                    this.getView().setBusy(false);
                 });
+            } else {
+                console.warn("No oDataTradeEntry model found");
+                this.getView().setBusy(false);
             }
         },
 

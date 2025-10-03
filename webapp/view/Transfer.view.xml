@@ -38,7 +38,7 @@
                 selectionMode="Single"
             >
                 <ui:rowMode>
-                    <rowmodes:Fixed />
+                    <rowmodes:Fixed rowCount="1"/>
                 </ui:rowMode>
                 <ui:columns>
                     <ui:Column width="10rem">
@@ -75,11 +75,11 @@
                         <ui:template>
                             <Select
                                 width="100%"
-                                items="{oDataTradeEntry>/TransferLocation}"
+                                items="{SelectedTradeNumber>/TransferLocation/LOCATNNAME}"
                             >
                                 <core:Item
-                                    key="{oDataTradeEntry>TRNLCATION}"
-                                    text="{oDataTradeEntry>TRNLCATION}"
+                                    key="{SelectedTradeNumber>TRNLCATION}"
+                                    text="{SelectedTradeNumber>LOCATNNAME}"
                                 />
                             </Select>
                         </ui:template>
@@ -144,15 +144,16 @@
                     <ui:Column width="10rem">
                         <Label text="Status" />
                         <ui:template>
+                         <!-- <Text text="{SelectedTradeNumber>/STATUS}" /> -->
                             <ComboBox
                                 width="100%"
-                                selectedKey="{SelectedTradeNumber>/transferStatus/TRSNFRNAME}"
-                                items="{SelectedTradeNumber>/TransferStatus}"
+                                selectedKey="{SelectedTradeNumber>transferStatus/TRSNFRNAME}"
+                                items="{oDataTradeEntry>/TransferStatus}"
                                
                             >
                                 <core:Item
-                                    key="{SelectedTradeNumber>ID}"
-                                    text="{SelectedTradeNumber>TRSNFRNAME}"
+                                    key="{oDataTradeEntry>ID}"
+                                    text="{oDataTradeEntry>TRSNFRNAME}"
                                 />
                             </ComboBox>
                         </ui:template>
