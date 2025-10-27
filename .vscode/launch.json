@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Start hmelpaper",
+      "name": "Start operations",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -24,11 +24,11 @@
       "env": {
         "DEBUG": "--inspect",
         "FIORI_TOOLS_URL_PARAMS": "sap-ui-xx-viewCache=false",
-        "run.config": "{\"handlerId\":\"fiori_tools\",\"runnableId\":\"/home/user/projects/hmelpaper\"}"
+        "run.config": "{\"handlerId\":\"fiori_tools\",\"runnableId\":\"/home/user/projects/operations\"}"
       }
     },
     {
-      "name": "Start hmelpaper Mock",
+      "name": "Start operations Mock",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -51,11 +51,11 @@
       "outputCapture": "std",
       "env": {
         "FIORI_TOOLS_URL_PARAMS": "sap-ui-xx-viewCache=false",
-        "run.config": "{\"handlerId\":\"fiori_tools\",\"runnableId\":\"/home/user/projects/hmelpaper\"}"
+        "run.config": "{\"handlerId\":\"fiori_tools\",\"runnableId\":\"/home/user/projects/operations\"}"
       }
     },
     {
-      "name": "Start hmelpaper Local",
+      "name": "Start operations Local",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
@@ -78,7 +78,7 @@
       "outputCapture": "std",
       "env": {
         "FIORI_TOOLS_URL_PARAMS": "sap-ui-xx-viewCache=false",
-        "run.config": "{\"handlerId\":\"fiori_tools\",\"runnableId\":\"/home/user/projects/hmelpaper\"}"
+        "run.config": "{\"handlerId\":\"fiori_tools\",\"runnableId\":\"/home/user/projects/operations\"}"
       }
     }
   ]

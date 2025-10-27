@@ -1,10 +1,10 @@
 sap.ui.define([
     "sap/ui/core/UIComponent",
-    "hmelpaper/model/models"
+    "operations/model/models"
 ], (UIComponent, models) => {
     "use strict";
 
-    return UIComponent.extend("hmelpaper.Component", {
+    return UIComponent.extend("operations.Component", {
         metadata: {
             manifest: "json",
             interfaces: [

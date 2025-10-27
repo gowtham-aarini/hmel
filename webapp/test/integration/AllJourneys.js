@@ -7,7 +7,7 @@ sap.ui.define([
 
 	Opa5.extendConfig({
 		arrangements: new Startup(),
-		viewNamespace: "hmelpaper.view.",
+		viewNamespace: "operations.view.",
 		autoWait: true
 	});
 });

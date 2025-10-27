@@ -1,5 +1,5 @@
 {
-  "xsappname": "hmelpaper",
+  "xsappname": "operations",
   "tenant-mode": "dedicated",
   "description": "Security profile of called application",
   "scopes": [],

@@ -8,8 +8,8 @@
 |**Template Used**<br>Basic V4|
 |**Service Type**<br>SAP System (ABAP On-Premise)|
 |**Service URL**<br>https://aarini-development-development-tradingapphmel-srv.cfapps.eu10-004.hana.ondemand.com/odata/v4/hmeltrading/|
-|**Module Name**<br>hmelpaper|
-|**Application Title**<br>Transfer FOB|
+|**Module Name**<br>operations|
+|**Application Title**<br>Operations|
 |**Namespace**<br>|
 |**UI5 Theme**<br>sap_horizon|
 |**UI5 Version**<br>1.140.0|
@@ -17,9 +17,9 @@
 |**Enable TypeScript**<br>False|
 |**Add Eslint configuration**<br>False|
 
-## hmelpaper
+## operations
 
-Paper Trade
+Operations
 
 ### Starting the generated app
 

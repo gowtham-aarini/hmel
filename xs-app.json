@@ -10,6 +10,13 @@
       "csrfProtection": false
     },
     {
+      "source": "^/sap/(.*)$",
+      "target": "/sap/$1",
+      "destination": "HMEL_S4_DEST",
+      "authenticationType": "none",
+      "csrfProtection": false
+    },
+    {
       "source": "^/odata/v4/hmeltrading/(.*)$",
       "target": "/odata/v4/hmeltrading/$1",
       "destination": "hmel_trade_dest",

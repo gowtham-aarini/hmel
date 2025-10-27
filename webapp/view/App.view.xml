@@ -1,4 +1,4 @@
-<mvc:View controllerName="hmelpaper.controller.App"
+<mvc:View controllerName="operations.controller.App"
     displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">

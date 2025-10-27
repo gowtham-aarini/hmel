@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"hmelpaper/controller/PaperTrade.controller"
+	"operations/controller/PaperTrade.controller"
 ], function (Controller) {
 	"use strict";
 

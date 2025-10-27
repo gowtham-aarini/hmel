@@ -1,5 +1,6 @@
-<mvc:View
-    controllerName="hmelpaper.controller.Transfer"
+<mvc:View 
+    xmlns:odata="sap.ui.comp.odata"
+    controllerName="operations.controller.Transfer"
     xmlns:rowmodes="sap.ui.table.rowmodes"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
@@ -19,22 +20,54 @@
                     text="Trade Number"
                     class="sapUiSmallMarginEnd"
                 />
-                <ComboBox
+              <ComboBox
                     id="topTradeNumberCombo"
-                    selectedKey="{oDataTradeEntry>/TRADE_NO}"
-                    items="{/TradeEntry}"
+                    selectedKey="{appModel>/TrdNum}"
+                    items="{
+                        path: 's4HanaModel>/ZTA_TRADE_ENTRYSet',
+                        filters: [
+                            {
+                                path: 'TrdNumP',
+                                operator: 'EQ',
+                                value1: ''
+                            }
+                        ],
+                        sorter: {path: 'TrdNum'}
+                    }"
+                    change="onchangetradeno"
                     selectionChange="onchangetradeno"
                     width="200px"
                 >
                     <core:Item
-                        key="{TRADE_NO}"
-                        text="{TRADE_NO}"
+                        key="{s4HanaModel>TrdNum}"
+                        text="{s4HanaModel>TrdNum}"
                     />
                 </ComboBox>
+     <Toolbar design="Transparent">
+      <ToolbarSpacer />
+    <Button 
+        id="editBtn"
+        width="75px"
+        text="Edit"
+        icon="sap-icon://edit"
+        press=".onEditPress"
+        type="Emphasized"
+    />
+    <Button 
+        id="saveBtn"
+        width="75px"
+        text="Save"
+        icon="sap-icon://save"
+        press=".onPressSave"
+        type="Accept"
+    />
+</Toolbar>
             </HBox>
+
+            <!-- ===== START: Top Trade Details Table (bound to appModel TradeDetails as object property binding) ===== -->
             <ui:Table
                 id="transferTableId"
-                rows="{path:'oDataTradeEntry>/TradeEntry', parameters: { expand: ['transferFrom','transferStatus','transportMot','transferTo','transferLocation','transferOperator','transferStrategy'] }}"
+                rows="{path:'appModel>/TradeDetails'}"
                 selectionMode="Single"
             >
                 <ui:rowMode>
@@ -42,911 +75,577 @@
                 </ui:rowMode>
                 <ui:columns>
                     <ui:Column width="10rem">
-                        <Label text="From" />
+                        <Label text="Trade Date" />
                         <ui:template>
-                            <Select
-                                items="{oDataTradeEntry>/TransferFrom}"
-                                width="100%"
-                            >
-                                <core:Item
-                                    key="{oDataTradeEntry>FROMNAME}"
-                                    text="{oDataTradeEntry>FROMNAME}"
-                                />
-                            </Select>
+                            <DatePicker value="{appModel>TrdExedt}"  enabled="false"/>
                         </ui:template>
                     </ui:Column>
 
                     <ui:Column width="10rem">
-                        <Label text="To" />
+                        <Label text="Trader" />
                         <ui:template>
-                            <Select
-                                width="100%"
-                                items="{oDataTradeEntry>/TransferTo}"
-                            >
-                                <core:Item
-                                    key="{oDataTradeEntry>TRANSFRTO}"
-                                    text="{oDataTradeEntry>TRANSFRTO}"
-                                />
-                            </Select>
+                            <VBox>
+                                <!-- <Text text="Key: {appModel>TrdTrdr}" class="sapUiTinyMarginBottom"/> -->
+                                <ComboBox
+                                    width="100%"
+                                    selectedKey="{appModel>TrdTrdr}"
+                                    items="{path: 's4HanaModel>/ZTA_TRADERSet', sorter: {path: 's4HanaModel>TrdTrdrD'}}"
+                                    enabled="false"
+                                >
+                                    <core:Item
+                                        key="{s4HanaModel>TrdTrdr}"
+                                        text="{s4HanaModel>TrdTrdrD}"
+                                    />
+                                </ComboBox>
+                            </VBox>
+
                         </ui:template>
                     </ui:Column>
                     <ui:Column width="10rem">
-                        <Label text="Location" />
+                        <Label text="Grade" />
                         <ui:template>
-                            <Select
+                              <ComboBox
                                 width="100%"
-                                items="{SelectedTradeNumber>/TransferLocation/LOCATNNAME}"
+                                selectedKey="{appModel>TrdCmdty}"
+                                items="{path: 's4HanaModel>/ZTA_COMMODTYSet', sorter: {path: 's4HanaModel>Maktx'}}"
+                                enabled="false"
                             >
                                 <core:Item
-                                    key="{SelectedTradeNumber>TRNLCATION}"
-                                    text="{SelectedTradeNumber>LOCATNNAME}"
-                                />
-                            </Select>
-                        </ui:template>
-                    </ui:Column>
-
-                    <ui:Column width="12rem">
-                        <Label text="Operator" />
-                        <ui:template>
-                            <Select
-                                width="100%"
-                                items="{SelectedTradeNumber>/TransportOperator}"
-                            >
-                                <core:Item
-                                    key="{SelectedTradeNumber>TRNOPERATR}"
-                                    text="{SelectedTradeNumber>TRNOPERATR}"
-                                />
-                            </Select>
-                        </ui:template>
-                    </ui:Column>
-
-                    <ui:Column width="12rem">
-                        <Label text="Lifting Strategy" />
-                        <ui:template>
-                            <Select width="100%"
-                             items="{SelectedTradeNumber>/TransportStrategy}">
-                                <core:Item
-                                    key="{SelectedTradeNumber>TRNLFTSTGY}"
-                                    text="{SelectedTradeNumber>STRGYNAME}"
-                                />
-                            </Select>
-                        </ui:template>
-                    </ui:Column>
-
-                    <ui:Column width="12rem">
-                        <Label text="Effective Date" />
-                        <ui:template>
-                            <DatePicker value="{SelectedTradeNumber>/EFFTVEDATE}" />
-                        </ui:template>
-                    </ui:Column>
-
-                    <ui:Column width="15rem">
-                        <Label text="Transfer Commencement" />
-                        <ui:template>
-                            <DatePicker value="{SelectedTradeNumber>/TNSFRCMCNT}" />
-                        </ui:template>
-                    </ui:Column>
-
-                    <ui:Column width="15rem">
-                        <Label text="Transfer Completion" />
-                        <ui:template>
-                            <DatePicker value="{SelectedTradeNumber>/TNSFRCMPLN}" />
-                        </ui:template>
-                    </ui:Column>
-
-                    <ui:Column width="12rem">
-                        <Label text="Application Date" />
-                        <ui:template>
-                            <DatePicker value="{SelectedTradeNumber>/TRNAPPLDAT}" />
-                        </ui:template>
-                    </ui:Column>
-
-                    <ui:Column width="10rem">
-                        <Label text="Status" />
-                        <ui:template>
-                          <!-- <Text text="{SelectedTradeNumber>/TNSFRSTID}" /> -->
-                            <ComboBox
-                                width="100%"
-                                selectedKey="{SelectedTradeNumber>transferStatus/TRSNFRNAME}"
-                                items="{oDataTradeEntry>/TransferStatus}"
-                               
-                            >
-                                <core:Item
-                                    key="{oDataTradeEntry>ID}"
-                                    text="{oDataTradeEntry>TRSNFRNAME}"
+                                    key="{s4HanaModel>TrdCmdty}"
+                                    text="{s4HanaModel>Maktx}"
                                 />
                             </ComboBox>
                         </ui:template>
                     </ui:Column>
 
-                    <ui:Column width="10rem">
-                        <Label text="Transfer num" />
+                    <ui:Column width="12rem">
+                        <Label text="Counterparty" />
                         <ui:template>
-                            <Text text="{SelectedTradeNumber>/TRANSFERNUM}" />
+                            <Select
+                                enabled="false"
+                                width="100%"
+                                selectedKey="{appModel>TrdCnpty}"
+                                items="{path: 's4HanaModel>/ZTA_CNTRPRTYSet', sorter: {path: 's4HanaModel>Name1'}}"
+                            >
+                                <core:Item
+                                    key="{s4HanaModel>TrdCnpty}"
+                                    text="{s4HanaModel>Name1}"
+                                />
+                            </Select>
+                        </ui:template>
+                    </ui:Column>
+
+                    <ui:Column width="12rem">
+                        <Label text="Load Port" />
+                        <ui:template>
+                            <ComboBox width="100%"
+                             selectedKey="{appModel>TrdLdprt}"
+                             enabled="false"
+                             items="{path: 's4HanaModel>/ZTA_LOAD_PORTSet', sorter: {path: 's4HanaModel>TrdLdprtD'}}">
+                                <core:Item
+                                    key="{s4HanaModel>TrdLdprt}"
+                                    text="{s4HanaModel>TrdLdprtD}"
+                                />
+                            </ComboBox>
+                        </ui:template>
+                    </ui:Column>
+
+                    <ui:Column width="12rem">
+                        <Label text="Window Start Date" />
+                        <ui:template>
+                            <DatePicker value="{appModel>TrdWsdt}" enabled="{appModel>/IsEditable}" />
+                            
+                        </ui:template>
+                    </ui:Column>
+
+                    <ui:Column width="15rem">
+                        <Label text="Window End Date" />
+                        <ui:template>
+                            <DatePicker value="{appModel>TrdWedt}" enabled="{appModel>/IsEditable}" />
+
+                        </ui:template>
+                    </ui:Column>
+
+                    <ui:Column width="15rem">
+                        <Label text="Incoterm" />
+                        <ui:template>
+                            <Select width="100%"
+                             selectedKey="{appModel>TrdDlvtrm}"
+                             enabled="false"
+                             items="{path: 's4HanaModel>/ZTA_DLV_TRMSSet', sorter: {path: 's4HanaModel>TrdDlvtrmD'}}">
+                                <core:Item
+                                    key="{s4HanaModel>TrdDlvtrm}"
+                                    text="{s4HanaModel>TrdDlvtrmD}"
+                                />
+                            </Select>
+                        </ui:template>
+                    </ui:Column>
+
+                    <ui:Column width="12rem">
+                        <Label text="Trade Quantity" />
+                         <ui:template>
+                            <Text
+                                text="{appModel>TrdQty}" enabled="{appModel>/IsEditable}"
+                            />
                         </ui:template>
                     </ui:Column>
 
                     <ui:Column width="10rem">
-                        <Label text="MOT" />
+                        <Label text="Discharge Port" />
                         <ui:template>
-                            <Text
-                                text="{SelectedTradeNumber>/transportMot/MOTNAME}"
-                            />
+                            <ComboBox width="100%"
+                             selectedKey="{appModel>TrdDsprt}"
+                             enabled="false"
+                             items="{path: 's4HanaModel>/ZTA_DSCH_PORTSet', sorter: {path: 's4HanaModel>TrdDsprtD'}}">
+                                <core:Item
+                                    key="{s4HanaModel>TrdDsprt}"
+                                    text="{s4HanaModel>TrdDsprtD}"
+                                />
+                            </ComboBox>
                         </ui:template>
                     </ui:Column>
                 </ui:columns>
             </ui:Table>
+            <!-- ===== END: Top Trade Details Table ===== -->
 
-            <IconTabBar
-                id="idIconTabBarMulti"
-                expanded="true"
-                class="sapUiResponsiveContentPadding"
-            >
-                <items>
-                    <IconTabFilter
-                        text="Transfer"
-                        key="TransferFormtab"
-                    >
-                        <l:VerticalLayout
-                            class="sapUiContentPadding equalColumns"
-                            width="100%"
-                        >
-                            <FlexBox renderType="Bare">
-                                <Panel
-                                    id="pnl2"
-                                    headerText="Transfer From"
-                                    class="sapUiTinyMarginEnd"
+               <Panel
+                    expandable="true"
+                    expanded="true"
+                    headerText="Cost"
+                    width="auto"
+                    class="sapUiMediumMarginTop"
+                >
+                    <ui:Table
+                                id="costTableId"
+                                rows="{
+                                    path: 'costModel>/'
+                                }"
+                                selectionMode="Multi"
+                                selectionBehavior="Row"
+                                rowSelectionChange=".onRowSelectionChange"
+                                enableColumnReordering="false"
+                            >
+                                <!-- Header Toolbar -->
+                                <ui:extension>
+                                    <OverflowToolbar>
+                                        <content>
+                                            <ToolbarSpacer />
+                                            <Button
+                                                id="toggleAddBtn"
+                                                text="Add"
+                                                icon="sap-icon://add"
+                                                press=".onToggleAdd"
+                                            />
+
+                                            <Button
+                                                id="toggleSaveBtn"
+                                                text="Save"
+                                                icon="sap-icon://save"
+                                                press=".onToggleSave"
+                                                enabled="false"
+                                                visible="{appModel>/IsCOSTSaveActive}"
+                                            />
+
+                                            <Button
+                                                id="toggleEditBtn"
+                                                text="Edit"
+                                                icon="sap-icon://edit"
+                                                press=".onToggleEdit"
+                                                enabled="{appModel>/IsCOSTSelectionActive}"
+                                            />
+                                            <Button
+                                                id="toggleDeleteBtn"
+                                                text="Delete"
+                                                enabled="{appModel>/IsCOSTSelectionActive}"
+                                                icon="sap-icon://delete"
+                                                press=".onToggleDel"
+                                            />
+                                        </content>
+                                    </OverflowToolbar>
+                                </ui:extension>
+
+                                <!-- Columns -->
+                                <ui:columns>
+                                    <!-- Cost Type (editable ComboBox) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_TYPE}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstType}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: 's4HanaModel>/ZTA_CST_TYPESet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CstType}"
+                                                    text="{s4HanaModel>CstTypeD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+                                    
+                                    <!-- Cost Status -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_STATUS}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstEstfn}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: 's4HanaModel>/ZTA_CST_ESTFINSet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CstEstfn}"
+                                                    text="{s4HanaModel>CstEstfnD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Price Type (editable ComboBox) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PRICE_TYPE}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstPrctyp}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: 's4HanaModel>/ZTA_PRC_TYPESet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CstPrctyp}"
+                                                    text="{s4HanaModel>CstPrctypD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Expense Currency -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>EXPENSE_CURR}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstExpcur}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : 's4HanaModel>/ZTA_CURRENCYSet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CurrencyId}"
+                                                    text="{s4HanaModel>CurrencyD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Settlement Currency -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>SETTLEMENT_CURR}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstStcur}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : 's4HanaModel>/ZTA_CURRENCYSet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CurrencyId}"
+                                                    text="{s4HanaModel>CurrencyD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Exchange Rate -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>EXCHNG_RATE}" />
+                                        <ui:template>
+                                            <Input 
+                                                value="{costModel>CstExrt}"
+                                                enabled="{costModel>isRowEditable}" />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Payment Due  -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PAYMENT_DUE}" />
+                                        <ui:template>
+                                            <DatePicker
+                                                value="{path: 'costModel>CstPaydt', formatter: '.formatter.formatDate'}"
+                                                displayFormat="dd-MM-yyyy"
+                                                valueFormat="yyyy-MM-dd"
+                                                enabled="{costModel>isRowEditable}"
+                                            />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Company -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COMPANY}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstComp}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : 's4HanaModel>/ZTA_CST_VENDSet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CstComp}"
+                                                    text="{s4HanaModel>CstCompD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Payment -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PRICING_FORMULA}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey=""
+                                                enabled="{costModel>isRowEditable}"
+                                                items=""
+                                            >
+                                                <core:Item
+                                                    key=""
+                                                    text=""
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+                                </ui:columns>
+                            </ui:Table>
+                </Panel>
+                <Panel          
+                                headerText="Purchase Order Input"
+                                expandable="true"
+                                expanded="true"
+                                class="sapUiMediumMarginTop"
+                            >
+                                <f:SimpleForm
+                                    id="SimpleFormForPriceDetailsTabPaper"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="2"
+                                    columnsL="2"
+                                    columnsM="4"
                                 >
-                                    <VBox>
-                                        <!-- ================= Trade Info Section ================= -->
-                                        <Panel
-                                            headerText="Trade Info"
-                                            class="sapUiNoContentPadding sapUiTinyMarginBottom"
-                                        >
-                                            <f:SimpleForm
-                                                editable="true"
-                                                layout="ResponsiveGridLayout"
-                                                labelSpanXL="4"
-                                                labelSpanL="3"
-                                                labelSpanM="4"
-                                                labelSpanS="12"
-                                                columnsXL="2"
-                                                columnsL="1"
-                                                columnsM="1"
-                                                columnsS="1"
-                                            >
-                                                <f:content>
-                                                    <!-- Trade Number -->
-                                                    <!-- <Label
-                                                        text="Trade Number"
-                                                    />
-                                                    <ComboBox
-                                                        id="transferFromTradeNumberCombo"
-                                                        width="20rem"
-                                                        selectedKey="{SelectedTradeNumber>/TRADE_NO}"
-                                                        items="{
-                                                        path: '/TradeEntry',
-                                                         sorter: { path: 'TRADE_NO' }
-    }"
-                                                        
-                                                    >
-                                                        <core:Item
-                                                            key="{TRADE_NO}"
-                                                            text="{TRADE_NO}"
-                                                        />
-                                                    </ComboBox> -->
+                             <f:content>
+    <core:Title text="Discharge Ports" />
 
-                                                    <!-- Counterpart -->
-                                                    <Label text="Counterparty" />
+    <!-- Dynamic Discharge Port Sections -->
+    <VBox id="dischargePortsVBox" items="{appModel>/DischargePorts}" class="sapUiSmallMargin">
+    <items>
+        <!-- Template for each discharge port -->
+        <VBox class="sapUiSmallMarginBottom" width="100%" templateShareable="false">
+            
+            <!-- Quantity in BBL -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Quantity in BBL'}"
+                       width="18rem" />
+                <Input id="discPortDp1" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/Dp1Qtybbl} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/Dp2Qtybbl} : ${appModel>/TradeDetails/0/Dp3Qtybbl})}"
+                       width="10rem"
+                      enabled="{appModel>/IsEditable}"
+                       class="sapUiSmallMarginEnd"/>
+                <Button icon="sap-icon://delete" type="Reject" press=".onRemoveDischargePort" tooltip="Remove this Discharge Port" />
+            </HBox>
 
-                                                    <Input
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/counterpart/CTPRTNAME}"
-                                                    />
+            <!-- Quantity in MT -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Quantity in MT'}" width="18rem"/>
+                <Input id="discPortQtMt2" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/Dp1Qtymt} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/Dp2Qtymt} : ${appModel>/TradeDetails/0/Dp3Qtymt})}"
+                       width="10rem"
+                       enabled="{appModel>/IsEditable}"
+                       class="sapUiSmallMarginEnd"/>
+            </HBox>
 
-                                                    <!-- Section -->
-                                                    <Label text="Section" />
-                                                    <Input
-                                                        id="transferFromSection"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/transferSection/SECTNNAME}"
-                                                    />
-                                                </f:content>
-                                            </f:SimpleForm>
-                                        </Panel>
+            <!-- Temperature -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Temperature in Deg C'}" width="18rem"/>
+                <Input id="discPortTmp" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/Dp1Tmp} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/Dp2Tmp} : ${appModel>/TradeDetails/0/Dp3Tmp})}" width="10rem" enabled="{appModel>/IsEditable}" />
+                <!-- <Label text="Deg C" width="4rem"/> -->
+            </HBox>
 
-                                        <!-- ================= Quantities Section ================= -->
-                                        <Panel
-                                            headerText="Quantities"
-                                            class="sapUiNoContentPadding sapUiTinyMarginBottom"
-                                        >
-                                            <f:SimpleForm
-                                                editable="true"
-                                                layout="ResponsiveGridLayout"
-                                            >
-                                                <f:content>
-                                                    <!-- Open Qty -->
-                                                    <Label text="Open Qty" />
-                                                    <Input
-                                                        id="transferFromOpenQty"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/OPENQTY}"
-                                                    >
-                                                        <layoutData>
-                                                            <l:GridData
-                                                                span="XL2 L1 M3 S4"
-                                                            />
-                                                        </layoutData>
-                                                    </Input>
-                                                    <Input
-                                                        id="transferFromOpenQty1"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/openquomqty/UOMNAME}"
-                                                    />
+            <!-- API -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' API'}" width="18rem"/>
+                <Input id="discPortApi" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/Dp1Api} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/Dp2Api} : ${appModel>/TradeDetails/0/Dp3Api})}" width="10rem" enabled="{appModel>/IsEditable}" class="sapUiSmallMarginEnd" />
+            </HBox>
 
-                                                    <!-- Contract Qty -->
-                                                    <Label
-                                                        text="Contract Qty"
-                                                    />
-                                                    <Input
-                                                        id="transferFromContractQty"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/CQUANTITY}"
-                                                    >
-                                                        <layoutData>
-                                                            <l:GridData
-                                                                span="XL2 L1 M3 S4"
-                                                            />
-                                                        </layoutData>
-                                                    </Input>
-                                                    <Input
-                                                        id="transferFromContractQty1"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/quantityUnit/QTYUNTNAME}"
-                                                    />
+            <!-- Transfer Date -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Transfer Date'}" width="18rem"/>
+                <DatePicker id="discPortTrndt" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/Dp1Trndt} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/Dp2Trndt} : ${appModel>/TradeDetails/0/Dp3Trndt})}" width="10rem" enabled="{appModel>/IsEditable}" />
+            </HBox>
 
-                                                    <!-- Commodity -->
-                                                    <Label text="Commodity" />
-                                                    <Input
-                                                        id="transferFromCommodity"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/commodity/CMDTYNAME}"
-                                                    />
+            <!-- Miscellaneous / Other -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Miscellaneous / Other'}" width="18rem"/>
+                <Input id="discPortMsc" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/Dp1Msc} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/Dp2Msc} : ${appModel>/TradeDetails/0/Dp3Msc})}" width="10rem" enabled="{appModel>/IsEditable}" class="sapUiSmallMarginEnd" />
+                <ComboBox id="discPortMscuom" selectedKey="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/Dp1Mscuom} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/Dp2Mscuom} : ${appModel>/TradeDetails/0/Dp3Mscuom})}" enabled="{appModel>/IsEditable}" items="{ path: 's4HanaModel>/ZTA_CURRENCYSet', sorter: { path: 's4HanaModel>CurrencyD' } }">
+                    <core:Item key="{s4HanaModel>CurrencyId}" text="{s4HanaModel>CurrencyD}" />
+                </ComboBox>
+            </HBox>
+           
 
-                                                    <!-- Group 1 -->
-                                                    <Label text="Group 1" />
-                                                    <Input
-                                                        id="transferFromGroup1"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/transferGroup1/GRP1NAME}"
-                                                    />
+        </VBox>
+    </items>
+</VBox>
 
-                                                    <!-- Group 2 -->
-                                                    <Label text="Group 2" />
-                                                    <Input
-                                                        id="transferFromGroup2"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/transferGroup2/GRP2NAME}"
-                                                    />
 
-                                                    <!-- Scheduled Qty -->
-                                                    <Label
-                                                        text="Scheduled Qty"
-                                                    />
-                                                    <Input
-                                                        id="transferFromScheduledQty"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/SCHEDLDQTY}"
-                                                    >
-                                                        <layoutData>
-                                                            <l:GridData
-                                                                span="XL2 L1 M3 S4"
-                                                            />
-                                                        </layoutData>
-                                                    </Input>
-                                                    <Input
-                                                        id="transferFromScheduledQty1"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/schedulequom/UOMNAME}"
-                                                    />
 
-                                                    <!-- Nominal Qty -->
-                                                    <Label text="Nominal Qty" />
-                                                    <VBox>
-                                                        <l:Grid
-                                                            defaultSpan="XL6 L6 M6 S12"
-                                                        >
-                                                            <Input
-                                                                id="transferFromnominalQty1"
-                                                                width="10rem"
-                                                                value="{SelectedTradeNumber>/NOMINALQTY}"
-                                                            />
-                                                            <Input
-                                                                id="transferFromnominalQtyUOM"
-                                                                width="20rem"
-                                                                value="{SelectedTradeNumber>/nominalquom/UOMNAME}"
-                                                            />
-                                                        </l:Grid>
-                                                        <l:Grid
-                                                            defaultSpan="XL6 L6 M6 S12"
-                                                        >
-                                                            <RadioButtonGroup
-                                                                id="groupF"
-                                                                columns="2"
-                                                            >
-                                                                <buttons>
-                                                                    <RadioButton
-                                                                        text="Multiply"
-                                                                        selected="true"
-                                                                    />
-                                                                    <RadioButton
-                                                                        text="Divide by"
-                                                                    />
-                                                                </buttons>
-                                                            </RadioButtonGroup>
-                                                            <Input
-                                                                id="transferFromMultiplyDivide"
-                                                                width="20rem"
-                                                                value="{SelectedTradeNumber>}"
-                                                            />
-                                                        </l:Grid>
-                                                    </VBox>
+</f:content>
 
-                                                    <!-- Invoice Qty -->
-                                                    <Label text="Invoice Qty" />
-                                                    <HBox alignItems="Center">
-                                                        <Input
-                                                            id="transferFromInvoiceQty"
-                                                            value="{SelectedTradeNumber>/INVOICEQTY}"
-                                                            width="150px"
-                                                            class="sapUiTinyMarginEnd"
-                                                        />
-                                                        <ComboBox
-                                                            id="transferFromInvoiceQtyUomCombo"
-                                                            selectedKey="{SelectedTradeNumber>/INVQTYUOMID}"
-                                                            width="120px"
-                                                            items="{ path: '/InvoiceQuantityUOM', sorter: { path: 'IVQYUOMNAME' }}"
-                                                            class="sapUiTinyMarginEnd"
-                                                        >
-                                                            <core:Item
-                                                                key="{ID}"
-                                                                text="{IVQYUOMNAME}"
-                                                            />
-                                                        </ComboBox>
-                                                        <Button
-                                                            text="Calculator"
-                                                            press="onPress"
-                                                            width="100px"
-                                                        />
-                                                    </HBox>
-                                                </f:content>
-                                            </f:SimpleForm>
-                                        </Panel>
 
-                                        <!-- ================= Pricing Section ================= -->
-                                        <Panel
-                                            headerText="Pricing"
-                                            class="sapUiNoContentPadding sapUiTinyMarginBottom"
-                                        >
-                                            <f:SimpleForm
-                                                editable="true"
-                                                layout="ResponsiveGridLayout"
-                                            >
-                                                <f:content>
-                                                    <!-- Override -->
-                                                    <Label text="Override" />
-                                                    <CheckBox
-                                                        id="transferFromOverrideCheckbox"
-                                                        width="20rem"
-                                                        selected="{}"
-                                                    />
 
-                                                    <!-- Override Price -->
-                                                    <Label
-                                                        text="Override Price"
-                                                    />
-                                                    <Input
-                                                        id="transferFromOverridePrice"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/TRNOVRDPRC}"
-                                                    />
+                                </f:SimpleForm>
+                                <HBox class="sapUiSmallMarginTop" justifyContent="Start">
+    <Button
+        text="Add Another Discharge Port"
+        icon="sap-icon://add"
+        type="Emphasized"
+        press=".onAddDischargePort"
+        class="sapUiTinyMarginEnd"
+    />
+     <Button
+        text="Execute"
+        icon="sap-icon://save"
+        type="Emphasized"
+        press=".onExecutePOCreation"
+        class="sapUiTinyMarginEnd"
+    />
+      <Button
+        text="Submit"
+        icon="sap-icon://accept"
+        type="Emphasized"
+        press=".onSubmitPOCreation"
+        class="sapUiTinyMarginEnd"
+    />
+</HBox>
+                            </Panel>
 
-                                                    <!-- Overridden Price Currency -->
-                                                    <Label
-                                                        text="Overridden Price Currency"
-                                                    />
-                                                    <ComboBox
-                                                        id="transferFromOverridePriceCcyCombo"
-                                                        width="20rem"
-                                                        selectedKey="{SelectedTradeNumber>/TRNOVCRRCY}"
-                                                        items="{ path: '/PaymentCurrency', sorter: { path: 'PYMTCURNAME' }}"
-                                                    >
-                                                        <core:Item
-                                                            key="{ID}"
-                                                            text="{PYMTCURNAME}"
-                                                        />
-                                                    </ComboBox>
-
-                                                    <!-- Base Price -->
-                                                    <Label text="Base Price" />
-                                                    <HBox alignItems="Center">
-                                                        <Input
-                                                            id="transferFromBasePrice"
-                                                            value="{SelectedTradeNumber>/TRBASEPRIC}"
-                                                            width="150px"
-                                                            class="sapUiTinyMarginEnd"
-                                                        />
-                                                        <Select
-                                                            id="transferFromBasePriceCurrencySelect"
-                                                            selectedKey="{SelectedTradeNumber>/TRBPRICECY}"
-                                                            width="120px"
-                                                            items="{ path: '/PaymentCurrency', sorter: { path: 'PYMTCURNAME' }}"
-                                                            class="sapUiTinyMarginEnd"
-                                                        >
-                                                            <core:Item
-                                                                key="{ID}"
-                                                                text="{PYMTCURNAME}"
-                                                            />
-                                                        </Select>
-                                                        <Select
-                                                            id="transferFromBasePriceUomSelect"
-                                                            selectedKey="{SelectedTradeNumber>/TRBPRICEUM}"
-                                                            width="120px"
-                                                            items="{ path: '/UOM', sorter: { path: 'UOMNAME' }}"
-                                                        >
-                                                            <core:Item
-                                                                key="{ID}"
-                                                                text="{UOMNAME}"
-                                                            />
-                                                        </Select>
-                                                    </HBox>
-
-                                                    <!-- Settlement Amount -->
-                                                    <Label
-                                                        text="Settlement Amount"
-                                                    />
-                                                    <HBox alignItems="Center">
-                                                        <Input
-                                                            id="transferFromSettlementAmount"
-                                                            value="{SelectedTradeNumber>/TRSTLMAMNT}"
-                                                            width="200px"
-                                                            class="sapUiTinyMarginEnd"
-                                                        />
-                                                        <ComboBox
-                                                            id="transferFromSettlementAmountUomCombo"
-                                                            selectedKey="{SelectedTradeNumber>/STLMTUUM}"
-                                                            width="150px"
-                                                            items="{ path: '/SettlementUOM', sorter: { path: 'STLUUMNAME' }}"
-                                                            class="sapUiTinyMarginEnd"
-                                                        >
-                                                            <core:Item
-                                                                key="{STLMTUUM}"
-                                                                text="{STLUUMNAME}"
-                                                            />
-                                                        </ComboBox>
-                                                        <Button
-                                                            icon="sap-icon://refresh"
-                                                            tooltip="Refresh Settlement Amount"
-                                                            press="onRefreshSettlementAmount"
-                                                            width="40px"
-                                                        />
-                                                    </HBox>
-
-                                                    <!-- Override FX -->
-                                                    <Label text="Override FX" />
-                                                    <CheckBox
-                                                        id="transferFromOverrideFxCheckbox"
-                                                        width="20rem"
-                                                        selected="{}"
-                                                    />
-
-                                                    <!-- Overridden FX -->
-                                                    <Label
-                                                        text="Overridden FX"
-                                                    />
-                                                    <Input
-                                                        id="transferFromOverriddenFx"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/TROVRIDEFX}"
-                                                    />
-                                                </f:content>
-                                            </f:SimpleForm>
-                                        </Panel>
-
-                                        <!-- ================= Other Section ================= -->
-                                        <Panel
-                                            headerText="Other"
-                                            class="sapUiNoContentPadding"
-                                        >
-                                            <f:SimpleForm
-                                                editable="true"
-                                                layout="ResponsiveGridLayout"
-                                            >
-                                                <f:content>
-                                                    <!-- Ticket Number -->
-                                                    <Label
-                                                        text="Ticket Number"
-                                                    />
-                                                    <Input
-                                                        id="transferFromTicketNumber"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/TRNTKTNUMB}"
-                                                    />
-
-                                                    <!-- Tax Region -->
-                                                    <Label text="Tax Region" />
-                                                    <Input
-                                                        id="transferFromTaxRegion"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/taxRegion/TAXREGNAME}"
-                                                    />
-                                                </f:content>
-                                            </f:SimpleForm>
-                                        </Panel>
-                                    </VBox>
-                                </Panel>
-
-                                <Panel
-                                    id="pnl3"
-                                    headerText="Transfer To"
-                                    class="sapUiTinyMarginEnd"
+                             
+                 <Panel
+                                headerText="GRN STO Input"
+                                expandable="true"
+                                expanded="true"
+                                class="sapUiMediumMarginTop"
+                            >
+                                <f:SimpleForm
+                                    id="SimpleFormForPriceDetailsTabPaper6"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="2"
+                                    columnsL="2"
+                                    columnsM="4"
                                 >
-                                    <VBox>
-                                        <!-- ================= Vehicle & Cargo Section ================= -->
-                                        <Panel
-                                            headerText="Vehicle &amp; Cargo"
-                                            class="sapUiNoContentPadding sapUiTinyMarginBottom"
-                                        >
-                                            <f:SimpleForm
-                                                editable="true"
-                                                layout="ResponsiveGridLayout"
-                                                labelSpanXL="4"
-                                                labelSpanL="3"
-                                                labelSpanM="4"
-                                                labelSpanS="12"
-                                                columnsXL="2"
-                                                columnsL="1"
-                                                columnsM="1"
-                                                columnsS="1"
-                                            >
-                                                <f:content>
-                                                    <!-- Vehicle -->
-                                                    <Label text="Vehicle" />
-                                                    <ComboBox
-                                                        id="transferToVehicleCombo"
-                                                        width="20rem"
-                                                        selectedKey="{SelectedTradeNumber>/VEHICLEID}"
-                                                        items="{ path: '/Vehicle', sorter: { path: 'ID' } }"
-                                                    >
-                                                        <core:Item
-                                                            key="{ID}"
-                                                            text="{VEHCLENAME}"
-                                                        />
-                                                    </ComboBox>
+                             <f:content>
+    <core:Title text="Discharge Ports" />
 
-                                                    <!-- MOT -->
-                                                    <Label text="MOT" />
-                                                    <Input
-                                                        id="transferToMot"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/transportMot/MOTNAME}"
-                                                    />
+    <!-- Dynamic Discharge Port Sections for GRN STO -->
+    <VBox id="dischargePortsVBoxGRN" items="{appModel>/DischargePorts}" class="sapUiSmallMargin">
+    <items>
+        <!-- Template for each discharge port -->
+        <VBox class="sapUiSmallMarginBottom" width="100%" templateShareable="false">
 
-                                                    <!-- Name -->
-                                                    <Label text="Name" />
-                                                    <Input
-                                                        id="transferToName"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/vehicle/VEHCLENAME}"
-                                                    />
+            <!-- Quantity in BBL -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Quantity in BBL'}"
+                       width="18rem" />
+                <Input id="discPortDp1GRN" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/GrDp1Qtybbl} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/GrDp2Qtybbl} : ${appModel>/TradeDetails/0/GrDp3Qtybbl})}"
+                       width="10rem"
+                       enabled="{appModel>/IsEditable}"
+                       class="sapUiSmallMarginEnd"/>
+                <Button icon="sap-icon://delete" type="Reject" press=".onRemoveDischargePortGRN" tooltip="Remove this Discharge Port" />
+            </HBox>
 
-                                                    <!-- Cargo -->
-                                                    <Label text="Cargo" />
-                                                    <ComboBox
-                                                        id="transferToCargoCombo"
-                                                        width="20rem"
-                                                        selectedKey="{SelectedTradeNumber>/TRNFCARGO}"
-                                                        items="{ path: '/TransportCargo', sorter: { path: 'CARGONAME' } }"
-                                                    >
-                                                        <core:Item
-                                                            key="{TRNFCARGO}"
-                                                            text="{CARGONAME}"
-                                                        />
-                                                    </ComboBox>
+            <!-- Quantity in MT -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Quantity in MT'}" width="18rem"/>
+                <Input id="discPortQtMt2GRN" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/GrDp1Qtymt} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/GrDp2Qtymt} : ${appModel>/TradeDetails/0/GrDp3Qtymt})}"
+                       width="10rem"
+                      enabled="{appModel>/IsEditable}"
+                       class="sapUiSmallMarginEnd"/>
+            </HBox>
 
-                                                    <!-- Cargo Name -->
-                                                    <Label text="Name" />
-                                                    <Input
-                                                        id="transferToCargoName"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/transferCargo/CARGONAME}"
-                                                    />
+            <!-- Temperature -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Temperature in Deg C'}" width="18rem"/>
+                <Input id="discPortTmpGRN" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/GrDp1Tmp} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/GrDp2Tmp} : ${appModel>/TradeDetails/0/GrDp3Tmp})}" width="10rem" enabled="{appModel>/IsEditable}" />
+                <!-- <Label text="Deg C" width="4rem"/> -->
+            </HBox>
 
-                                                    <!-- Reset Date -->
-                                                    <Label text="Reset Date" />
-                                                    <DatePicker
-                                                        id="transferToResetDate"
-                                                        width="20rem"
-                                                        placeholder="Reset Date"
-                                                        value="{ path: 'SelectedTradeNumber>/TRNSRESTDT',
-                                 type: 'sap.ui.model.odata.type.DateTimeOffset',
-                                 formatOptions: { style: 'long', UTC: true }}"
-                                                        valueFormat="dd-MM-yyyy"
-                                                        displayFormat="long"
-                                                        change=".handleChange"
-                                                    />
-                                                </f:content>
-                                            </f:SimpleForm>
-                                        </Panel>
+            <!-- API -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' API'}" width="18rem"/>
+                <Input id="discPortApiGRN" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/GrDp1Api} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/GrDp2Api} : ${appModel>/TradeDetails/0/GrDp3Api})}" width="10rem" enabled="{appModel>/IsEditable}" class="sapUiSmallMarginEnd" />
+            </HBox>
 
-                                        <!-- ================= Commodity Section ================= -->
-                                        <Panel
-                                            headerText="Commodity"
-                                            class="sapUiNoContentPadding sapUiTinyMarginBottom"
-                                        >
-                                            <f:SimpleForm
-                                                editable="true"
-                                                layout="ResponsiveGridLayout"
-                                            >
-                                                <f:content>
-                                                    <Label text="Commodity" />
-                                                    <Input
-                                                        id="transferToCommodity"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/commodity/CMDTYNAME}"
-                                                    />
+            <!-- Transfer Date -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Transfer Date'}" width="18rem"/>
+                <DatePicker id="discPortTrndtGRN" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/GrDp1Trndt} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/GrDp2Trndt} : ${appModel>/TradeDetails/0/GrDp3Trndt})}" width="10rem" enabled="{appModel>/IsEditable}" />
+            </HBox>
 
-                                                    <Label text="Group 1" />
-                                                    <Input
-                                                        id="transferToGroup1"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/transferGroup1/GRP1NAME}"
-                                                    />
-
-                                                    <Label text="Group 2" />
-                                                    <Input
-                                                        id="transferToGroup2"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/transferGroup2/GRP2NAME}"
-                                                    />
-                                                </f:content>
-                                            </f:SimpleForm>
-                                        </Panel>
-
-                                        <!-- ================= Quantity Section ================= -->
-                                        <Panel
-                                            headerText="Quantities"
-                                            class="sapUiNoContentPadding sapUiTinyMarginBottom"
-                                        >
-                                            <f:SimpleForm
-                                                editable="true"
-                                                layout="ResponsiveGridLayout"
-                                            >
-                                                <f:content>
-                                                    <!-- Converted Qty -->
-                                                    <Label
-                                                        text="Converted Qty"
-                                                    />
-                                                    <Input
-                                                        id="transferToConvertedQty"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/TRCONVDQTY}"
-                                                    >
-                                                        <layoutData>
-                                                            <l:GridData
-                                                                span="XL2 L1 M3 S4"
-                                                            />
-                                                        </layoutData>
-                                                    </Input>
-                                                    <Input
-                                                        id="transferToConvertedQty1"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/convertedqtyuom/UOMNAME}"
-                                                    />
-
-                                                    <!-- Cargo Qty -->
-                                                    <Label text="Cargo Qty" />
-                                                    <Input
-                                                        id="transferToCargoQty"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/TRCARGOQTY}"
-                                                    >
-                                                        <layoutData>
-                                                            <l:GridData
-                                                                span="XL2 L1 M3 S4"
-                                                            />
-                                                        </layoutData>
-                                                    </Input>
-                                                    <Input
-                                                        id="transferToCargoQty1"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/cargoqtyuom/UOMNAME}"
-                                                    />
-
-                                                    <!-- Gain/Loss -->
-                                                    <Label text="Gain/Loss" />
-                                                    <Input
-                                                        id="transferToGainLoss"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/TRGAINLOSS}"
-                                                    >
-                                                        <layoutData>
-                                                            <l:GridData
-                                                                span="XL2 L1 M3 S4"
-                                                            />
-                                                        </layoutData>
-                                                    </Input>
-                                                    <Input
-                                                        id="transferToGainLoss1"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/TRGNLOSUOM}"
-                                                    />
-
-                                                    <!-- Packaging -->
-                                                    <Label text="Packaging" />
-                                                    <Input
-                                                        id="transferToPackaging"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/TRPACKAGIN}"
-                                                    >
-                                                        <layoutData>
-                                                            <l:GridData
-                                                                span="XL2 L1 M3 S4"
-                                                            />
-                                                        </layoutData>
-                                                    </Input>
-                                                    <Input
-                                                        id="transferToPackaging1"
-                                                        width="20rem"
-                                                        value="{SelectedTradeNumber>/TRPACKAUOM}"
-                                                    />
-                                                </f:content>
-                                            </f:SimpleForm>
-                                        </Panel>
-
-                                        <!-- ================= Other Section ================= -->
-                                        <Panel
-                                            headerText="Other"
-                                            class="sapUiNoContentPadding"
-                                        >
-                                            <f:SimpleForm
-                                                editable="true"
-                                                layout="ResponsiveGridLayout"
-                                            >
-                                                <f:content>
-                                                    <!-- Custom Duty Status -->
-                                                    <Label
-                                                        text="Custom Duty Status"
-                                                    />
-                                                    <ComboBox
-                                                        id="transferToCustomDutyStatusCombo"
-                                                        width="20rem"
-                                                        selectedKey="{SelectedTradeNumber>/TRCUSDUTST}"
-                                                        items="{ path: '/CustomDutyStatus', sorter: { path: 'CUSTDUTST' } }"
-                                                    >
-                                                        <core:Item
-                                                            key="{TRCUSDUTST}"
-                                                            text="{CUSTDUTST}"
-                                                        />
-                                                    </ComboBox>
-
-                                                    <!-- Transfer At -->
-                                                    <Label text="Transfer At" />
-                                                    <ComboBox
-                                                        id="transferToTransferAtCombo"
-                                                        width="20rem"
-                                                        selectedKey="{SelectedTradeNumber>/TRANSFERAT}"
-                                                        items="{ path: '/TransferAt', sorter: { path: 'TRANATNAME' } }"
-                                                    >
-                                                        <core:Item
-                                                            key="{TRANSFERAT}"
-                                                            text="{TRANATNAME}"
-                                                        />
-                                                    </ComboBox>
-                                                </f:content>
-                                            </f:SimpleForm>
-                                        </Panel>
-                                    </VBox>
-                                </Panel>
-                            </FlexBox>
-                        </l:VerticalLayout>
-                    </IconTabFilter>
-
-                    <!-- <IconTabFilter text="UDF" key="Udftab">
-    <l:VerticalLayout class="sapUiContentPadding" width="100%">
-        <FlexBox renderType="Bare" width="100%" justifyContent="SpaceBetween">
-
-            <Panel headerText="From UDF" width="48%">
-    <f:SimpleForm
-        id="frm5"
-        editable="true"
-        layout="ResponsiveGridLayout"
-        labelSpanXL="4"
-        labelSpanL="4"
-        labelSpanM="4"
-        labelSpanS="12"
-        adjustLabelSpan="false"
-        emptySpanXL="0"
-        emptySpanL="0"
-        emptySpanM="0"
-        emptySpanS="0"
-        columnsXL="2"
-        columnsL="2"
-        columnsM="2"
-        columnsS="1">
-
-        <f:content>
-
-            
-           <Title text="Field" class="sapUiSmallMarginBottom sapUiBoldText sapUiLargeMarginBegin field" />
-            <Title text="Value" class="sapUiSmallMarginBottom sapUiBoldText" />
-
-           
-            <Label text="Quantity" />
-            <Input id="inp44" value="{oDataTradeEntry>quantity}" width="70%" class="sapUiSmallMarginBegin"/>
-
-          
-            <Label text="Temp in Celsius" />
-            <Input id="inp55" value="{oDataTradeEntry>temperature}" width="70%" class="sapUiSmallMarginBegin"/>
-
-           
-            <Label text="Title Transfer Date" />
-            <Input id="inp63" value="{oDataTradeEntry>titleTransferDate}" width="70%" class="sapUiSmallMarginBegin" />
-
-        </f:content>
-    </f:SimpleForm>
-</Panel>
+            <!-- Miscellaneous / Other -->
+            <HBox  class="sapUiSmallMarginBottom">
+                <Label text="{= 'Discharge Port ' + ${appModel>PortNo} + ' Miscellaneous / Other'}" width="18rem"/>
+                <Input id="discPortMscGRN" value="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/GrDp1Msc} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/GrDp2Msc} : ${appModel>/TradeDetails/0/GrDp3Msc})}" width="10rem" enabled="{appModel>/IsEditable}" class="sapUiSmallMarginEnd" />
+                <ComboBox id="discPortMscuomGRN" selectedKey="{= ${appModel>PortNo} === 1 ? ${appModel>/TradeDetails/0/GrDp1Mscuom} : (${appModel>PortNo} === 2 ? ${appModel>/TradeDetails/0/GrDp2Mscuom} : ${appModel>/TradeDetails/0/GrDp3Mscuom})}" enabled="{appModel>/IsEditable}" items="{ path: 's4HanaModel>/ZTA_CURRENCYSet', sorter: { path: 's4HanaModel>CurrencyD' } }">
+                    <core:Item key="{s4HanaModel>CurrencyId}" text="{s4HanaModel>CurrencyD}" />
+                </ComboBox>
+            </HBox>
 
 
-         <Panel headerText="To UDF" width="48%">
-  <f:SimpleForm
-        id="frm6"
-        editable="true"
-        layout="ResponsiveGridLayout"
-        labelSpanXL="4"
-        labelSpanL="4"
-        labelSpanM="4"
-        labelSpanS="12"
-        adjustLabelSpan="false"
-        emptySpanXL="0"
-        emptySpanL="0"
-        emptySpanM="0"
-        emptySpanS="0"
-        columnsXL="2"
-        columnsL="2"
-        columnsM="2"
-        columnsS="1">
-
-        <f:content>
-
-            
-            <Title text="Field" class="sapUiSmallMarginBottom sapUiBoldText sapUiLargeMarginBegin field" />
-            <Title text="Value" class="sapUiSmallMarginBottom sapUiBoldText" />
-
-           
-            <Label text="Quantity" />
-            <Input id="inp56" value="{oDataTradeEntry>UDFQUANTY}" width="70%" class="sapUiSmallMarginBegin"/>
-
-            
-            <Label text="Temp in Celsius" />
-            <Input id="inp57" value="{oDataTradeEntry>UDFTEMPCE}" width="70%" class="sapUiSmallMarginBegin" />
-
-          
-            <Label text="Title Transfer Date" />
-            <Input id="inp66" value="{oDataTradeEntry>UDFTRNDAT}" width="70%"  class="sapUiSmallMarginBegin"/>
-
-        </f:content>
-    </f:SimpleForm>
-</Panel>
+        </VBox>
+    </items>
+</VBox>
 
 
 
+</f:content>
 
-        </FlexBox>
-    </l:VerticalLayout>
-</IconTabFilter> -->
-                </items>
-            </IconTabBar>
+
+
+                                </f:SimpleForm>
+                                <HBox class="sapUiSmallMarginTop" justifyContent="Start">
+    <Button
+        text="Add Another Discharge Port"
+        icon="sap-icon://add"
+        type="Emphasized"
+        press=".onAddDischargePortGRN"
+        class="sapUiTinyMarginEnd"
+    />
+     <Button
+        text="Execute"
+        icon="sap-icon://save"
+        type="Emphasized"
+        press=".onExecuteGRNCreation"
+        class="sapUiTinyMarginEnd"
+    />
+      <Button
+        text="Submit"
+        icon="sap-icon://accept"
+        type="Emphasized"
+        press=".onSubmitGRNCreation"
+        class="sapUiTinyMarginEnd"
+    />
+</HBox>
+                            </Panel>
+                            
+                            
         </content>
     </Page>
 </mvc:View>

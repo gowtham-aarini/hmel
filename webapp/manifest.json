@@ -1,7 +1,7 @@
 {
   "_version": "1.76.0",
   "sap.app": {
-    "id": "hmelpaper",
+    "id": "operations",
     "type": "application",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
@@ -25,14 +25,23 @@
           "localUri": "localService/mainService/metadata.xml",
           "odataVersion": "4.0"
         }
+      },
+       "s4HanaService": {
+        "uri": "/sap/opu/odata/sap/ZHMELFACTMASTERTABLES_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
       }
     },
     "crossNavigation": {
       "inbounds": {
-        "hmelpaper-create": {
-          "semanticObject": "hmelpaper",
+        "operations-create": {
+          "semanticObject": "operations",
           "action": "create",
-          "title": "{{hmelpaper-create.flpTitle}}",
+          "title": "{{operations-create.flpTitle}}",
           "signature": {
             "parameters": {},
             "additionalParameters": "allowed"
@@ -74,17 +83,18 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "hmelpaper.i18n.i18n"
+          "bundleName": "operations.i18n.i18n"
         }
       },
        "appModel": {
         "type": "sap.ui.model.json.JSONModel"
       },
        "s4HanaModel": {
+        "type": "sap.ui.model.odata.v2.ODataModel",
         "dataSource": "s4HanaService",
         "preload": true,
         "settings": {
-          "useBatch": true,
+          "useBatch": false,
           "defaultBindingMode": "TwoWay",
           "defaultCountMode": "Inline"
         }
@@ -124,9 +134,9 @@
     "transition": "slide",
     "type": "View",
     "viewType": "XML",
-    "path": "hmelpaper.view",
+    "path": "operations.view",
     "async": true,
-    "viewPath": "hmelpaper.view"
+    "viewPath": "operations.view"
   },
   "routes": [
     {
@@ -186,7 +196,7 @@
 }
 ,
   "rootView": {
-    "viewName": "hmelpaper.view.App",
+    "viewName": "operations.view.App",
     "type": "XML",
     "id": "App",
     "async": true
@@ -194,6 +204,6 @@
 },
 "sap.cloud": {
   "public": true,
-  "service": "hmelpaper"
+  "service": "operations"
 }
 }

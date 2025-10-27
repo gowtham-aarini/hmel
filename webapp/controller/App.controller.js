@@ -3,7 +3,7 @@ sap.ui.define([
 ], (BaseController) => {
   "use strict";
 
-  return BaseController.extend("hmelpaper.controller.App", {
+  return BaseController.extend("operations.controller.App", {
       onInit() {
       }
   });

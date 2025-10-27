@@ -2,7 +2,7 @@
 
 specVersion: "3.1"
 metadata:
-  name: hmelpaper
+  name: operations
 type: application
 server:
   customMiddleware:
@@ -19,6 +19,9 @@ server:
           - path: /odata
             url: https://aarini-development-development-tradingapphmel-srv.cfapps.eu10-004.hana.ondemand.com
             destination: hmel_trade_dest
+          - path: /sap
+            url: http://aarinis4:50000
+            destination: HMEL_S4_DEST
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
