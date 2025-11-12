@@ -7,87 +7,94 @@ sap.ui.define([
     "use strict";
 
     return Controller.extend("operations.controller.Transfer", {
-       /**
-        * Called when the controller is instantiated.
-        * Initialize models and preload required data.
-        */
-       onInit: function () {
-    var oAppModel = this.getOwnerComponent().getModel("appModel");
-    var oS4Model = this.getOwnerComponent().getModel("s4HanaModel");
+        /**
+         * Called when the controller is instantiated.
+         * Initialize models and preload required data.
+         */
+        onInit: function () {
+            var oAppModel = this.getOwnerComponent().getModel("appModel");
+            var oS4Model = this.getOwnerComponent().getModel("s4HanaModel");
 
-    // Initialize UI flags and structures used across the view
-    oAppModel.setProperty("/IsEditMode", false);
-    oAppModel.setProperty("/TradeDetails", {}); // single object for selected trade
-    oAppModel.setProperty("/IsCreateEnabled", false);
-    oAppModel.setProperty("/IsSaveEnabled", false);
-    oAppModel.setProperty("/IsEditEnabled", true);
-    oAppModel.setProperty("/IsEditable", false);
+            // Initialize UI flags and structures used across the view
+            oAppModel.setProperty("/IsEditMode", false);
+            oAppModel.setProperty("/TradeDetails", {}); // single object for selected trade
+            oAppModel.setProperty("/IsCreateEnabled", false);
+            oAppModel.setProperty("/IsSaveEnabled", false);
+            oAppModel.setProperty("/IsEditEnabled", true);
+            oAppModel.setProperty("/IsEditable", false);
+            oAppModel.setProperty("/ShowLoadPortPanel", false);
+            oAppModel.setProperty("/ShowDischargePortPanel", false);
 
-    // Create 3 discharge port placeholders (DP1, DP2, DP3) and set ActivePortNo = 1
-    this._createThreePorts();
 
-    // Preload trade list for ComboBox (non-blocking) — keep for quick local debug
-    if (oS4Model) {
-        oS4Model.read("/ZTA_TRADE_ENTRYSet", {
-            success: function (oData) {
-                Log.info("ZTA_TRADE_ENTRYSet loaded, count: " + (oData && oData.results ? oData.results.length : 0));
-            },
-            error: function (err) {
-                Log.error("Failed to preload ZTA_TRADE_ENTRYSet", err);
+            // Button visibility controls
+            oAppModel.setProperty("/IsEditBtnVisible", true);
+            oAppModel.setProperty("/IsSaveBtnVisible", false);
+
+            // Create 3 discharge port placeholders (DP1, DP2, DP3) and set ActivePortNo = 1
+            this._createThreePorts();
+
+            // Preload trade list for ComboBox (non-blocking) — keep for quick local debug
+            if (oS4Model) {
+                oS4Model.read("/ZTA_TRADE_ENTRYSet", {
+                    success: function (oData) {
+                        Log.info("ZTA_TRADE_ENTRYSet loaded, count: " + (oData && oData.results ? oData.results.length : 0));
+                    },
+                    error: function (err) {
+                        Log.error("Failed to preload ZTA_TRADE_ENTRYSet", err);
+                    }
+                });
+            } else {
+                Log.warn("s4HanaModel not found during onInit preload");
             }
-        });
-    } else {
-        Log.warn("s4HanaModel not found during onInit preload");
-    }
 
-    //Set Cost Model
-    var oCostModel = new sap.ui.model.json.JSONModel();
-    this.getView().setModel(oCostModel, "costModel");
-    //For COST table
-    oAppModel.setProperty("/IsCOSTSelectionActive", false);
-    oAppModel.setProperty("/IsCOSTSaveActive", false);
-    oAppModel.refresh(true);
-},
+            //Set Cost Model
+            var oCostModel = new sap.ui.model.json.JSONModel();
+            this.getView().setModel(oCostModel, "costModel");
+            //For COST table
+            oAppModel.setProperty("/IsCOSTSelectionActive", false);
+            oAppModel.setProperty("/IsCOSTSaveActive", false);
+            oAppModel.refresh(true);
+        },
 
-/**
- * Create discharge port definitions and store in appModel>/DischargePorts
- * By default, only 1 port is shown. Users can add more using the "Add" button.
- * Each port item contains the mapping to backend field names and also UI fields.
- */
-_createThreePorts: function () {
-    var oAppModel = this.getOwnerComponent().getModel("appModel");
+        /**
+         * Create discharge port definitions and store in appModel>/DischargePorts
+         * By default, only 1 port is shown. Users can add more using the "Add" button.
+         * Each port item contains the mapping to backend field names and also UI fields.
+         */
+        _createThreePorts: function () {
+            var oAppModel = this.getOwnerComponent().getModel("appModel");
 
-    // Initialize with only 1 discharge port by default
-    var aPorts = [
-        {
-            PortNo: 1,
-            // UI-friendly keys (we'll populate values from TradeDetails using backend names)
-            QtyBBLField: "DP1_QTYBBL",
-            QtyMTField: "DP1_QTYMT",
-            TmpField: "DP1_TMP",
-            ApiField: "DP1_API",
-            ApiUomField: "DP1_APIUOM",
-            TrnDtField: "DP1_TRNDT",
-            MiscField: "DP1_MSC",
-            MiscUomField: "DP1_MSCUOM",
+            // Initialize with only 1 discharge port by default
+            var aPorts = [
+                {
+                    PortNo: 1,
+                    // UI-friendly keys (we'll populate values from TradeDetails using backend names)
+                    QtyBBLField: "DP1_QTYBBL",
+                    QtyMTField: "DP1_QTYMT",
+                    TmpField: "DP1_TMP",
+                    ApiField: "DP1_API",
+                    ApiUomField: "DP1_APIUOM",
+                    TrnDtField: "DP1_TRNDT",
+                    MiscField: "DP1_MSC",
+                    MiscUomField: "DP1_MSCUOM",
 
-            // values displayed in UI (initially empty)
-            QuantityBBL: "",
-            QuantityMT: "",
-            Temperature: 40,
-            API: "",
-            APICurrency: "",
-            TransferDate: null,
-            MiscOther: "",
-            MiscCurrency: ""
-        }
-    ];
+                    // values displayed in UI (initially empty)
+                    QuantityBBL: "",
+                    QuantityMT: "",
+                    Temperature: 40,
+                    API: "",
+                    APICurrency: "",
+                    TransferDate: null,
+                    MiscOther: "",
+                    MiscCurrency: ""
+                }
+            ];
 
-    oAppModel.setProperty("/DischargePorts", aPorts);
-    // show the first port by default (UI can use this property if needed)
-    oAppModel.setProperty("/ActivePortNo", 1);
-    oAppModel.refresh(true);
-},
+            oAppModel.setProperty("/DischargePorts", aPorts);
+            // show the first port by default (UI can use this property if needed)
+            oAppModel.setProperty("/ActivePortNo", 1);
+            oAppModel.refresh(true);
+        },
 
         getTradeEntryData: function () {
             var oAppModel = this.getOwnerComponent().getModel("appModel");
@@ -138,7 +145,31 @@ _createThreePorts: function () {
                     },
                     events: {
                         dataRequested: () => this.getView().setBusy(true),
-                        dataReceived: () => this.getView().setBusy(false)
+                        dataReceived: (oEvent) => {
+                            this.getView().setBusy(false);
+
+                            // Check if data was received successfully
+                            const oData = oEvent.getParameter("data");
+                            if (!oData) {
+                                console.warn("No data received for trade:", sTradeNumber);
+                                sap.m.MessageToast.show("Trade data could not be loaded");
+                                return;
+                            }
+
+                            // Sanitize invalid dates in the received data
+                            this._sanitizeDates(oData);
+
+                            console.log("Trade data loaded successfully:", sTradeNumber);
+                        },
+                        change: (oEvent) => {
+                            // Handle binding errors
+                            const oBinding = oEvent.getSource();
+                            if (oBinding && oBinding.getContext()) {
+                                console.log("Binding changed successfully");
+                            } else {
+                                console.warn("Binding error - context not available");
+                            }
+                        }
                     }
                 });
 
@@ -148,30 +179,27 @@ _createThreePorts: function () {
         },
 
         onEditPress: function () {
-    const oView = this.getView();
-    const oAppModel = this.getOwnerComponent().getModel("appModel");
-    
-    // Enable main trade fields
-    oAppModel.setProperty("/IsEditable", true);
+            const oView = this.getView();
+            const oAppModel = this.getOwnerComponent().getModel("appModel");
+
+            // Enable main trade fields
+            oAppModel.setProperty("/IsEditable", true);
+
+            // Toggle buttons visibility
+            oAppModel.setProperty("/IsEditBtnVisible", false);
+            oAppModel.setProperty("/IsSaveBtnVisible", true);
+
+            sap.m.MessageToast.show("Edit mode enabled");
+        },
 
 
-    // Toggle buttons visibility
-    var btnEdit = oView.byId("editBtn");
-    var btnSave = oView.byId("saveBtn");
-    if (btnEdit) btnEdit.setVisible(false);
-    if (btnSave) btnSave.setVisible(true);
-
-    sap.m.MessageToast.show("Edit mode enabled ");
-},
-
-
-        // ✅ UPDATED SAVE FUNCTION (works with OData V4)
+        //  UPDATED SAVE FUNCTION (works with OData V4)
         onSavePress: async function () {
             const oView = this.getView();
             const oAppModel = this.getOwnerComponent().getModel("appModel");
             const oODataModel = this.getOwnerComponent().getModel(); // OData V4 (default as per manifest)
             const oTradeData = oAppModel.getProperty("/TradeDetails");
-           
+
 
             if (!oTradeData || !(oTradeData.TrdNum || oTradeData.TRADE_NO || oTradeData.TRADEID)) {
                 MessageBox.error("Trade number/key is missing. Cannot save.");
@@ -240,24 +268,49 @@ _createThreePorts: function () {
             return result;
         },
 
-        // ✅ Updated onchangetradeno: reads selected trade from s4HanaModel and writes into appModel>/TradeDetails
+        //  Updated onchangetradeno: reads selected trade from s4HanaModel and writes into appModel>/TradeDetails
         onchangetradeno: function (oEvent) {
             const oView = this.getView();
             const oAppModel = this.getOwnerComponent().getModel("appModel");
             const oS4Model = this.getOwnerComponent().getModel("s4HanaModel");
-    oAppModel.setProperty("/IsEditable", false);
-var btnEdit = oView.byId("editBtn") || oView.byId("btnEdit");
-var btnSave = oView.byId("saveBtn") || oView.byId("btnSave");
-
-if (btnEdit) btnEdit.setVisible(true);
-if (btnSave) btnSave.setVisible(false);
-            // Show busy indicator while fetching
-            oView.setBusy(true);
 
             // Get the ComboBox control
             const oComboBox = oEvent.getSource();
 
-            // 🔍 DETAILED DEBUG: Log everything about the selection
+            // Get selected trade number from ComboBox
+            const sTradeNo = oComboBox.getSelectedKey();
+            const oSelectedItem = oEvent.getParameter("selectedItem");
+
+            //  VALIDATION: Only proceed if an item was actually selected from dropdown
+            // This prevents triggering when user is just typing
+            if (!oSelectedItem && !sTradeNo) {
+                console.log("=== TRADE SELECTION SKIPPED ===");
+                console.log("Reason: No item selected from dropdown (user is typing)");
+                return;
+            }
+
+            // Additional check: Ensure we have a valid trade number
+            if (!sTradeNo || sTradeNo.trim() === "") {
+                console.log("=== TRADE SELECTION SKIPPED ===");
+                console.log("Reason: Empty or invalid trade number");
+                return;
+            }
+
+            // Reset port panels and trade data before loading new trade
+            oAppModel.setProperty("/ShowLoadPortPanel", false);
+            oAppModel.setProperty("/ShowDischargePortPanel", false);
+            oAppModel.setProperty("/TradeDetails", []);
+            sap.ui.getCore().applyChanges();
+
+            // Disable editing and reset button visibility
+            oAppModel.setProperty("/IsEditable", false);
+            oAppModel.setProperty("/IsEditBtnVisible", true);
+            oAppModel.setProperty("/IsSaveBtnVisible", false);
+
+            // Show busy indicator while fetching
+            oView.setBusy(true);
+
+            //  DETAILED DEBUG: Log everything about the selection
             console.log("=== TRADE NUMBER SELECTION DEBUG ===");
             console.log("ComboBox ID:", oComboBox.getId());
             console.log("Selected Key (getSelectedKey):", oComboBox.getSelectedKey());
@@ -267,19 +320,9 @@ if (btnSave) btnSave.setVisible(false);
                 console.log("Selected Item Text:", oComboBox.getSelectedItem().getText());
             }
             console.log("ComboBox Value (getValue):", oComboBox.getValue());
-            console.log("Event parameter 'selectedItem':", oEvent.getParameter("selectedItem"));
-
-            // Get selected trade number from ComboBox
-            const sTradeNo = oComboBox.getSelectedKey();
-
+            console.log("Event parameter 'selectedItem':", oSelectedItem);
             console.log("Extracted Trade Number:", sTradeNo);
             console.log("Current appModel>/TrdNum BEFORE setting:", oAppModel.getProperty("/TrdNum"));
-
-            if (!sTradeNo) {
-                oView.setBusy(false);
-                MessageToast.show("Please select a trade number.");
-                return;
-            }
 
             // Set the selected trade number IMMEDIATELY to prevent ComboBox from changing
             oAppModel.setProperty("/TrdNum", sTradeNo);
@@ -310,16 +353,19 @@ if (btnSave) btnSave.setVisible(false);
                     console.log("Results count:", oData && oData.results ? oData.results.length : 0);
 
                     if (oData && oData.results && oData.results.length > 0) {
-                        // 🔍 CRITICAL: Check if we got multiple results
+                        //  CRITICAL: Check if we got multiple results
                         if (oData.results.length > 1) {
-                            console.warn("⚠️ WARNING: Multiple results returned! Expected 1, got:", oData.results.length);
+                            console.warn(" WARNING: Multiple results returned! Expected 1, got:", oData.results.length);
                             console.log("All returned trade numbers:", oData.results.map(r => r.TrdNum));
                         }
 
                         // store the selected trade object inside appModel
                         const oTradeData = oData.results[0];
+                        const oView = this.getView();
+                        const oAppModel = this.getOwnerComponent().getModel("appModel");
+                        oView.setModel(oAppModel, "appModel");
 
-                        // 🔍 VERIFY: Check if the returned data matches what was requested
+                        //  VERIFY: Check if the returned data matches what was requested
                         console.log("=== DATA VERIFICATION ===");
                         console.log("REQUESTED Trade Number:", sTradeNo);
                         console.log("RECEIVED Trade Number (TrdNum):", oTradeData.TrdNum);
@@ -337,7 +383,7 @@ if (btnSave) btnSave.setVisible(false);
                         // Store original data for delta tracking
                         oAppModel.setProperty("/OriginalTradeDetails", JSON.parse(JSON.stringify(oTradeData)));
 
-                        // ⚠️ DO NOT set /TrdNum again here - it's already set above to prevent ComboBox from changing
+                        //  DO NOT set /TrdNum again here - it's already set above to prevent ComboBox from changing
 
                         // mirror common keys if needed
                         if (oTradeData.TrdNum) {
@@ -346,6 +392,54 @@ if (btnSave) btnSave.setVisible(false);
 
                         // Force model refresh to update all bindings
                         oAppModel.refresh(true);
+
+
+
+                        // === Handle Incoterm-based panel visibility ===
+                        let sIncoterm = "";
+                        const rawIncoterm = oTradeData.TrdDlvtrm;
+
+                        console.log("=== Checking Incoterm Field ===");
+                        console.log("Raw Incoterm Value:", rawIncoterm);
+                        console.log("Type of rawIncoterm:", typeof rawIncoterm);
+
+                        //  Step 1: Normalize value (trim, remove zeros, uppercase)
+                        const normalize = val => String(val || "").trim().replace(/^0+/, "").toUpperCase();
+                        const code = normalize(rawIncoterm);
+
+                        //  Step 2: Determine final Incoterm description
+                        // You can map numeric codes to terms here (only if needed)
+                        const codeToTermMap = {
+                            "3": "DAP",
+                            "00": "DAP",
+                            "00": "DAP",
+                            // Add others here *only if* DAP appears as numeric code.
+                        };
+
+                        // If backend gives a known code, map it — else use as-is
+                        sIncoterm = codeToTermMap[code] || code;
+
+                        console.log("Resolved Incoterm:", sIncoterm);
+
+                        //  Step 3: Show correct panel
+                        if (sIncoterm === "DAP") {
+                            //  Only for DAP
+                            oAppModel.setProperty("/ShowLoadPortPanel", false);
+                            oAppModel.setProperty("/ShowDischargePortPanel", true);
+                            MessageToast.show("Incoterm: DAP → Showing Discharge Port panel");
+                        } else {
+                            //  All other terms (FOB, CFR, CIF, EXW, etc.)
+                            oAppModel.setProperty("/ShowLoadPortPanel", true);
+                            oAppModel.setProperty("/ShowDischargePortPanel", false);
+                            MessageToast.show("Incoterm: " + sIncoterm + " → Showing Load Port panel");
+                        }
+
+                        // Step 4: Apply immediately
+                        sap.ui.getCore().applyChanges();
+
+
+
+
 
                         // Debug: Log the TradeDetails array to verify
                         console.log("TradeDetails array in appModel:", oAppModel.getProperty("/TradeDetails"));
@@ -374,10 +468,10 @@ if (btnSave) btnSave.setVisible(false);
             oAppModel.setProperty("/IsCOSTSaveActive", true);
             var oBusyDialog = new sap.m.BusyDialog();
             oBusyDialog.open();
-            
+
             // s4 call...
             var s4Model = this.getOwnerComponent().getModel("s4HanaModel");
-            s4Model.read('/ZTA_COSTSet',{
+            s4Model.read('/ZTA_COSTSet', {
                 filters: [
                     new sap.ui.model.Filter("TrdNum", sap.ui.model.FilterOperator.EQ, tradeNo)
                 ],
@@ -390,13 +484,14 @@ if (btnSave) btnSave.setVisible(false);
                     });
                     this.getView().getModel("costModel").setData(costDetails);
                     this.getView().getModel("costModel").refresh();
-                }.bind(this), 
-                error: function(err) {
+                }.bind(this),
+                error: function (err) {
                     oBusyDialog.close();
                     console.error("Error fetching project data: ", oError);
                 }.bind(this)
             });
         },
+
 
         onRowSelectionChange: function (oEvent) {
             var oTable = this.byId("costTableId");
@@ -446,7 +541,7 @@ if (btnSave) btnSave.setVisible(false);
                         var aData = oModel.getProperty("/") || [];
 
                         // Sort descending so we can safely remove from model
-                        aSelectedIndices.sort((a,b) => b-a);
+                        aSelectedIndices.sort((a, b) => b - a);
 
                         aSelectedIndices.forEach(function (iIndex) {
                             var oRow = aData[iIndex];
@@ -461,7 +556,7 @@ if (btnSave) btnSave.setVisible(false);
 
                                 // Example OData delete call
                                 this.getOwnerComponent().getModel("s4HanaModel").remove(
-                                    `/ZTA_COSTSet(TrdNum='${sTrdNum}',CstUuid='${sCstUuid}')`, 
+                                    `/ZTA_COSTSet(TrdNum='${sTrdNum}',CstUuid='${sCstUuid}')`,
                                     {
                                         success: function () {
                                             console.log("Deleted from backend:", sTrdNum, sCstUuid);
@@ -494,14 +589,14 @@ if (btnSave) btnSave.setVisible(false);
             }
             var aData = oModel.getProperty("/") || [];
             if (!Array.isArray(aData)) {
-                aData = []; 
+                aData = [];
             }
             if (aData.length > 0) {
                 // aData.forEach(function(oRow) {
                 //     oRow.isRowEditable = false;
                 // });
             }
-            var appModel = this.getView().getModel("appModel"); 
+            var appModel = this.getView().getModel("appModel");
             var tradeNumber = appModel.getProperty("/TrdNum");
             var oNewRow = {
                 "TrdNum": tradeNumber || "",
@@ -511,14 +606,15 @@ if (btnSave) btnSave.setVisible(false);
                 "CstEstfn": "",
                 "CstStas": "",
                 "CstPrctyp": "",
+                "CstTotval": "",
                 "CstExpcur": "",
                 "CstStcur": "",
                 "CstExrt": "",
                 "CstPaydt": "",
                 "CstComp": "",
-                "CstPrfor": "",    
+                "CstPrfor": "",
                 isRowEditable: true,
-                IsLocal: true 
+                IsLocal: true
             };
 
             aData.push(oNewRow);
@@ -529,26 +625,26 @@ if (btnSave) btnSave.setVisible(false);
 
         onToggleSave: function () {
             this.onPostCost("", "", false, "A")
-            .then(function (bSuccess) {
-                if (bSuccess) {
-                    // Success: do your post-save logic
-                    var oCostModel = this.getView().getModel("costModel");
-                    var aData = oCostModel.getProperty("/");
+                .then(function (bSuccess) {
+                    if (bSuccess) {
+                        // Success: do your post-save logic
+                        var oCostModel = this.getView().getModel("costModel");
+                        var aData = oCostModel.getProperty("/");
 
-                    aData.forEach(function (oRow) {
-                        oRow.isRowEditable = false;
-                        oRow.IsEditEnabled = false;
-                        oRow.IsLocal = false;
-                    });
-                    oCostModel.setProperty("/", aData);
+                        aData.forEach(function (oRow) {
+                            oRow.isRowEditable = false;
+                            oRow.IsEditEnabled = false;
+                            oRow.IsLocal = false;
+                        });
+                        oCostModel.setProperty("/", aData);
 
-                    this.byId("toggleSaveBtn").setEnabled(false);
-                    sap.m.MessageToast.show("Data saved successfully!");
-                }
-            }.bind(this))
-            .catch(function (oError) {
-                sap.m.MessageBox.error("Error while saving cost data: " + oError.message);
-            });
+                        this.byId("toggleSaveBtn").setEnabled(false);
+                        sap.m.MessageToast.show("Data saved successfully!");
+                    }
+                }.bind(this))
+                .catch(function (oError) {
+                    sap.m.MessageBox.error("Error while saving cost data: " + oError.message);
+                });
 
         },
 
@@ -586,6 +682,20 @@ if (btnSave) btnSave.setVisible(false);
                     return `${year}-${month}-${day}T00:00:00`;
                 }
 
+                // Case 3: yyyy-MM-dd (ISO date format from DatePicker valueFormat)
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                    return `${dateStr}T00:00:00`;
+                }
+
+                // Case 4: dd-MM-yyyy (display format)
+                if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+                    const parts = dateStr.split("-");
+                    const day = parts[0];
+                    const month = parts[1];
+                    const year = parts[2];
+                    return `${year}-${month}-${day}T00:00:00`;
+                }
+
                 // Default: try native Date parsing
                 const d = new Date(dateStr);
                 if (!isNaN(d)) {
@@ -608,12 +718,13 @@ if (btnSave) btnSave.setVisible(false);
                 var aPayload = aEditableData.map(function (item) {
                     return {
                         TrdNum: isNewReq ? tradeNo : item.TrdNum || "",
-                        CstUuid: item.CstUuid? item.CstUuid: "", //String(new Date().getTime())
+                        CstUuid: item.CstUuid ? item.CstUuid : "", //String(new Date().getTime())
                         TrdNumP: isNewReq ? trdNump : item.TrdNumP || "",
                         CstType: item.CstType || "",
                         CstEstfn: item.CstEstfn || "",
                         CstStas: item.CstStas ? item.CstStas : status,
                         CstPrctyp: item.CstPrctyp || "",
+                        CstTotval: item.CstTotval || "",
                         CstExpcur: item.CstExpcur || "",
                         CstStcur: item.CstStcur || "",
                         CstExrt: item.CstExrt || "",
@@ -641,7 +752,7 @@ if (btnSave) btnSave.setVisible(false);
                     groupId: "costBatch",
                     success: function (oData) {
                         oModel.setUseBatch(false); // Reset batch mode
-                        resolve(true); // ✅ All cost items saved successfully
+                        resolve(true); //  All cost items saved successfully
                     }.bind(this),
                     error: function (oError) {
                         oModel.setUseBatch(false); // Reset batch mode
@@ -694,15 +805,15 @@ if (btnSave) btnSave.setVisible(false);
 
             sap.m.MessageToast.show("Discharge Port " + nextPortNo + " added");
         },
-onExecutePOCreation: function () {
+        onExecutePOCreation: function () {
             MessageToast.show("Execute PO Creation clicked");
- 
+
             var oModel = this.getView().getModel();
             if (!oModel) {
                 MessageBox.error("OData model not found!");
                 return;
             }
- 
+
             // Example: Read PO-related data from backend
             oModel.read("/TransferFrom", {
                 success: function (oData) {
@@ -713,21 +824,21 @@ onExecutePOCreation: function () {
                 }
             });
         },
- 
-        onSubmitPOCreation: async function() {
-  try {
-    const oModel = this.getView().getModel();
-    const oBinding = oModel.bindList("/ZTA_TRADE_ENTRYSet");
-    await oBinding.create({
-      TRADE_NO: "5844",  // example
-      // ... other fields
-    });
-    sap.m.MessageToast.show("Trade Entry Created Successfully");
-  } catch (e) {
-    sap.m.MessageBox.error("Failed to create Trade Entry: " + e.message);
-  }
-}
-,
+
+        onSubmitPOCreation: async function () {
+            try {
+                const oModel = this.getView().getModel();
+                const oBinding = oModel.bindList("/ZTA_TRADE_ENTRYSet");
+                await oBinding.create({
+                    TRADE_NO: "5844",  // example
+                    // ... other fields
+                });
+                sap.m.MessageToast.show("Trade Entry Created Successfully");
+            } catch (e) {
+                sap.m.MessageBox.error("Failed to create Trade Entry: " + e.message);
+            }
+        }
+        ,
         onRemoveDischargePort: function (oEvent) {
             var oAppModel = this.getOwnerComponent().getModel("appModel");
             var aPorts = oAppModel.getProperty("/DischargePorts") || [];
@@ -848,7 +959,7 @@ onExecutePOCreation: function () {
             });
         },
 
-        onSubmitGRNCreation: async function() {
+        onSubmitGRNCreation: async function () {
             try {
                 const oModel = this.getView().getModel();
                 const oBinding = oModel.bindList("/ZTA_TRADE_ENTRYSet");
@@ -861,137 +972,23 @@ onExecutePOCreation: function () {
                 sap.m.MessageBox.error("Failed to create GRN Entry: " + e.message);
             }
         },
-         onPressEdit: function () {
-                  const oView = this.getView();
-                  const oAppModel = this.getOwnerComponent().getModel("appModel");
+        onPressEdit: function () {
+            const oView = this.getView();
+            const oAppModel = this.getOwnerComponent().getModel("appModel");
 
-                  // Make inputs editable
-                  oAppModel.setProperty("/IsEditable", true);
+            // Make inputs editable
+            oAppModel.setProperty("/IsEditable", true);
 
-                  // Toggle buttons
-                  var btnEdit = oView.byId("editBtn");
-                  var btnSave = oView.byId("saveBtn");
-                  if (btnEdit) btnEdit.setVisible(false);
-                  if (btnSave) btnSave.setVisible(true);
+            // Toggle buttons
+            var btnEdit = oView.byId("editBtn");
+            var btnSave = oView.byId("saveBtn");
+            if (btnEdit) btnEdit.setVisible(false);
+            if (btnSave) btnSave.setVisible(true);
 
-                  MessageToast.show("Edit mode enabled");
-            },
- onPressSave: async function (oEvent) {
-    var sAction = oEvent.getSource().data("action");
-    var appModel = this.getView().getModel("appModel");
-    var tradeData = appModel.getProperty("/TradeDetails");
-
-    // TradeDetails is an array, get the first element
-    if (Array.isArray(tradeData) && tradeData.length > 0) {
-        tradeData = tradeData[0];
-    }
-
-    var tradeNumber = appModel.getProperty("/TrdNum");
-    var tradeCreDate = appModel.getProperty("/TradeCreationDate");
-
-    // TrdNumP is always blank for filtering
-    var trdNump = "";
-    var status;
-    if (sAction == 'draft') {
-        status = "D";
-    } else if (sAction == 'save') {
-        status = 'A';
-    } else {
-        status = "A";
-    }
-
-    // Helper function for safe control value retrieval from dynamic discharge ports
-    var getControlValue = function(controlId, parentId, index) {
-        try {
-            var oParent = this.getView().byId(parentId);
-            if (!oParent) {
-                console.warn("Parent container not found:", parentId);
-                return "0.00";
-            }
-
-            var aItems = oParent.getItems();
-            if (!aItems || !aItems[index]) {
-                console.warn("Item at index", index, "not found in", parentId);
-                return "0.00";
-            }
-
-            var findControl = function(oContainer, sId) {
-                if (oContainer.getId && oContainer.getId().indexOf(sId) > -1) {
-                    return oContainer;
-                }
-                if (oContainer.getItems) {
-                    var aChildItems = oContainer.getItems();
-                    for (var i = 0; i < aChildItems.length; i++) {
-                        var result = findControl(aChildItems[i], sId);
-                        if (result) return result;
-                    }
-                }
-                if (oContainer.getContent) {
-                    var aContent = oContainer.getContent();
-                    for (var j = 0; j < aContent.length; j++) {
-                        var result = findControl(aContent[j], sId);
-                        if (result) return result;
-                    }
-                }
-                return null;
-            };
-
-            var oControl = findControl(aItems[index], controlId);
-
-            if (oControl) {
-                if (oControl.getValue) {
-                    return oControl.getValue() || "0.00";
-                }
-                if (oControl.getSelectedKey) {
-                    return oControl.getSelectedKey() || "";
-                }
-                if (oControl.getDateValue) {
-                    return oControl.getDateValue() || null;
-                }
-            } else {
-                console.warn("Control not found:", controlId, "in parent:", parentId, "at index:", index);
-            }
-            return "0.00";
-        } catch (e) {
-            console.error("Error getting control value for", controlId, e);
-            return "0.00";
-        }
-    }.bind(this);
-
-    // --- Updated Save Logic using costModel ---
-    try {
-        var oModel = this.getView().getModel("costModel");
-        var oBinding = oModel.bindList("/ZTA_TRADE_ENTRYSet");
-
-        var oPayload = {
-            TradeNo: tradeNumber,
-            Commodity: tradeData.Commodity,
-            Quantity: tradeData.Quantity,
-            GRN: tradeData.GRN,
-            CostCenter: tradeData.CostCenter || "" // cost-specific field
-            // Include any other fields from tradeData if needed
-        };
-
-        await oBinding.create(oPayload, {
-            success: function (oData) {
-                sap.m.MessageToast.show("Entry saved successfully in Cost Model!");
-                // Keep any additional success logic here
-            },
-            error: function (oError) {
-                sap.m.MessageBox.error("Error saving entry: " + oError.message);
-                // Keep any additional error handling here
-            }
-        });
-    } catch (err) {
-        sap.m.MessageBox.error("Unexpected error: " + err.message);
-    }
-    // --- End of costModel Save Logic ---
-},
-
-       
-
-        onPressSave: function (oEvent) {
-            var sAction = oEvent.getSource().data("action")
+            MessageToast.show("Edit mode enabled");
+        },
+        onPressSave: async function (oEvent) {
+            var sAction = oEvent.getSource().data("action");
             var appModel = this.getView().getModel("appModel");
             var tradeData = appModel.getProperty("/TradeDetails");
 
@@ -1011,74 +1008,66 @@ onExecutePOCreation: function () {
             } else if (sAction == 'save') {
                 status = 'A';
             } else {
-                status = "A"
+                status = "A";
             }
-          
-            // Helper function for safe control value retrieval from dynamic discharge ports
-            var getControlValue = function(controlId, parentId, index) {
-                try {
-                    // Build the full control ID dynamically
-                    var oParent = this.getView().byId(parentId);
-                    if (!oParent) {
-                        console.warn("Parent container not found:", parentId);
-                        return "0.00";
+
+            // --- Updated Save Logic using costModel ---
+            try {
+                var oModel = this.getView().getModel("costModel");
+                var oBinding = oModel.bindList("/ZTA_TRADE_ENTRYSet");
+
+                var oPayload = {
+                    TradeNo: tradeNumber,
+                    Commodity: tradeData.Commodity,
+                    Quantity: tradeData.Quantity,
+                    GRN: tradeData.GRN,
+                    CostCenter: tradeData.CostCenter || "" // cost-specific field
+                    // Include any other fields from tradeData if needed
+                };
+
+                await oBinding.create(oPayload, {
+                    success: function (oData) {
+                        sap.m.MessageToast.show("Entry saved successfully in Cost Model!");
+                        // Keep any additional success logic here
+                    },
+                    error: function (oError) {
+                        sap.m.MessageBox.error("Error saving entry: " + oError.message);
+                        // Keep any additional error handling here
                     }
+                });
+            } catch (err) {
+                sap.m.MessageBox.error("Unexpected error: " + err.message);
+            }
+            // --- End of costModel Save Logic ---
+        },
 
-                    // Get the items in the parent container
-                    var aItems = oParent.getItems();
-                    if (!aItems || !aItems[index]) {
-                        console.warn("Item at index", index, "not found in", parentId);
-                        return "0.00";
-                    }
 
-                    // Find the control within the item by searching recursively
-                    var findControl = function(oContainer, sId) {
-                        if (oContainer.getId && oContainer.getId().indexOf(sId) > -1) {
-                            return oContainer;
-                        }
-                        if (oContainer.getItems) {
-                            var aChildItems = oContainer.getItems();
-                            for (var i = 0; i < aChildItems.length; i++) {
-                                var result = findControl(aChildItems[i], sId);
-                                if (result) return result;
-                            }
-                        }
-                        if (oContainer.getContent) {
-                            var aContent = oContainer.getContent();
-                            for (var j = 0; j < aContent.length; j++) {
-                                var result = findControl(aContent[j], sId);
-                                if (result) return result;
-                            }
-                        }
-                        return null;
-                    };
 
-                    var oControl = findControl(aItems[index], controlId);
+        onPressDraft: function (oEvent) {
+            // Call the common save function with status "D" for Draft
+            this._saveTradeEntry("D");
+        },
 
-                    if (oControl) {
-                        // Handle Input controls
-                        if (oControl.getValue) {
-                            return oControl.getValue() || "0.00";
-                        }
-                        // Handle ComboBox/Select controls
-                        if (oControl.getSelectedKey) {
-                            return oControl.getSelectedKey() || "";
-                        }
-                        // Handle DatePicker controls
-                        if (oControl.getDateValue) {
-                            return oControl.getDateValue() || null;
-                        }
-                    } else {
-                        console.warn("Control not found:", controlId, "in parent:", parentId, "at index:", index);
-                    }
-                    return "0.00";
-                } catch (e) {
-                    console.error("Error getting control value for", controlId, e);
-                    return "0.00";
-                }
-            }.bind(this);
+        onPressSave: function (oEvent) {
+            // Call the common save function with status "A" for Active/Approved
+            this._saveTradeEntry("A");
+        },
 
-           
+        _saveTradeEntry: function (status) {
+            var appModel = this.getView().getModel("appModel");
+            var tradeData = appModel.getProperty("/TradeDetails");
+
+            // TradeDetails is an array, get the first element
+            if (Array.isArray(tradeData) && tradeData.length > 0) {
+                tradeData = tradeData[0];
+            }
+
+            var tradeNumber = appModel.getProperty("/TrdNum");
+            var tradeCreDate = appModel.getProperty("/TradeCreationDate");
+
+            // TrdNumP is always blank for filtering
+            var trdNump = "";
+
             var oModel = this.getOwnerComponent().getModel(); // OData V2 model
 
             function convertToISO(dateStr) {
@@ -1114,6 +1103,20 @@ onExecutePOCreation: function () {
                     return `${year}-${month}-${day}T00:00:00`;
                 }
 
+                // Case 3: yyyy-MM-dd (ISO date format from DatePicker valueFormat)
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                    return `${dateStr}T00:00:00`;
+                }
+
+                // Case 4: dd-MM-yyyy (display format)
+                if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+                    const parts = dateStr.split("-");
+                    const day = parts[0];
+                    const month = parts[1];
+                    const year = parts[2];
+                    return `${year}-${month}-${day}T00:00:00`;
+                }
+
                 // Default: try native Date parsing
                 const d = new Date(dateStr);
                 if (!isNaN(d)) {
@@ -1122,80 +1125,247 @@ onExecutePOCreation: function () {
 
                 return null; // invalid date
             }
-            // tradeData.0.Dp1Qtybbl
+
+            // Calculate Payment Due Date based on BL Date and payment terms
+            var sDueDate = null;
+            var sBlDateInput = tradeData.BlDate; // Read from model data directly
+
+            console.log("=== CHECKING PAYMENT DUE DATE REQUIREMENTS ===");
+            console.log("BlDate from model:", sBlDateInput, "Type:", typeof sBlDateInput);
+            console.log("TrdPtndays:", tradeData.TrdPtndays, "Type:", typeof tradeData.TrdPtndays);
+            console.log("TrnPtndaysc:", tradeData.TrnPtndaysc, "Type:", typeof tradeData.TrnPtndaysc);
+            console.log("Condition met?", !!(sBlDateInput && tradeData.TrdPtndays && tradeData.TrnPtndaysc));
+
+            if (sBlDateInput && tradeData.TrdPtndays && tradeData.TrnPtndaysc) {
+                var iFirstDays = parseInt(tradeData.TrdPtndays, 10) || 0;
+                var iSecondDays = parseInt(tradeData.TrnPtndaysc, 10) || 0;
+                var iDays = iFirstDays + iSecondDays - 1;
+
+                // Convert BlDate string to Date object
+                var sStartDate = sBlDateInput;
+                var oStartDate = new Date(sStartDate);
+                console.log("Date object created:", oStartDate, "Is valid?", !isNaN(oStartDate));
+
+                if (!isNaN(oStartDate)) {
+                    oStartDate.setDate(oStartDate.getDate() + iDays);
+                    sDueDate = oStartDate.toISOString().split("T")[0];
+
+                    console.log("=== PAYMENT DUE DATE CALCULATION ===");
+                    console.log("BL Date (from model data):", sStartDate);
+                    console.log("TrdPtndays (iFirstDays):", iFirstDays);
+                    console.log("TrnPtndaysc (iSecondDays):", iSecondDays);
+                    console.log("Total Days (iFirstDays + iSecondDays - 1):", iDays);
+                    console.log("Calculated Due Date (before convertToISO):", sDueDate);
+                }
+            } else {
+                console.log("Payment due date calculation SKIPPED - missing required fields");
+            }
+
+            // Helper functions for formatting
+            function formatDecimals(value) {
+                // Convert empty or undefined to 0
+                var num = parseFloat(value);
+                if (isNaN(num)) {
+                    num = 0;
+                }
+                // Return value
+                return num.toFixed(3);
+            }
+
+            function formatToFiveDecimals(value) {
+                // Convert empty or undefined to 0
+                var num = parseFloat(value);
+                if (isNaN(num)) {
+                    num = 0;
+                }
+                // Return value with exactly 5 decimal places
+                return num.toFixed(5);
+            }
+
+            var that = this;
+            function getCeilValue(sID) {
+                var oCheckBox = that.getView().byId(sID);
+                if (!oCheckBox || typeof oCheckBox.getSelected !== "function") {
+                    return "";
+                }
+                var bSelected = oCheckBox.getSelected(); // returns true if checked, false if unchecked
+
+                // Convert to 'X' or ''
+                var sValue = bSelected ? "X" : "";
+                return sValue;
+            }
+
+            // tradeData.0.Dp1Qtabbl
             var oSavePayload = {
+                // TradeEntry 
                 "TrdNum": tradeNumber || "",
                 "TrdNumP": trdNump,
                 "TrdStat": status,
-                // Fields visible in Transfer view - editable only
-                // "TrdExedt": convertToISO(tradeData.TrdExedt) || null, // Read-only
-                // "TrdTrdr": tradeData.TrdTrdr || "", // Read-only
-                // "TrdCmdty": tradeData.TrdCmdty || "", // Read-only
-                // "TrdCnpty": tradeData.TrdCnpty || "", // Read-only
-                // "TrdLdprt": tradeData.TrdLdprt || "", // Read-only
-                "TrdWsdt": convertToISO(tradeData.TrdWsdt) || null,
-                "TrdWedt": convertToISO(tradeData.TrdWedt) || null,
+                
+                "RefTrdnum": tradeData.RefTrdnum,
+                "TrdStat": tradeData.TrdStat,
+                "TrdMtype": tradeData.TrdMtype,
+                "TrdBysl": tradeData.TrdBysl || "",
+                "TrdExedt": tradeData.TrdExedt, // Read-only
+                "TrdCrdt": tradeData.TrdCrdt,
+                "TrdCnpty": tradeData.TrdCnpty || "", // Read-only
+                 "TrdIntcmp": tradeData.TrdIntcmp || "",
+                "TrdTrdr": tradeData.TrdTrdr || "",  // Read-only
+                "TrdCmdty": tradeData.TrdCmdty || "", // Read-only
+                "TrdPrdtyp": tradeData.TrdPrdtyp || "",
+                "TrdApicn": tradeData.TrdApicn || "0.00",
+                "TrdApiup": formatDecimals(tradeData.TrdApiup),
+                "TrdApilw": formatDecimals(tradeData.TrdApilw),
+                "TrdApidsl": formatToFiveDecimals(tradeData.TrdApidsl),
+                "TrdApidsf": formatToFiveDecimals(tradeData.TrdApidsf),
+                "TrdQtymn": tradeData.TrdQtymn || "0.00",
+                "TrdQtymin": tradeData.TrdQtymin || "0.00",
+                "TrdQtymax": tradeData.TrdQtymax || "0.00",
+                "TrdDclby": tradeData.TrdDclby || "",
+                "TrdDcldt": convertToISO(tradeData.TrdDcldt) || null,
+                "TrdBlpct": tradeData.TrdBlpct || "0.00",
+                "TrdAbpct": tradeData.TrdAbpct || "0.00",
+                "TrdOptn": tradeData.TrdOptn || "",
+                "TrdDlvtrm": tradeData.TrdDlvtrm || "", // Read-only
+                "TrdLdprt": tradeData.TrdLdprt || "", // Read-only
+                "TrdDsprt": tradeData.TrdDsprt || "", // Read-only
+                "TrdCntry": tradeData.TrdCntry || "",
+                "TrdDlvsdt": convertToISO(tradeData.TrdDlvsdt) || null,
+                "TrdDlvedt": convertToISO(tradeData.TrdDlvedt) || null,
+                "TrdPrctyp": tradeData.TrdPrctyp || "",
+                "TrdForm": tradeData.TrdForm || "",
+                "TrdPrcFNam": this.getView().byId("formulacb") ? this.getView().byId("formulacb").getValue() : tradeData.TrdPrcFNam || "",
+                "TrdOthcst": Array.isArray(tradeData.TrdOthcst)
+                            ? tradeData.TrdOthcst.join(",")
+                            : tradeData.TrdOthcst || "",
+                "TrdPrdisc": formatDecimals(tradeData.TrdPrdisc),
+                "TrdPrduom": tradeData.TrdPrduom || "",
+                "TrdPrdiscr": tradeData.TrdPrdiscr || "",
+                "TrdOpdiscuom": tradeData.TrdOpdiscuom,
+                "TrdOpdisccr": tradeData.TrdOpdisccr,
+                "TrdOspdrp":tradeData.TrdOspdrp || "",
+                "TrdOpdisc": formatDecimals(tradeData.TrdOpdisc),
+                "TrdSchd": tradeData.TrdSchd || "",
+                "TrdPrrul": tradeData.TrdPrrul || "",
+                "TrdPrcsdt": convertToISO(tradeData.TrdPrcsdt) || null,
+                "TrdPrcedt": convertToISO(tradeData.TrdPrcedt) || null,
+                "TrdPrctm": tradeData.TrdPrctm || "",
+                "TrdMtmcv": tradeData.TrdMtmcv || "",
+                "TrdMtmfc": tradeData.TrdMtmfc || "",
+                "TrdMtmcr": tradeData.TrdMtmcr || "",
+                "TrdPpstdt": convertToISO(tradeData.TrdPpstdt) || null,
+                "TrdPpendt": convertToISO(tradeData.TrdPpendt) || null,
+                "TrdQty": tradeData.TrdQty || "0.00", // Read-only
+                // "TrdValusd": tradeData.TrdValusd || "0.00",
+                "TrdStcur": tradeData.TrdStcur || "",
+                // "TrdStuom": tradeData.TrdStuom || "",// Commented as it is not required in the ui
+                "TrdPaytrm": tradeData.TrdPaytrm || "",
+                "TrdPaydt": convertToISO(tradeData.TrdPaydt) || null,
+                "TrdPayasg": tradeData.TrdPayasg || "",
+                "TrdAlaw": tradeData.TrdAlaw || "",
+                "TrdGtc": tradeData.TrdGtc || "",
+                "TrdCrtrm": tradeData.TrdCrtrm || "",
+                "TrdTotval": tradeData.TrdTotval || "0.00",
+                "TrdLc": tradeData.TrdLc || "",
+                "TrdLcedt": convertToISO(tradeData.TrdLcedt) || null,
+                "TrdLcdays": tradeData.TrdLcdays || "0",
+                "TrdBg": tradeData.TrdBg || "",
+                "TrdBgedt": convertToISO(tradeData.TrdBgedt) || null,
+                "TrdBgdays": tradeData.TrdBgdays || "0.00",
+                "TrdOpcrd": tradeData.TrdOpcrd || "0.00",
+                "TrdQtymuom": tradeData.TrdQtymuom || "",
+                "TrdTvlcur": tradeData.TrdTvlcur || "",
+                 "TentDate": convertToISO(tradeData.TentDate) || null,
+                "NdysBefore": tradeData.NdysBefore || "0.00",
+                "NdaysAfter": tradeData.NdaysAfter || "0.00",
+                "TrdCnpty2": tradeData.TrdCnpty2 || "",
+                "LcPaytrm": tradeData.LcPaytrm || "",
+                "BgPaytrm": tradeData.BgPaytrm || "",
+                "Pymntdays": tradeData.Pymntdays || "",
+                "HolidayPaymnt": tradeData.HolidayPaymnt || "",
+                "HolidayPrice": tradeData.HolidayPrice || "",
+                 "PimsCode":  tradeData.PimsCode || "", // Commented as it is not required in the ui
+                "TrdSpwknd": tradeData.TrdSpwknd || "",
+                "TrdPtndays": tradeData.TrdPtndays || "0",
+                "TrnPtndaysc" : tradeData.TrnPtndaysc || "0",
+                "TrdDffval": tradeData.TrdDffval || "0.00",
+                "TrdFinpdt": convertToISO(tradeData.TrdFinpdt) || null,
+                "DateRound": tradeData.DateRound || "0",
+                "CurveRound": tradeData.CurveRound || "0",
+                "AverageRound": tradeData.AverageRound || "0",
+                "TotalRound": tradeData.TotalRound || "0",
+                "DateCeil": getCeilValue(tradeData.DateCeil),
+                "CurveCeil": getCeilValue(tradeData.CurveCeil),
+                "AverageCeil": getCeilValue(tradeData.AverageCeil),
+                "TotalCeil": getCeilValue(tradeData.TotalCeil),
+                "Reference": tradeData.Reference || "",
+                
+                //Operation Payload
+                // Vehicle field
+                "TrdVeh": tradeData.TrdVeh || "",
+
+                // Date fields - use getValue() to get formatted string value
+                "TrdWsdt": convertToISO(this.byId("windowStartDate") && this.byId("windowStartDate").getValue() ? this.byId("windowStartDate").getValue() : tradeData.TrdWsdt) || null,
+                "TrdWedt": convertToISO(this.byId("windowEndDate") && this.byId("windowEndDate").getValue() ? this.byId("windowEndDate").getValue() : tradeData.TrdWedt) || null,
+                "NorDate": convertToISO(this.byId("norDate") && this.byId("norDate").getValue() ? this.byId("norDate").getValue() : tradeData.NorDate) || null,
+                "DschDate": convertToISO(this.byId("dschDate") && this.byId("dschDate").getValue() ? this.byId("dschDate").getValue() : tradeData.DschDate) || null,
+                "BlDate": convertToISO(this.byId("blDate") && this.byId("blDate").getValue() ? this.byId("blDate").getValue() : tradeData.BlDate) || null,
+
+                // Payment due dates - calculated from BL Date and payment terms
+                // "TrdFinpdt": convertToISO(tradeData.TrdFinpdt) || null, //sDueDate ? convertToISO(sDueDate) : null,
+                // "TrdPaydt": sDueDate ? convertToISO(sDueDate) : null,
+
                 // "TrdDlvtrm": tradeData.TrdDlvtrm || "", // Read-only
                 // "TrdQty": tradeData.TrdQty || "0.00", // Read-only
                 // "TrdDsprt": tradeData.TrdDsprt || "", // Read-only
-                // Discharge Port 1 fields - dynamically generated controls
-                "Dp1Qtybbl": getControlValue("discPortDp1", "dischargePortsVBox", 0),
-                "Dp1Qtymt": getControlValue("discPortQtMt2", "dischargePortsVBox", 0),
-                "Dp1Tmp": getControlValue("discPortTmp", "dischargePortsVBox", 0),
-                "Dp1Api": getControlValue("discPortApi", "dischargePortsVBox", 0),
+
+                // Load Port fields - static controls
+                "Lp1Qtybbl": this.byId("loadPortQtyBbl") ? this.byId("loadPortQtyBbl").getValue() : tradeData.Lp1Qtybbl || "0.00",
+                "Lp1Qtymt": this.byId("loadPortQtyMt") ? this.byId("loadPortQtyMt").getValue() : tradeData.Lp1Qtymt || "0.00",
+                "Lp1Tmp": this.byId("loadPortTmp") ? this.byId("loadPortTmp").getValue() : tradeData.Lp1Tmp || "0.00",
+                "Lp1Api": this.byId("loadPortApi") ? this.byId("loadPortApi").getValue() : tradeData.Lp1Api || "0.00",
+                "Lp1Apiuom": tradeData.Lp1Apiuom || "",
+                "Lp1Trndt": convertToISO(this.byId("loadPortTrndt") && this.byId("loadPortTrndt").getValue() ? this.byId("loadPortTrndt").getValue() : tradeData.Lp1Trndt) || null,
+                "Lp1Msc": this.byId("loadPortMsc") ? this.byId("loadPortMsc").getValue() : tradeData.Lp1Msc || "0.00",
+                "Lp1Mscuom": this.byId("loadPortMscuom") ? this.byId("loadPortMscuom").getSelectedKey() : tradeData.Lp1Mscuom || "",
+
+                // Discharge Port fields - static controls
+                "Dp1Qtybbl": this.byId("discPortQtyBbl") ? this.byId("discPortQtyBbl").getValue() : tradeData.Dp1Qtybbl || "0.00",
+                "Dp1Qtymt": this.byId("discPortQtyMt") ? this.byId("discPortQtyMt").getValue() : tradeData.Dp1Qtymt || "0.00",
+                "Dp1Tmp": this.byId("discPortTmp") ? this.byId("discPortTmp").getValue() : tradeData.Dp1Tmp || "0.00",
+                "Dp1Api": this.byId("discPortApi") ? this.byId("discPortApi").getValue() : tradeData.Dp1Api || "0.00",
                 "Dp1Apiuom": tradeData.Dp1Apiuom || "",
-                "Dp1Trndt": convertToISO(getControlValue("discPortTrndt", "dischargePortsVBox", 0)) || null,
-                "Dp1Msc": getControlValue("discPortMsc", "dischargePortsVBox", 0),
-                "Dp1Mscuom": getControlValue("discPortMscuom", "dischargePortsVBox", 0),
-                // Discharge Port 2 fields - dynamically generated controls
-                "Dp2Qtybbl": getControlValue("discPortDp1", "dischargePortsVBox", 1),
-                "Dp2Qtymt": getControlValue("discPortQtMt2", "dischargePortsVBox", 1),
-                "Dp2Tmp": getControlValue("discPortTmp", "dischargePortsVBox", 1),
-                "Dp2Api": getControlValue("discPortApi", "dischargePortsVBox", 1),
-                "Dp2Apiuom": tradeData.Dp2Apiuom || "",
-                "Dp2Trndt": convertToISO(getControlValue("discPortTrndt", "dischargePortsVBox", 1)) || null,
-                "Dp2Msc": getControlValue("discPortMsc", "dischargePortsVBox", 1),
-                "Dp2Mscuom": getControlValue("discPortMscuom", "dischargePortsVBox", 1),
-                // Discharge Port 3 fields - dynamically generated controls
-                "Dp3Qtybbl": getControlValue("discPortDp1", "dischargePortsVBox", 2),
-                "Dp3Qtymt": getControlValue("discPortQtMt2", "dischargePortsVBox", 2),
-                "Dp3Tmp": getControlValue("discPortTmp", "dischargePortsVBox", 2),
-                "Dp3Api": getControlValue("discPortApi", "dischargePortsVBox", 2),
-                "Dp3Apiuom": tradeData.Dp3Apiuom || "",
-                "Dp3Trndt": convertToISO(getControlValue("discPortTrndt", "dischargePortsVBox", 2)) || null,
-                "Dp3Msc": getControlValue("discPortMsc", "dischargePortsVBox", 2),
-                "Dp3Mscuom": getControlValue("discPortMscuom", "dischargePortsVBox", 2),
-                // GRN Discharge Port 1 fields - dynamically generated controls
-                "GrDp1Qtybbl": getControlValue("discPortDp1GRN", "dischargePortsVBoxGRN", 0),
-                "GrDp1Qtymt": getControlValue("discPortQtMt2GRN", "dischargePortsVBoxGRN", 0),
-                "GrDp1Tmp": getControlValue("discPortTmpGRN", "dischargePortsVBoxGRN", 0),
-                "GrDp1Api": getControlValue("discPortApiGRN", "dischargePortsVBoxGRN", 0),
-                "GrDp1Apiuom": tradeData.GrDp1Apiuom || "",
-                "GrDp1Trndt": convertToISO(getControlValue("discPortTrndtGRN", "dischargePortsVBoxGRN", 0)) || null,
-                "GrDp1Msc": getControlValue("discPortMscGRN", "dischargePortsVBoxGRN", 0),
-                "GrDp1Mscuom": getControlValue("discPortMscuomGRN", "dischargePortsVBoxGRN", 0),
-                // GRN Discharge Port 2 fields - dynamically generated controls
-                "GrDp2Qtybbl": getControlValue("discPortDp1GRN", "dischargePortsVBoxGRN", 1),
-                "GrDp2Qtymt": getControlValue("discPortQtMt2GRN", "dischargePortsVBoxGRN", 1),
-                "GrDp2Tmp": getControlValue("discPortTmpGRN", "dischargePortsVBoxGRN", 1),
-                "GrDp2Api": getControlValue("discPortApiGRN", "dischargePortsVBoxGRN", 1),
-                "GrDp2Apiuom": tradeData.GrDp2Apiuom || "",
-                "GrDp2Trndt": convertToISO(getControlValue("discPortTrndtGRN", "dischargePortsVBoxGRN", 1)) || null,
-                "GrDp2Msc": getControlValue("discPortMscGRN", "dischargePortsVBoxGRN", 1),
-                "GrDp2Mscuom": getControlValue("discPortMscuomGRN", "dischargePortsVBoxGRN", 1),
-                // GRN Discharge Port 3 fields - dynamically generated controls
-                "GrDp3Qtybbl": getControlValue("discPortDp1GRN", "dischargePortsVBoxGRN", 2),
-                "GrDp3Qtymt": getControlValue("discPortQtMt2GRN", "dischargePortsVBoxGRN", 2),
-                "GrDp3Tmp": getControlValue("discPortTmpGRN", "dischargePortsVBoxGRN", 2),
-                "GrDp3Api": getControlValue("discPortApiGRN", "dischargePortsVBoxGRN", 2),
-                "GrDp3Apiuom": tradeData.GrDp3Apiuom || "",
-                "GrDp3Trndt": convertToISO(getControlValue("discPortTrndtGRN", "dischargePortsVBoxGRN", 2)) || null,
-                "GrDp3Msc": getControlValue("discPortMscGRN", "dischargePortsVBoxGRN", 2),
-                "GrDp3Mscuom": getControlValue("discPortMscuomGRN", "dischargePortsVBoxGRN", 2)
+                "Dp1Trndt": convertToISO(this.byId("discPortTrndt") && this.byId("discPortTrndt").getValue() ? this.byId("discPortTrndt").getValue() : tradeData.Dp1Trndt) || null,
+                "Dp1Msc": this.byId("discPortMsc") ? this.byId("discPortMsc").getValue() : tradeData.Dp1Msc || "0.00",
+                "Dp1Mscuom": this.byId("discPortMscuom") ? this.byId("discPortMscuom").getSelectedKey() : tradeData.Dp1Mscuom || "",
                
+                // GRN Discharge Port fields - get from view controls or fallback to data
+                "GrDp1Qtybbl": this.byId("grnQtyBbl") ? this.byId("grnQtyBbl").getValue() : tradeData.GrDp1Qtybbl || "0.00",
+                 "GrDp1Qtymt": this.byId("grnQtyMt") ? this.byId("grnQtyMt").getValue() : tradeData.GrDp1Qtymt || "0.00",
+                  "GrDp1Tmp": this.byId("grnTmp") ? this.byId("grnTmp").getValue() : tradeData.GrDp1Tmp || "0.00",
+                  "GrDp1Api": this.byId("grnApi") ? this.byId("grnApi").getValue() : tradeData.GrDp1Api || "0.00",
+                  "GrDp1Trndt": convertToISO(this.byId("grnTrndt") && this.byId("grnTrndt").getValue() ? this.byId("grnTrndt").getValue() : tradeData.GrDp1Trndt) || null,
+
+                  //Chartering Entry Payload
+                    // Chartering
+                "TrdLoc": tradeData.TrdLoc || "",
+                "TrdDemday": tradeData.TrdDemday || "0.00",
+                "TrdDemrat": tradeData.TrdDemrat || "0.00",
+                "TrdDemuom": tradeData.TrdDemuom || "",
+                "CstType": tradeData.CstType || "",
+                "CstUom": tradeData.CstUom || "",
+                "CstCur": tradeData.CstCur || "",
+                "CstCurval": tradeData.CstCurval || "0.00",
+                "CstEstfn": tradeData.CstEstfn || ""      
+              
+
             }
             // this.postS4hana(oSavePayload);
             console.log("=== SAVE PAYLOAD ===", oSavePayload);
+            console.log("=== FINAL PAYLOAD FOR PAYMENT DATES ===");
+            console.log("sDueDate (raw):", sDueDate);
+            console.log("TrdFinpdt (after convertToISO):", oSavePayload.TrdFinpdt);
+            console.log("TrdPaydt (after convertToISO):", oSavePayload.TrdPaydt);
             var oModel = this.getOwnerComponent().getModel("s4HanaModel");
 
             if (!oModel) {
@@ -1238,15 +1408,14 @@ onExecutePOCreation: function () {
                                 success: function (oData) {
                                     console.log("=== UPDATE SUCCESS ===", oData);
                                     sap.ui.core.BusyIndicator.hide();
-                                    sap.m.MessageBox.success("Trade Entry " + tradeNumber + " successfully updated!");
+
+                                    var statusMessage = status === "D" ? "Trade Entry " + tradeNumber + " saved as Draft!" : "Trade Entry " + tradeNumber + " successfully updated!";
+                                    sap.m.MessageBox.success(statusMessage);
+
                                     const oAppModel = this.getOwnerComponent().getModel("appModel");
-    oAppModel.setProperty("/IsEditable", false);
-
-var btnEdit = this.getView().byId("editBtn") || this.getView().byId("btnEdit");
-var btnSave = this.getView().byId("saveBtn") || this.getView().byId("btnSave");
-
-if (btnEdit) btnEdit.setVisible(true);
-if (btnSave) btnSave.setVisible(false);
+                                    oAppModel.setProperty("/IsEditable", false);
+                                    oAppModel.setProperty("/IsEditBtnVisible", true);
+                                    oAppModel.setProperty("/IsSaveBtnVisible", false);
 
                                 }.bind(this),
                                 error: function (oError) {
@@ -1315,6 +1484,40 @@ if (btnSave) btnSave.setVisible(false);
             }
 
         },
+
+        /**
+         * Sanitize invalid dates in the received data
+         * Converts invalid date formats like '00.00.0000' to null
+         */
+        _sanitizeDates: function(oData) {
+            if (!oData) return;
+
+            // List of date fields that might have invalid values
+            const aDateFields = [
+                'TrdExedt', 'TrdCrdt', 'TrdDcldt', 'TrdDlvsdt', 'TrdDlvedt',
+                'TrdPrcsdt', 'TrdPrcedt', 'TrdPpstdt', 'TrdPpendt', 'TrdPaydt',
+                'TrdLcedt', 'TrdBgedt', 'TentDate', 'TrdFinpdt',
+                'TrdWsdt', 'TrdWedt', 'NorDate', 'DschDate', 'BlDate',
+                'Lp1Trndt', 'Dp1Trndt', 'GrDp1Trndt'
+            ];
+
+            aDateFields.forEach(function(sField) {
+                if (oData[sField]) {
+                    const sDateValue = String(oData[sField]);
+                    // Check for invalid date patterns
+                    if (/^0+$/.test(sDateValue) ||
+                        sDateValue === '00000000' ||
+                        sDateValue === '0000-00-00' ||
+                        sDateValue === '00.00.0000' ||
+                        sDateValue === '00/00/0000' ||
+                        sDateValue.includes('0000') ||
+                        sDateValue.trim() === '') {
+                        oData[sField] = null;
+                        console.log(`Sanitized invalid date field: ${sField} = ${sDateValue} -> null`);
+                    }
+                }
+            });
+        }
 
     });
 });
