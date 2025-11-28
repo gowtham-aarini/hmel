@@ -94,7 +94,7 @@
         "dataSource": "s4HanaService",
         "preload": true,
         "settings": {
-          "useBatch": false,
+          "useBatch": true,
           "defaultBindingMode": "TwoWay",
           "defaultCountMode": "Inline"
         }

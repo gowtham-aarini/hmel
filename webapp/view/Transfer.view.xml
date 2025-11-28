@@ -25,6 +25,7 @@
                     selectedKey="{appModel>/TrdNum}"
                     items="{
                         path: 's4HanaModel>/ZTA_TRADE_ENTRYSet',
+                        length: 99999,
                         filters: [
                             {
                                 path: 'TrdNumP',
@@ -61,7 +62,7 @@
         text="Draft"
         icon="sap-icon://save"
         press=".onPressDraft"
-        type="Default"
+        type="Emphasized"
         visible="{appModel>/IsSaveBtnVisible}"
     />
     <Button
@@ -70,61 +71,56 @@
         text="Save"
         icon="sap-icon://save"
         press=".onPressSave"
-        type="Accept"
+        type="Emphasized"
         visible="{appModel>/IsSaveBtnVisible}"
     />
 </Toolbar>
             </HBox>
 
-            <!-- ===== START: Top Trade Details Table (bound to appModel TradeDetails as object property binding) ===== -->
-            <ui:Table
-                id="transferTableId"
+              <!-- ===== START: Top Trade Details Table (bound to appModel TradeDetails as object property binding) ===== -->
+            <!-- <Title text="Trade Details" level="H2" class="sapUiMediumMarginTop sapUiSmallMarginBottom" /> -->
+
+<ui:Table
+                id="transferTableId1"
                 rows="{path:'appModel>/TradeDetails'}"
+                class="sapUiLargeMarginBottom"
                 selectionMode="Single"
-            >
+            > <ui:extension>
+    <OverflowToolbar>
+        <Title text="Trade Details" class="tableTitleShift" level="H3"/>
+    </OverflowToolbar>
+</ui:extension>
+
                 <ui:rowMode>
                     <rowmodes:Fixed rowCount="1"/>
                 </ui:rowMode>
                 <ui:columns>
-                    <ui:Column width="8rem">
-                    <Label text="Vessel" />
-                    <ui:template>   <ComboBox
-                                    width="100%"
-                                    selectedKey="{appModel>TrdVeh}"
-                                    items="{path: 's4HanaModel>/ZTA_VEHICLESet', sorter: {path: 's4HanaModel>TrdVehD'}}" enabled="{appModel>/IsEditable}"
-                                >
-                                    <core:Item
-                                        key="{s4HanaModel>TrdVeh}"
-                                        text="{s4HanaModel>TrdVehD}"
-                                    />
-                                </ComboBox>
-                     
-                        </ui:template>
-                    </ui:Column>
-
-                    <ui:Column width="8rem">
-                        <Label text="Vessel IMO" />
+                     <ui:Column width="10rem" resizable="false">
+                        <Label text="Counterparty Name" />
                         <ui:template>
-                            <VBox>
-                                <!-- <Text text="Key: {appModel>TrdTrdr}" class="sapUiTinyMarginBottom"/> -->
-                                <ComboBox
-                                    width="100%"
-                                    selectedKey="{appModel>TrdVeh}"
-                                    items="{path: 's4HanaModel>/ZTA_VEHICLESet', sorter: {path: 's4HanaModel>TrdVehD'}}" enabled="{appModel>/IsEditable}"
-                                >
-                                    <core:Item
-                                        key="{s4HanaModel>TrdVeh}"
-                                        text="{s4HanaModel>TrdVehD}"
-                                    />
-                                </ComboBox>
-                            </VBox>
-
+                        <Input 
+                                value="{appModel>Name1}" enabled="false"
+                            />
+                            <!-- <ComboBox
+                                enabled="false"
+                                width="100%"
+                                selectedKey="{appModel>TrdCnpty}"
+                                items="{path: 's4HanaModel>/ZCDS_CNTRPRTY', sorter: {path: 's4HanaModel>Name1'}}"
+                            >
+                                <core:Item
+                                    key="{s4HanaModel>TrdCnpty}"
+                                    text="{s4HanaModel>Name1}"
+                                />
+                            </ComboBox> -->
                         </ui:template>
                     </ui:Column>
-                    <ui:Column width="8rem">
+ <ui:Column width="8rem">
                         <Label text="Delivery Term" />
                         <ui:template>
-                            <Select width="100%"
+                        <Input 
+                                value="{appModel>TrdDlvtrmD}" enabled="false"
+                            />
+                            <!-- <Select width="100%"
                              selectedKey="{appModel>TrdDlvtrm}"
                              enabled="false"
                              items="{path: 's4HanaModel>/ZTA_DLV_TRMSSet', sorter: {path: 's4HanaModel>TrdDlvtrmD'}}">
@@ -132,95 +128,237 @@
                                     key="{s4HanaModel>TrdDlvtrm}"
                                     text="{s4HanaModel>TrdDlvtrmD}"
                                 />
-                            </Select>
+                            </Select> -->
                         </ui:template>
                     </ui:Column>
-
-                    <ui:Column width="10rem">
-                        <Label text="BL Quantity in BBL" />
+                    <ui:Column width="8rem">
+                        <Label text="Commodity" />
+                        <ui:template>
+                         <Input 
+                                value="{appModel>Mtbez}" enabled="false"
+                            />
+                            <!-- <ComboBox
+                                width="100%"
+                                selectedKey="{appModel>TrdCmdty}"
+                                items="{
+                                    path: 's4HanaModel>/ZCDS_COMMODITY',
+                                    sorter: {path: 's4HanaModel>Mtbez'}
+                                }"
+                                enabled="false"
+                            >
+                                <core:Item
+                                    key="{s4HanaModel>TrdCmdty}"
+                                    text="{s4HanaModel>Mtbez}"
+                                />
+                            </ComboBox> -->
+                        </ui:template>
+                    </ui:Column>
+                    <ui:Column width="6rem">
+                        <Label text="Grade" />
                         <ui:template>
                             <Input
-                                value="{appModel>Lp1Qtybbl}" enabled="{appModel>/IsEditable}"
+                                value="{appModel>Maktx}" enabled="false"
                             />
                         </ui:template>
                     </ui:Column>
 
-                    <ui:Column width="10rem">
-                        <Label text="BL Quantity in MT" />
+                    <ui:Column width="8rem">
+                        <Label text="Minimum Quantity" />
                         <ui:template>
-                             <Input
-                                value="{appModel>Lp1Qtymt}" enabled="{appModel>/IsEditable}"
-                            />
+                           <Input value="{path:'appModel>/TradeDetails/0/TrdQtymin',
+                         formatter: '.formatter.formatNumberWithComma'}" enabled="false" />
                         </ui:template>
                     </ui:Column>
 
-                    <ui:Column width="10rem">
-                        <Label text="BL Date" />
+                    <ui:Column width="8rem">
+                        <Label text="Maximum Quantity" />
                         <ui:template>
-                           <DatePicker
-                                value="{appModel>BlDate}" enabled="{appModel>/IsEditable}"
-                            />
+                             <Input value="{path:'appModel>/TradeDetails/0/TrdQtymax',
+                         formatter: '.formatter.formatNumberWithComma'}" enabled="false" />
                         </ui:template>
                     </ui:Column>
 
-                    <ui:Column width="10rem">
-                        <Label text="Window Start Date" />
-                         <ui:template>
-                            <DatePicker
-                                value="{appModel>TrdWsdt}" enabled="{appModel>/IsEditable}"
-                            />
-                        </ui:template>
-                    </ui:Column>
-                     <ui:Column width="10rem">
-                        <Label text="Window End Date" />
-                         <ui:template>
-                            <DatePicker
-                                value="{appModel>TrdWedt}" enabled="{appModel>/IsEditable}"
-                            />
-                        </ui:template>
-                    </ui:Column>
-                     <ui:Column width="10rem">
-                        <Label text="NOR Date" />
-                         <ui:template>
-                            <DatePicker
-                                value="{appModel>NorDate}" enabled="{appModel>/IsEditable}"
-                            />
-                        </ui:template>
-                    </ui:Column>
-                    <ui:Column width="10rem">
-                        <Label text="Discharge Date" />
-                         <ui:template>
-                            <DatePicker id = "dschDate"
-                                value="{appModel>DschDate}" enabled="{appModel>/IsEditable}"
-                            />
-                        </ui:template>
-                    </ui:Column>
-                     <!-- <ui:Column width="12rem">
-                        <Label text="BL Date" />
-                         <ui:template>
-                            <DatePicker
-                                value="{appModel>}" enabled="{appModel>/IsEditable}"
-                            />
-                        </ui:template>
-                    </ui:Column> -->
+                    <ui:Column width="8rem">
+                    <Label text="Vessel Name" />
+                    <ui:template>   
+                    <Input value="{appModel>TrdVehD}" enabled="false" width="100%" />
 
-                    <ui:Column width="10rem">
-                        <Label text="Discharge Port" />
+                    <!-- <ComboBox
+                                    width="100%"
+                                    selectedKey="{appModel>TrdVeh}"
+                                    items="{path: 's4HanaModel>/ZCDS_VEHICLE', sorter: {path: 's4HanaModel>TrdVehD'}}" enabled="false"
+                                >
+                                    <core:Item
+                                        key="{s4HanaModel>TrdVeh}"
+                                        text="{s4HanaModel>TrdVehD}"
+                                    />
+                                </ComboBox> -->
+                     
+                        </ui:template>
+                    </ui:Column>
+                    
+                   <ui:Column width="8rem">
+                        <Label text="Load Port" />
                         <ui:template>
-                            <ComboBox width="100%"
-                             selectedKey="{appModel>TrdDsprt}"
+                        <Input 
+                                value="{appModel>TrdLdprtD}" enabled="false"
+                            />
+                            <!-- <ComboBox width="100%"
+                             selectedKey="{appModel>TrdLdprt}"
                              enabled="false"
-                             items="{path: 's4HanaModel>/ZTA_DSCH_PORTSet', sorter: {path: 's4HanaModel>TrdDsprtD'}}">
+                             items="{path: 's4HanaModel>/ZCDS_LOAD_PORT', sorter: {path: 's4HanaModel>TrdLdprtD'}}">
                                 <core:Item
-                                    key="{s4HanaModel>TrdDsprt}"
-                                    text="{s4HanaModel>TrdDsprtD}"
+                                    key="{s4HanaModel>TrdLdprt}"
+                                    text="{s4HanaModel>TrdLdprtD}"
                                 />
-                            </ComboBox>
+                            </ComboBox> -->
                         </ui:template>
                     </ui:Column>
+                     <ui:Column width="10rem">
+                        <Label text="Delivery Date from" />
+                         <ui:template>
+                            <DatePicker
+                                value="{appModel>TrdDlvsdt}" enabled="false"
+                            />
+                        </ui:template>
+                    </ui:Column>
+                     <ui:Column width="10rem">
+                        <Label text="Delivery Date to" />
+                         <ui:template>
+                            <DatePicker
+                                value="{appModel>TrdDlvedt}" enabled="false"
+                            />
+                        </ui:template>
+                    </ui:Column> 
                 </ui:columns>
             </ui:Table>
             <!-- ===== END: Top Trade Details Table ===== -->
+
+            <!-- ===== START: Top Trade Details Table (bound to appModel TradeDetails as object property binding) ===== -->
+            
+            <Panel
+                headerText="Operations Input"
+                expandable="true"
+                expanded="true"
+                width="auto"
+                class="sapUiMediumMarginTop"
+            >
+                <HBox width="100%" class="sapUiSmallMargin" style="gap: 2rem;">
+                    <!-- Left Column -->
+                    <VBox width="48%" class="sapUiSmallMarginEnd">
+                    <Label text="Demurrage Nos of Days" />
+                 <Input
+                  value="{appModel>/TradeDetails/0/TrdDemday}"
+                   enabled="{appModel>/IsEditable}" />
+
+
+                        <Label text="BL Quantity in BBL" />
+                        <Input value="{path:'appModel>/TradeDetails/0/Lp1Qtybbl',
+                            type: 'sap.ui.model.type.Float',
+                            formatOptions: {groupingEnabled: true, minFractionDigits: 3, maxFractionDigits: 3}}"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                        <Label text="BL Quantity in MT" />
+                        <Input value="{path:'appModel>/TradeDetails/0/Lp1Qtymt',
+                            type: 'sap.ui.model.type.Float',
+                            formatOptions: {groupingEnabled: true, minFractionDigits: 3, maxFractionDigits: 3}}"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                        <Label text="BL Date" />
+                        <DatePicker
+                            value="{appModel>/TradeDetails/0/BlDate}"
+                            displayFormat="dd-MM-yyyy"
+                            valueFormat="yyyy-MM-dd"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                        <Label text="NOR Date" />
+                        <DatePicker
+                            value="{appModel>/TradeDetails/0/NorDate}"
+                            displayFormat="dd-MM-yyyy"
+                            valueFormat="yyyy-MM-dd"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                        <Label text="Final Laycan Start Date" />
+                        <DatePicker
+                            value="{appModel>/TradeDetails/0/TrdWsdt}"
+                            displayFormat="dd-MM-yyyy"
+                            valueFormat="yyyy-MM-dd"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                        <Label text="Final Laycan End Date" />
+                        <DatePicker
+                            value="{appModel>/TradeDetails/0/TrdWedt}"
+                            displayFormat="dd-MM-yyyy"
+                            valueFormat="yyyy-MM-dd"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                        <Label text="Load Port API For Crude" />
+                        <Input value="{path:'appModel>/TradeDetails/0/Lp1Api',
+                            type: 'sap.ui.model.type.Float',
+                            formatOptions: {groupingEnabled: true, minFractionDigits: 3, maxFractionDigits: 3}}"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+                    </VBox>
+
+                    <!-- Right Column -->
+                    <VBox width="48%" class="sapUiSmallMarginBegin">
+                        <Label text="Discharge Completion Date" />
+                        <DatePicker id="dschDate"
+                            value="{appModel>/TradeDetails/0/DschDate}"
+                            displayFormat="dd-MM-yyyy"
+                            valueFormat="yyyy-MM-dd"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                             <Label text="Title Transfer Event" />
+                             <Input 
+                                value="{appModel>/TradeDetails/0/TrdOptdsel}"  enabled="false"
+                            />
+
+                        <Label text="Title Transfer Date" />
+                        <DatePicker id="TtlDate"
+                            value="{appModel>/TradeDetails/0/TrdTtldat}"
+                            displayFormat="dd-MM-yyyy"
+                            valueFormat="yyyy-MM-dd"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                        <Label text="Discharge Port API For Crude" />
+                        <Input value="{path:'appModel>/TradeDetails/0/Dp1Api',
+                            type: 'sap.ui.model.type.Float',
+                            formatOptions: {groupingEnabled: true, minFractionDigits: 3, maxFractionDigits: 3}}"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                        <Label text="Load Port Density For Naptha" />
+                        <Input id="loadPortDensityNaptha"
+    value="{path:'appModel>/TradeDetails/0/TrdLpdenst',
+    formatter: '.formatter.formatNumberWithComma'}"
+    liveChange=".onNumberLiveChange"
+    enabled="{appModel>/IsEditable}"
+    class="sapUiTinyMarginBottom" />
+
+
+                        <Label text="Material Temperature" />
+                        <Input
+                            value="{appModel>/TradeDetails/0/TrdMattemp}"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+
+                        <Label text="Test Temperature" />
+                        <Input
+                            value="{appModel>/TradeDetails/0/TrdTsttemp}"
+                            enabled="{appModel>/IsEditable}"
+                            class="sapUiTinyMarginBottom" />
+                    </VBox>
+                </HBox>
+            </Panel>
 
                <Panel
                     expandable="true"
@@ -335,7 +473,8 @@
                                         <Label text="{i18n>TOT_VALUE}" />
                                         <ui:template>
                                             <Input 
-                                                value="{costModel>CstTotval}"
+                                                value="{path:'costModel>CstTotval',  formatter: '.formatter.formatNumberWithComma'}"
+                                                liveChange=".onCostNumberLiveChange"
                                                 enabled="{costModel>isRowEditable}" />
                                         </ui:template>
                                       
@@ -382,7 +521,8 @@
                                         <Label text="{i18n>EXCHNG_RATE}" />
                                         <ui:template>
                                             <Input 
-                                                value="{costModel>CstExrt}"
+                                                value="{path:'costModel>CstExrt' ,formatter:'.formatter.formatNumberWithComma'}"
+                                                liveChange=".onCostNumberLiveChange"
                                                 enabled="{costModel>isRowEditable}" />
                                         </ui:template>
                                     </ui:Column>
@@ -436,184 +576,196 @@
                                 </ui:columns>
                             </ui:Table>
                 </Panel>
-                <Panel
-                                headerText="Purchase Order Input"
-                                expandable="true"
-                                expanded="true"
-                                class="sapUiMediumMarginTop"
-                            >
-                                <!-- Two Column Layout using HBox -->
-                                <!-- <HBox class="sapUiSmallMargin" width="100%"> -->
-                                    <!-- Left Column: Dates and Load Port -->
-                                    <VBox width="50%" class="sapUiSmallMarginEnd">
-                                        <!-- Dates Section -->
-                                        <!-- <Title text="Dates" class="sapUiSmallMarginBottom" /> -->
+                <HBox width="100%"
+      renderType="Bare"
+      alignItems="Start"
+      class="sapUiLargeMarginBottom"
+      style="gap: 2rem;">  <!-- space between panels -->
 
-                                        <!-- <Label text="Window Start Date" class="sapUiTinyMarginTop" />
-                                        <DatePicker id="windowStartDate" value="{appModel>/TradeDetails/0/TrdWsdt}"
-                                                    displayFormat="dd-MM-yyyy" valueFormat="yyyy-MM-dd"
-                                                    width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" /> -->
+    <!-- ================= LEFT PANEL CONTAINER ================= -->
+    <VBox width="49%" style="flex-grow:1;" class="sapUiSmallMarginEnd sapUiMediumPadding">
 
-                                        <!-- <Label text="Window End Date" class="sapUiTinyMarginTop" />
-                                        <DatePicker id="windowEndDate" value="{appModel>/TradeDetails/0/TrdWedt}"
-                                                    displayFormat="dd-MM-yyyy" valueFormat="yyyy-MM-dd"
-                                                    width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+        <Panel
+            headerText="Purchase Order Input"
+            expandable="true"
+            expanded="true"
+            width="100%"
+            class="sapUiMediumMarginTop">
 
-                                        <Label text="NOR Date" class="sapUiTinyMarginTop" />
-                                        <DatePicker id="norDate" value="{appModel>/TradeDetails/0/NorDate}"
-                                                    displayFormat="dd-MM-yyyy" valueFormat="yyyy-MM-dd"
-                                                    width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+            <VBox width="100%">
 
-                                        <Label text="BL Date" class="sapUiTinyMarginTop" />
-                                        <DatePicker id="blDate" value="{appModel>/TradeDetails/0/BlDate}"
-                                                    displayFormat="dd-MM-yyyy" valueFormat="yyyy-MM-dd"
-                                                    width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" /> -->
+                <!-- Load Port Section -->
+                <VBox id="loadPortSection" visible="{appModel>/ShowLoadPortPanel}">
+                    <Title text="Load Port" class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
 
-                                        <!-- Load Port Section -->
-                                        <VBox id="loadPortSection" visible="{appModel>/ShowLoadPortPanel}">
-                                        <Title text="Load Port" class="sapUiSmallMarginTop sapUiSmallMarginBottom"  />
+                    <Label text="Transfer Number" />
+                    <Input id="loadPorttrsnum"
+                        value="{path:'appModel>/TradeDetails/0/TnfrNum', formatter: '.formatter.formatNumberWithComma'}"
+                        liveChange=".onNumberLiveChange"
+                        enabled="false" class="sapUiTinyMarginBottom" />
 
-                                        <Label text="Load Port Quantity in BBL" class="sapUiTinyMarginTop" />
-                                        <Input id="loadPortQtyBbl" value="{appModel>/TradeDetails/0/Lp1Qtybbl}" width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom"  />
+                    <Label text="Batch Number" />
+                    <Input 
+                                value="{appModel>BtchNum}" enabled="false"
+                            />
 
-                                        <Label text="Load Port Quantity in MT" class="sapUiTinyMarginTop" />
-                                        <Input id="loadPortQtyMt" value="{appModel>/TradeDetails/0/Lp1Qtymt}" width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+                    <Label text="Load Port Quantity in BBL" />
+                    <Input id="loadPortQtyBbl"
+                        value="{path:'appModel>/TradeDetails/0/Lp1Qtybbl', formatter: '.formatter.formatNumberWithComma'}"
+                        liveChange=".onNumberLiveChange"
+                        enabled="false" class="sapUiTinyMarginBottom" />
 
-                                        <Label text="Load Port Temperature in Deg C" class="sapUiTinyMarginTop" />
-                                        <Input id="loadPortTmp" value="{appModel>/TradeDetails/0/Lp1Tmp}" width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+                    <Label text="Load Port Quantity in MT" />
+                    <Input id="loadPortQtyMt"
+                        value="{path:'appModel>/TradeDetails/0/Lp1Qtymt', formatter: '.formatter.formatNumberWithComma'}"
+                        liveChange=".onNumberLiveChange"
+                        enabled="false" class="sapUiTinyMarginBottom" />
 
-                                        <Label text="Load Port API" class="sapUiTinyMarginTop" />
-                                        <Input id="loadPortApi" value="{appModel>/TradeDetails/0/Lp1Api}" width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+                    <Label text="Load Port API" />
+                    <Input id="loadPortApi"
+                        value="{path:'appModel>/TradeDetails/0/Lp1Api', formatter: '.formatter.formatNumberWithComma'}"
+                        liveChange=".onNumberLiveChange"
+                        enabled="false" class="sapUiTinyMarginBottom" />
 
-                                        <Label text="Load Port Title Transfer Date" class="sapUiTinyMarginTop" />
-                                        <DatePicker id="loadPortTrndt" value="{appModel>/TradeDetails/0/Lp1Trndt}"
-                                                    displayFormat="dd-MM-yyyy" valueFormat="yyyy-MM-dd"
-                                                    width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+                    <Label text="Load Port Title Transfer Date" />
+                    <DatePicker id="loadPortTrndt"
+                        value="{appModel>/TradeDetails/0/Lp1Trndt}"
+                        displayFormat="dd-MM-yyyy"
+                        valueFormat="yyyy-MM-dd"
+                        enabled="false"
+                        class="sapUiTinyMarginBottom" />
+                </VBox>
 
-                                        <Label text="Load Port Miscellaneous / Other" class="sapUiTinyMarginTop" />
-                                        <HBox width="100%" class="sapUiTinyMarginBottom">
-                                            <Input id="loadPortMsc" value="{appModel>/TradeDetails/0/Lp1Msc}" width="60%" enabled="{appModel>/IsEditable}" class="sapUiSmallMarginEnd" />
-                                            <ComboBox id="loadPortMscuom" selectedKey="{appModel>/TradeDetails/0/Lp1Mscuom}" width="40%" enabled="{appModel>/IsEditable}" items="{ path: 's4HanaModel>/ZTA_CURRENCYSet', sorter: { path: 's4HanaModel>CurrencyD' } }">
-                                                <core:Item key="{s4HanaModel>CurrencyId}" text="{s4HanaModel>CurrencyD}" />
-                                            </ComboBox>
-                                        </HBox>
-                                          </VBox>
-                                           </VBox>
-                                   
+                <!-- Discharge Port Section -->
+                <VBox width="100%" visible="{appModel>/ShowDischargePortPanel}">
+                    <Title text="Discharge Port" class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
 
-                                    <!-- Right Column: Discharge Port -->
-                                    <VBox width="50%" visible="{appModel>/ShowDischargePortPanel}">
-                                        <!-- Discharge Port Section -->
-                                        <Title text="Discharge Port" class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
+                    <Label text="Transfer Number" />
+                    <Input id="loadPorttsnum"
+                        value="{path:'appModel>/TradeDetails/0/TnfrNum', formatter: '.formatter.formatNumberWithComma'}"
+                        enabled="false" class="sapUiTinyMarginBottom" />
 
-                                        <Label text="Discharge Port Quantity in BBL" class="sapUiTinyMarginTop" />
-                                        <Input id="discPortQtyBbl" value="{appModel>/TradeDetails/0/Dp1Qtybbl}" width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+                    <Label text="Batch Number" />
+                    <Input id="loadPortbtchhnum"
+                        value="{path:'appModel>/TradeDetails/0/BtchNum', formatter: '.formatter.formatNumberWithComma'}"
+                        enabled="false" class="sapUiTinyMarginBottom" />
 
-                                        <Label text="Discharge Port Quantity in MT" class="sapUiTinyMarginTop" />
-                                        <Input id="discPortQtyMt" value="{appModel>/TradeDetails/0/Dp1Qtymt}" width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+                    <Label text="Discharge Port Quantity in BBL" />
+                    <Input id="discPortQtyBbl"
+                        value="{path:'appModel>/TradeDetails/0/Dp1Qtybbl', formatter: '.formatter.formatNumberWithComma'}"
+                        enabled="false" class="sapUiTinyMarginBottom" />
 
-                                        <Label text="Discharge Port Temperature in Deg C" class="sapUiTinyMarginTop" />
-                                        <Input id="discPortTmp" value="{appModel>/TradeDetails/0/Dp1Tmp}" width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+                    <Label text="Discharge Port Quantity in MT" />
+                    <Input id="discPortQtyMt"
+                        value="{path:'appModel>/TradeDetails/0/Dp1Qtymt', formatter: '.formatter.formatNumberWithComma'}"
+                        enabled="false" class="sapUiTinyMarginBottom" />
 
-                                        <Label text="Discharge Port API" class="sapUiTinyMarginTop" />
-                                        <Input id="discPortApi" value="{appModel>/TradeDetails/0/Dp1Api}" width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+                    <Label text="Discharge Port API" />
+                    <Input id="discPortApi"
+                        value="{path:'appModel>/TradeDetails/0/Dp1Api', formatter: '.formatter.formatNumberWithComma'}"
+                        enabled="false" class="sapUiTinyMarginBottom" />
 
-                                        <Label text="Discharge Port Title Transfer Date" class="sapUiTinyMarginTop" />
-                                        <DatePicker id="discPortTrndt" value="{appModel>/TradeDetails/0/Dp1Trndt}"
-                                                    displayFormat="dd-MM-yyyy" valueFormat="yyyy-MM-dd"
-                                                    width="100%" enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+                    <Label text="Discharge Port Title Transfer Date" />
+                    <DatePicker id="discPortTrndt"
+                        value="{appModel>/TradeDetails/0/Dp1Trndt}"
+                        displayFormat="dd-MM-yyyy"
+                        valueFormat="yyyy-MM-dd"
+                        enabled="false"
+                        class="sapUiTinyMarginBottom" />
+                </VBox>
 
-                                        <Label text="Discharge Port Miscellaneous / Other" class="sapUiTinyMarginTop" />
-                                        <HBox width="100%" class="sapUiTinyMarginBottom">
-                                            <Input id="discPortMsc" value="{appModel>/TradeDetails/0/Dp1Msc}" width="60%" enabled="{appModel>/IsEditable}" class="sapUiSmallMarginEnd" />
-                                            <ComboBox id="discPortMscuom" selectedKey="{appModel>/TradeDetails/0/Dp1Mscuom}" width="40%" enabled="{appModel>/IsEditable}" items="{ path: 's4HanaModel>/ZTA_CURRENCYSet', sorter: { path: 's4HanaModel>CurrencyD' } }">
-                                                <core:Item key="{s4HanaModel>CurrencyId}" text="{s4HanaModel>CurrencyD}" />
-                                            </ComboBox>
-                                        </HBox>
-                                    </VBox>
-                                
-                                <HBox class="sapUiSmallMarginTop" justifyContent="Start">
-    <!-- <Button
-        text="Add Another Discharge Port"
-        icon="sap-icon://add"
-        type="Emphasized"
-        press=".onAddDischargePort"
-        class="sapUiTinyMarginEnd"
-    /> -->
-     <Button
-        text="Execute"
-        icon="sap-icon://save"
-        type="Emphasized"
-        press=".onExecutePOCreation"
-        class="sapUiTinyMarginEnd"
-    />
-      <Button
-        text="Submit"
-        icon="sap-icon://accept"
-        type="Emphasized"
-        press=".onSubmitPOCreation"
-        class="sapUiTinyMarginEnd"
-    />
-</HBox>
-                            </Panel>
+                <HBox class="sapUiSmallMarginTop" justifyContent="Start">
+                    <Button
+                        text="Save"
+                        icon="sap-icon://save"
+                        type="Emphasized"
+                        press=".onExecutePOCreation"
+                        class="sapUiTinyMarginEnd" />
 
-                             
-               <Panel 
-    headerText="GRN STO Input"
-    expandable="true"
-    expanded="true"
-    class="sapUiMediumMarginTop">
+                    <Button
+                        text="Submit"
+                        icon="sap-icon://accept"
+                        type="Emphasized"
+                        press=".onSubmitPOCreation"
+                        class="sapUiTinyMarginEnd" />
+                </HBox>
 
-    <VBox class="sapUiSmallMargin">
+            </VBox>
 
-        <Label text="Quantity in BBL" />
-        <Input id="grnQtyBbl" value="{appModel>/TradeDetails/0/GrDp1Qtybbl}" width="15rem"
-               enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+        </Panel>
 
-              
+    </VBox>
 
-        <Label text="Quantity in MT" />
-        <Input id="grnQtyMt" value="{appModel>/TradeDetails/0/GrDp1Qtymt}" width="15rem"
-               enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+    <!-- ================= RIGHT PANEL CONTAINER ================= -->
+    <VBox width="49%" style="flex-grow:1;" class="sapUiSmallMarginBegin sapUiMediumPadding">
 
-        <Label text="Temperature (°C)" />
-        <Input id="grnTmp" value="{appModel>/TradeDetails/0/GrDp1Tmp}" width="15rem"
-               enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+        <Panel
+            headerText="GRN STO Input"
+            expandable="true"
+            expanded="true"
+            width="100%"
+            class="sapUiMediumMarginTop">
 
-        <Label text="API"/>
-        <Input id="grnApi" value="{appModel>/TradeDetails/0/GrDp1Api}" width="15rem"
-               enabled="{appModel>/IsEditable}" class="sapUiTinyMarginBottom" />
+            <VBox width="100%">
 
-        <Label text="Title Transfer Date" />
-        <DatePicker id="grnTrndt"
+                <Label text="PO Number" />
+                <Input value="{path:'appModel>/TradeDetails/0/', formatter: '.formatter.formatNumberWithComma'}"
+                    enabled="false" class="sapUiTinyMarginBottom" />
+
+                <Label text="Quantity in BBL" />
+                <Input id="grnQtyBbl" value="{path:'appModel>/TradeDetails/0/GrDp1Qtybbl', formatter: '.formatter.formatNumberWithComma'}"
+                    enabled="false" class="sapUiTinyMarginBottom" />
+
+                <Label text="Quantity in MT" />
+                <Input id="grnQtyMt" value="{path:'appModel>/TradeDetails/0/GrDp1Qtymt', formatter: '.formatter.formatNumberWithComma'}"
+                    enabled="false" class="sapUiTinyMarginBottom" />
+
+                <Label text="Test Density" />
+                <Input id="Tstden" value="{appModel>/TradeDetails/0/}"
+                    enabled="false" class="sapUiTinyMarginBottom" />
+
+                <Label text="Material Temperature" />
+                <Input id="grnTmp" value="{appModel>/TradeDetails/0/TrdMattemp}"
+                    enabled="false" class="sapUiTinyMarginBottom" />
+
+                <Label text="Test Temperature" />
+                <Input id="TstTmp" value="{appModel>/TradeDetails/0/TrdTsttemp}"
+                    enabled="false" class="sapUiTinyMarginBottom" />
+
+                <Label text="API" />
+                <Input id="grnApi" value="{path:'appModel>/TradeDetails/0/GrDp1Api', formatter: '.formatter.formatNumberWithComma'}"
+                    enabled="false" class="sapUiTinyMarginBottom" />
+
+                <Label text="Title Transfer Date" />
+                <DatePicker id="grnTrndt"
                     value="{appModel>/TradeDetails/0/GrDp1Trndt}"
                     displayFormat="dd-MM-yyyy"
                     valueFormat="yyyy-MM-dd"
-                    width="15rem"
-                    enabled="{appModel>/IsEditable}"
+                    enabled="false"
                     class="sapUiTinyMarginBottom" />
+            </VBox>
+
+            <HBox class="sapUiSmallMarginTop" justifyContent="Start">
+                <Button
+                    text="Save"
+                    icon="sap-icon://save"
+                    type="Emphasized"
+                    press=".onExecuteGRNCreation"
+                    class="sapUiTinyMarginEnd" />
+
+                <Button
+                    text="Submit"
+                    icon="sap-icon://accept"
+                    type="Emphasized"
+                    press=".onSubmitGRNCreation"
+                    class="sapUiTinyMarginEnd" />
+            </HBox>
+
+        </Panel>
+
     </VBox>
 
-    <HBox class="sapUiSmallMarginTop" justifyContent="Start">
-        <Button
-            text="Execute"
-            icon="sap-icon://save"
-            type="Emphasized"
-            press=".onExecuteGRNCreation"
-            class="sapUiTinyMarginEnd"/>
-        <Button
-            text="Submit"
-            icon="sap-icon://accept"
-            type="Emphasized"
-            press=".onSubmitGRNCreation"
-            class="sapUiTinyMarginEnd" />
-    </HBox>
-</Panel>
-
-
-
-                            
-                            
+</HBox>         
         </content>
     </Page>
 </mvc:View>

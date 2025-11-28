@@ -2,11 +2,13 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/base/Log",
     "sap/m/MessageBox",
-    "sap/m/MessageToast"
-], (Controller, Log, MessageBox, MessageToast) => {
+    "sap/m/MessageToast",
+    "../model/formatter"
+], (Controller, Log, MessageBox, MessageToast, formatter) => {
     "use strict";
 
     return Controller.extend("operations.controller.Transfer", {
+        formatter: formatter,
         /**
          * Called when the controller is instantiated.
          * Initialize models and preload required data.
@@ -22,7 +24,7 @@ sap.ui.define([
             oAppModel.setProperty("/IsSaveEnabled", false);
             oAppModel.setProperty("/IsEditEnabled", true);
             oAppModel.setProperty("/IsEditable", false);
-            oAppModel.setProperty("/ShowLoadPortPanel", false);
+            oAppModel.setProperty("/ShowLoadPortPanel", true);
             oAppModel.setProperty("/ShowDischargePortPanel", false);
 
 
@@ -55,6 +57,36 @@ sap.ui.define([
             oAppModel.setProperty("/IsCOSTSaveActive", false);
             oAppModel.refresh(true);
         },
+//         onNumberLiveChange: function (oEvent) {
+//     let input = oEvent.getSource();
+//     let path = input.getBinding("value").getPath();  // model path ex: /TradeDetails/0/TrdDemday
+    
+//     // Remove commas
+//     let raw = oEvent.getParameter("value").replace(/,/g, "");
+
+//     // Save RAW VALUE back to MODEL (very important)
+//     this.getView().getModel("appModel").setProperty(path, raw);
+
+//     // Display formatted
+//     if (!isNaN(raw)) {
+//         input.setValue(Number(raw).toLocaleString("en-US"));
+//     }
+// },
+
+
+// onCostNumberLiveChange: function (oEvent) {
+//     let input = oEvent.getSource();
+//     let ctx = input.getBindingContext("costModel");
+//     let field = input.getBinding("value").getPath(); // e.g., CstTotval
+//     let path = ctx.getPath() + "/" + field;
+
+//     let raw = oEvent.getParameter("value").replace(/,/g, "");
+//     this.getView().getModel("costModel").setProperty(path, raw);
+
+//     if (!isNaN(raw)) {
+//         input.setValue(Number(raw).toLocaleString("en-US"));
+//     }
+// },
 
         /**
          * Create discharge port definitions and store in appModel>/DischargePorts
@@ -267,6 +299,37 @@ sap.ui.define([
             }
             return result;
         },
+        cleanNumberValue(value) {
+                if (value === null || value === undefined) return "0.000";
+                value = value.toString().trim();
+                // Remove all commas
+                value = value.replace(/,/g, "");
+ 
+                // If empty or only dot or only "-", return empty
+                if (value === "" || value === "." || value === "-") return value;
+ 
+                // Allow only digits, one dot, and minus sign
+                value = value.replace(/[^0-9.-]/g, "");
+ 
+                // Ensure minus only at the beginning
+                if (value.includes("-")) {
+                    // Remove all "-" then add only at first position if originally present
+                    value = "-" + value.replace(/-/g, "").trim();
+                }
+ 
+                // Split integer & decimal parts
+                let parts = value.split(".");
+                let intPart = parts[0] || "0";
+                let decimalPart = parts[1] || "";
+ 
+                // Limit decimals to max 3 digits
+                if (decimalPart.length > 3) {
+                    decimalPart = decimalPart.substring(0, 3);
+                }
+ 
+                // Rebuild final value
+                return decimalPart ? `${intPart}.${decimalPart}` : intPart;
+            },
 
         //  Updated onchangetradeno: reads selected trade from s4HanaModel and writes into appModel>/TradeDetails
         onchangetradeno: function (oEvent) {
@@ -379,6 +442,171 @@ sap.ui.define([
                         // Wrap in array for table binding
                         oAppModel.setProperty("/TradeDetails", [oTradeData]);
                         oAppModel.setProperty("/SelectedTrade", oTradeData);
+                        console.log("======== COMMODITY/GRADE DEBUG ========");
+                        console.log("TrdCmdty (Grade Code):", oTradeData.TrdCmdty, "Type:", typeof oTradeData.TrdCmdty, "IsEmpty:", oTradeData.TrdCmdty === "" || oTradeData.TrdCmdty === null || oTradeData.TrdCmdty === undefined);
+                        console.log("Mtart (Commodity Type):", oTradeData.Mtart, "Type:", typeof oTradeData.Mtart);
+                        console.log("TrdPrdtyp (Product Type):", oTradeData.TrdPrdtyp, "Type:", typeof oTradeData.TrdPrdtyp);
+                        console.log("TrdCmdtyDesc (Grade Desc):", oTradeData.TrdCmdtyDesc);
+                        console.log("All fields containing 'cmdty' or 'Cmdty':");
+                        Object.keys(oTradeData).forEach(function(key) {
+                            if (key.toLowerCase().includes('cmdty') || key.toLowerCase().includes('commodity') || key.toLowerCase().includes('grade') || key.toLowerCase().includes('product')) {
+                                console.log("  " + key + ":", oTradeData[key]);
+                            }
+                        });
+                        console.log("======== TEMPERATURE DEBUG ========");
+                        console.log("Raw MAT TEMP from Backend:", oTradeData.TrdMattemp);
+                        console.log("Raw TEST TEMP from Backend:", oTradeData.TrdTsttemp);
+                        console.log("Raw DP Ullage Temp:", oTradeData.Dp1Tmp);
+                        console.log("===================================");
+                        console.log("FULL TRADE DATA OBJECT:", oTradeData);
+                        console.log(oTradeData);
+
+                        oS4Model.read("/ZCDS_VEHICLE", {
+    success: function (data) {
+        console.log("==== VEHICLE CDS RECORD ====");
+        console.log(data.results[0]);
+        console.log("==== VEHICLE CDS FIELDS ====");
+        console.log(Object.keys(data.results[0]));
+    },
+    error: function (err) {
+        console.error("Vehicle CDS read failed:", err);
+    }
+});
+
+
+                        // Debug: Load and inspect ZTA_PRODUCTSet
+                        console.log("======== DEBUGGING ZTA_PRODUCTSet ========");
+                        oS4Model.read("/ZTA_PRODUCTSet", {
+                            success: function(oProductData) {
+                                console.log("ZTA_PRODUCTSet total records:", oProductData.results.length);
+                                if (oProductData.results.length > 0) {
+                                    console.log("First product record:", oProductData.results[0]);
+                                    console.log("Fields in ZTA_PRODUCTSet:", Object.keys(oProductData.results[0]));
+                                }
+                                // Find the product matching current TrdCmdty
+                                var matchedProduct = oProductData.results.find(p => p.TrdCmdty === oTradeData.TrdCmdty);
+                                if (matchedProduct) {
+                                    console.log("Matched product for TrdCmdty '" + oTradeData.TrdCmdty + "':", matchedProduct);
+                                } else {
+                                    console.log("No product found for TrdCmdty:", oTradeData.TrdCmdty);
+                                }
+                            },
+                            error: function(err) {
+                                console.error("Failed to load ZTA_PRODUCTSet", err);
+                            }
+                        });
+
+                        // Debug: Load and inspect ZCDS_COMMODITY
+                        console.log("======== DEBUGGING ZCDS_COMMODITY ========");
+                        oS4Model.read("/ZCDS_COMMODITY", {
+                            success: function(oCommodityData) {
+                                console.log("ZCDS_COMMODITY total records:", oCommodityData.results.length);
+                                if (oCommodityData.results.length > 0) {
+                                    console.log("First commodity record:", oCommodityData.results[0]);
+                                    console.log("Fields in ZCDS_COMMODITY:", Object.keys(oCommodityData.results[0]));
+                                }
+                                // Find commodity matching current Mtart
+                                var matchedCommodity = oCommodityData.results.find(c => c.Mtart === oTradeData.Mtart);
+                                if (matchedCommodity) {
+                                    console.log("Matched commodity for Mtart '" + oTradeData.Mtart + "':", matchedCommodity);
+                                } else {
+                                    console.log("No commodity found for Mtart:", oTradeData.Mtart);
+                                }
+                            },
+                            error: function(err) {
+                                console.error("Failed to load ZCDS_COMMODITY", err);
+                            }
+                        });
+
+
+
+// ================= LOAD PORT LOOKUP =====================
+let loadPortCode = oTradeData.TrdLdprt;
+
+oS4Model.read("/ZCDS_LOAD_PORT", {
+    success: function (oPortData) {
+
+        let portMatch = oPortData.results.find(p => p.TrdLdprt == loadPortCode);
+
+        let portDesc = portMatch ? portMatch.TrdLdprtD : "";
+
+        console.log("Load Port Description:", portDesc);
+
+        // Store description for Input binding
+        oAppModel.setProperty("/TradeDetails/0/TrdLdprtD", portDesc);
+        oAppModel.refresh(true);
+    },
+    error: function (err) {
+        console.error("Load Port lookup failed:", err);
+    }
+});
+// ================= DELIVERY TERM LOOKUP =====================
+let dlvCode = oTradeData.TrdDlvtrm;
+
+oS4Model.read("/ZTA_DLV_TRMSSet", {
+    success: function (oDlvData) {
+
+        let match = oDlvData.results.find(d => d.TrdDlvtrm == dlvCode);
+
+        let dlvDesc = match ? match.TrdDlvtrmD : "";
+
+        console.log("Delivery Term Description:", dlvDesc);
+
+        oAppModel.setProperty("/TradeDetails/0/TrdDlvtrmD", dlvDesc);
+        oAppModel.refresh(true);
+    },
+    error: function (err) {
+        console.error("Delivery Term lookup failed:", err);
+    }
+});
+// ================= VEHICLE LOOKUP =====================
+let vehCode = oTradeData.TrdVeh;   // backend code like "1"
+
+oS4Model.read("/ZCDS_VEHICLE", {
+    success: function (oVehicleData) {
+
+        // Find vehicle where TrdVeh (code) matches
+        let match = oVehicleData.results.find(v => v.TrdVeh == vehCode);
+
+        let vehDesc = match ? match.TrdVehD : "";
+
+        console.log("Vehicle Description:", vehDesc);
+
+        // Set description into model so Input can display it
+        oAppModel.setProperty("/TradeDetails/0/TrdVehD", vehDesc);
+        oAppModel.refresh(true);
+    },
+    error: function (err) {
+        console.error("Vehicle lookup failed:", err);
+    }
+});
+
+// ================= COUNTERPARTY LOOKUP =====================
+let cnptyCode = oTradeData.TrdCnpty;
+
+oS4Model.read("/ZCDS_CNTRPRTY", {
+    success: function (oCnptyData) {
+
+        // Match by counterparty code
+        let match = oCnptyData.results.find(c => c.TrdCnpty == cnptyCode);
+
+        let name = match ? match.Name1 : "";
+
+        console.log("Counterparty Name:", name);
+
+        // Store using the SAME property name used in UI → Name1
+        oAppModel.setProperty("/TradeDetails/0/Name1", name);
+
+        oAppModel.refresh(true);
+        
+    },
+    error: function (err) {
+        console.error("Counterparty lookup failed:", err);
+    }
+});
+
+
+
 
                         // Store original data for delta tracking
                         oAppModel.setProperty("/OriginalTradeDetails", JSON.parse(JSON.stringify(oTradeData)));
@@ -392,8 +620,111 @@ sap.ui.define([
 
                         // Force model refresh to update all bindings
                         oAppModel.refresh(true);
+// ================= COMMODITY & GRADE LOOKUP LOGIC =====================
+// ================= COMMODITY & GRADE LOOKUP + TEMP LOGIC =====================
+// ================= COMMODITY & GRADE LOOKUP + TEMP LOGIC =====================
+let materialCode = oTradeData.TrdCmdty;
+
+oS4Model.read("/ZCDS_COMMODITY", {
+    success: function (oCommodityData) {
+
+        // Match commodity by material code (TrdCmdty)
+        let matched = oCommodityData.results.find(item => item.TrdCmdty == materialCode);
+
+        let mtbezDesc = matched ? (matched.Mtbez || "") : "";
+        let maktxDesc = matched ? (matched.Maktx || "") : "";
+
+        console.log("Commodity (Mtbez):", mtbezDesc);
+        console.log("Grade (Maktx):", maktxDesc);
+
+        // Update UI fields
+        oAppModel.setProperty("/TradeDetails/0/Mtbez", mtbezDesc);
+        oAppModel.setProperty("/TradeDetails/0/Maktx", maktxDesc);
+
+        // ============ TEMPERATURE LOGIC (NUMERIC & SAFE) ============
+
+        let descLower = mtbezDesc.toLowerCase().trim();
+
+        // Convert raw backend values to numbers
+        let dpTempNum   = Number(oTradeData.Dp1Tmp);
+        let matTempNum  = Number(oTradeData.TrdMattemp);
+        let testTempNum = Number(oTradeData.TrdTsttemp);
+
+        console.log("TEMP LOGIC → Mtbez:", descLower);
+        console.log("Raw DP Temp:", oTradeData.Dp1Tmp, "→", dpTempNum);
+        console.log("Raw Mat Temp:", oTradeData.TrdMattemp, "→", matTempNum);
+        console.log("Raw Test Temp:", oTradeData.TrdTsttemp, "→", testTempNum);
+
+        // CRUDE  → default 40/40
+        if (descLower.includes("crude")) {
+            matTempNum  = 40;
+            testTempNum = 40;
+            console.log("CRUDE detected → 40 / 40");
+        }
+
+        // NAPHTHA → MatTemp from DP temp, TestTemp = 15
+        else if (descLower.includes("naphtha") || descLower.includes("naptha")) {
+            // only use DP temp if it's a valid number
+            if (!isNaN(dpTempNum)) {
+                matTempNum = dpTempNum;
+            }
+            // if DP temp is invalid/empty, keep existing matTempNum
+            testTempNum = 15;
+            console.log("NAPHTHA detected → MatTemp = DP Temp (if valid), TestTemp = 15");
+        }
+
+        // Apply final numeric temps back to the model
+        oAppModel.setProperty("/TradeDetails/0/TrdMattemp",  Number(matTempNum || 0));
+        oAppModel.setProperty("/TradeDetails/0/TrdTsttemp", Number(testTempNum || 0));
+
+        oAppModel.refresh(true);
+    },
+    error: function (err) {
+        console.error("Failed to lookup commodity and grade", err);
+    }
+});
 
 
+// j
+
+// let cmdtyCode = oTradeData.Mtbez;
+
+// oS4Model.read("/ZTA_PRODUCTSet", {
+//     success: function (oCommodityData) {
+
+//         // Find matching commodity description
+//         let matched = oCommodityData.results.find(item => item.Mtbez == cmdtyCode);
+
+//         let desc = matched ? (matched.Mtbez || "") : "";
+//         desc = desc.toLowerCase().trim();
+
+//         console.log("Grade Description (from ZTA_PRODUCTSet):", desc);
+
+//         let dpTemp = oTradeData.Dp1Tmp;
+//         let matTemp = oTradeData.TrdMattemp;
+//         let testTemp = oTradeData.TrdTsttemp;
+
+//         // === CRUDE DETECTION ===
+//         if (desc.includes("crude")) {
+//             matTemp = 40;
+//             testTemp = 40;
+//         }
+
+//         // === NAPHTHA DETECTION ===
+//         else if (desc.includes("naptha") || desc.includes("naphtha")) {
+//             matTemp = dpTemp || matTemp;
+//             testTemp = 15;
+//         }
+
+//         // Apply final values to model
+//         oAppModel.setProperty("/TradeDetails/0/TrdMattemp", matTemp);
+//         oAppModel.setProperty("/TradeDetails/0/TrdTsttemp", testTemp);
+//         oAppModel.refresh(true);
+//     },
+//     error: function(err){
+//         console.log("Commodity lookup failed", err);
+//     }
+// }); 
 
                         // === Handle Incoterm-based panel visibility ===
                         let sIncoterm = "";
@@ -436,9 +767,6 @@ sap.ui.define([
 
                         // Step 4: Apply immediately
                         sap.ui.getCore().applyChanges();
-
-
-
 
 
                         // Debug: Log the TradeDetails array to verify
@@ -487,7 +815,9 @@ sap.ui.define([
                 }.bind(this),
                 error: function (err) {
                     oBusyDialog.close();
-                    console.error("Error fetching project data: ", oError);
+                    console.error("Error fetching cost data: ", err);
+                    // Show error message to user
+                    sap.m.MessageBox.error("Error loading cost data for this trade. Some cost records may have invalid dates.");
                 }.bind(this)
             });
         },
@@ -603,9 +933,9 @@ sap.ui.define([
                 "CstUuid": "",
                 "TrdNumP": "",
                 "CstType": "",
-                "CstEstfn": "",
+                "CstEstfn": "1",
                 "CstStas": "",
-                "CstPrctyp": "",
+                "CstPrctyp": "1",
                 "CstTotval": "",
                 "CstExpcur": "",
                 "CstStcur": "",
@@ -649,6 +979,7 @@ sap.ui.define([
         },
 
         onPostCost: function (tradeNo, trdNump, isNewReq, status) {
+            var that = this;
             function convertToISO(dateStr) {
                 if (!dateStr) return null;
 
@@ -724,41 +1055,39 @@ sap.ui.define([
                         CstEstfn: item.CstEstfn || "",
                         CstStas: item.CstStas ? item.CstStas : status,
                         CstPrctyp: item.CstPrctyp || "",
-                        CstTotval: item.CstTotval || "",
+                        CstTotval: that.cleanNumberValue(item.CstTotval || "0.00"),
+                        CstExrt: that.cleanNumberValue(item.CstExrt),
                         CstExpcur: item.CstExpcur || "",
                         CstStcur: item.CstStcur || "",
-                        CstExrt: item.CstExrt || "",
                         CstPaydt: item.CstPaydt ? convertToISO(item.CstPaydt) : null,
                         CstComp: item.CstComp || "",
                         CstPrfor: item.CstPrfor || ""
                     };
-                });
-
+        }.bind(this));
                 var oModel = this.getOwnerComponent().getModel("s4HanaModel");
 
-                // Use batch mode to send all cost items together so ABAP can generate UUIDs properly
-                oModel.setUseBatch(true);
-                oModel.setDeferredGroups(["costBatch"]);
-
-                // Add all creates to the batch
-                aPayload.forEach(function (oItem) {
-                    oModel.create("/ZTA_COSTSet", oItem, {
-                        groupId: "costBatch"
+                // Use individual create calls with Promises (like Physical project)
+                // The model's default useBatch:true setting will handle batching automatically
+                var aPromises = aPayload.map(function (oItem) {
+                    return new Promise(function (resolveEach, rejectEach) {
+                        oModel.create("/ZTA_COSTSet", oItem, {
+                            success: function () {
+                                resolveEach();
+                            },
+                            error: function (oError) {
+                                rejectEach(oError);
+                            }
+                        });
                     });
                 });
 
-                // Submit the batch
-                oModel.submitChanges({
-                    groupId: "costBatch",
-                    success: function (oData) {
-                        oModel.setUseBatch(false); // Reset batch mode
-                        resolve(true); //  All cost items saved successfully
-                    }.bind(this),
-                    error: function (oError) {
-                        oModel.setUseBatch(false); // Reset batch mode
+                Promise.all(aPromises)
+                    .then(function () {
+                        resolve(true); // ✅ All cost items saved successfully
+                    })
+                    .catch(function (oError) {
                         reject(oError);
-                    }.bind(this)
-                });
+                    });
 
             }.bind(this));
         },
@@ -1197,11 +1526,11 @@ sap.ui.define([
 
             // tradeData.0.Dp1Qtabbl
             var oSavePayload = {
-                // TradeEntry 
+                // TradeEntry
                 "TrdNum": tradeNumber || "",
                 "TrdNumP": trdNump,
-                "TrdStat": status,
-                
+                "TnfrStat": status,
+
                 "RefTrdnum": tradeData.RefTrdnum,
                 "TrdStat": tradeData.TrdStat,
                 "TrdMtype": tradeData.TrdMtype,
@@ -1299,10 +1628,17 @@ sap.ui.define([
                 "AverageCeil": getCeilValue(tradeData.AverageCeil),
                 "TotalCeil": getCeilValue(tradeData.TotalCeil),
                 "Reference": tradeData.Reference || "",
-                
+                "TrdMattemp": this.cleanNumberValue(tradeData.TrdMattemp || "0"),
+                "TrdTsttemp": this.cleanNumberValue(tradeData.TrdTsttemp || "0"),
+                "TrdLpdenst": this.cleanNumberValue( this.byId("loadPortDensityNaptha")? this.byId("loadPortDensityNaptha").getValue() : tradeData.TrdLpdenst || "0.00"),
+                 "TrdOptdsel": tradeData.TrdOptdsel || "",
+                "BtchNum": tradeData.BtchNum || "",
+                "TrdDemday": tradeData.TrdDemday || "",
+
                 //Operation Payload
                 // Vehicle field
                 "TrdVeh": tradeData.TrdVeh || "",
+                "TrdVehimo": tradeData.TrdVehimo || "",
 
                 // Date fields - use getValue() to get formatted string value
                 "TrdWsdt": convertToISO(this.byId("windowStartDate") && this.byId("windowStartDate").getValue() ? this.byId("windowStartDate").getValue() : tradeData.TrdWsdt) || null,
@@ -1310,6 +1646,7 @@ sap.ui.define([
                 "NorDate": convertToISO(this.byId("norDate") && this.byId("norDate").getValue() ? this.byId("norDate").getValue() : tradeData.NorDate) || null,
                 "DschDate": convertToISO(this.byId("dschDate") && this.byId("dschDate").getValue() ? this.byId("dschDate").getValue() : tradeData.DschDate) || null,
                 "BlDate": convertToISO(this.byId("blDate") && this.byId("blDate").getValue() ? this.byId("blDate").getValue() : tradeData.BlDate) || null,
+                "TrdTtldat": convertToISO(this.byId("TtlDate") && this.byId("TtlDate").getValue() ? this.byId("TtlDate").getValue() : tradeData.TrdTtldat) || null,
 
                 // Payment due dates - calculated from BL Date and payment terms
                 // "TrdFinpdt": convertToISO(tradeData.TrdFinpdt) || null, //sDueDate ? convertToISO(sDueDate) : null,
@@ -1319,37 +1656,41 @@ sap.ui.define([
                 // "TrdQty": tradeData.TrdQty || "0.00", // Read-only
                 // "TrdDsprt": tradeData.TrdDsprt || "", // Read-only
 
+                "TnfrNum": tradeData.TnfrNum || "",
+                 "TrdApp": "OPERATIONS",
+                // TrdApp will be added conditionally after payload is built
+
                 // Load Port fields - static controls
-                "Lp1Qtybbl": this.byId("loadPortQtyBbl") ? this.byId("loadPortQtyBbl").getValue() : tradeData.Lp1Qtybbl || "0.00",
-                "Lp1Qtymt": this.byId("loadPortQtyMt") ? this.byId("loadPortQtyMt").getValue() : tradeData.Lp1Qtymt || "0.00",
-                "Lp1Tmp": this.byId("loadPortTmp") ? this.byId("loadPortTmp").getValue() : tradeData.Lp1Tmp || "0.00",
-                "Lp1Api": this.byId("loadPortApi") ? this.byId("loadPortApi").getValue() : tradeData.Lp1Api || "0.00",
-                "Lp1Apiuom": tradeData.Lp1Apiuom || "",
-                "Lp1Trndt": convertToISO(this.byId("loadPortTrndt") && this.byId("loadPortTrndt").getValue() ? this.byId("loadPortTrndt").getValue() : tradeData.Lp1Trndt) || null,
-                "Lp1Msc": this.byId("loadPortMsc") ? this.byId("loadPortMsc").getValue() : tradeData.Lp1Msc || "0.00",
-                "Lp1Mscuom": this.byId("loadPortMscuom") ? this.byId("loadPortMscuom").getSelectedKey() : tradeData.Lp1Mscuom || "",
+               "Lp1Qtybbl": this.cleanNumberValue(this.byId("loadPortQtyBbl") ? this.byId("loadPortQtyBbl").getValue() : tradeData.Lp1Qtybbl || "0.00"),
+"Lp1Qtymt": this.cleanNumberValue(this.byId("loadPortQtyMt") ? this.byId("loadPortQtyMt").getValue() : tradeData.Lp1Qtymt || "0.00"),
+"Lp1Tmp": this.cleanNumberValue(this.byId("loadPortTmp") ? this.byId("loadPortTmp").getValue() : tradeData.Lp1Tmp || "0.00"),
+"Lp1Api": this.cleanNumberValue(this.byId("loadPortApi") ? this.byId("loadPortApi").getValue() : tradeData.Lp1Api || "0.00"),
+"Lp1Apiuom": tradeData.Lp1Apiuom || "",
+"Lp1Trndt": convertToISO(this.byId("loadPortTrndt") && this.byId("loadPortTrndt").getValue() ? this.byId("loadPortTrndt").getValue() : tradeData.Lp1Trndt) || null,
+"Lp1Msc": this.cleanNumberValue(this.byId("loadPortMsc") ? this.byId("loadPortMsc").getValue() : tradeData.Lp1Msc || "0.00"),
+"Lp1Mscuom": this.byId("loadPortMscuom") ? this.byId("loadPortMscuom").getSelectedKey() : tradeData.Lp1Mscuom || "",
 
                 // Discharge Port fields - static controls
-                "Dp1Qtybbl": this.byId("discPortQtyBbl") ? this.byId("discPortQtyBbl").getValue() : tradeData.Dp1Qtybbl || "0.00",
-                "Dp1Qtymt": this.byId("discPortQtyMt") ? this.byId("discPortQtyMt").getValue() : tradeData.Dp1Qtymt || "0.00",
-                "Dp1Tmp": this.byId("discPortTmp") ? this.byId("discPortTmp").getValue() : tradeData.Dp1Tmp || "0.00",
-                "Dp1Api": this.byId("discPortApi") ? this.byId("discPortApi").getValue() : tradeData.Dp1Api || "0.00",
-                "Dp1Apiuom": tradeData.Dp1Apiuom || "",
-                "Dp1Trndt": convertToISO(this.byId("discPortTrndt") && this.byId("discPortTrndt").getValue() ? this.byId("discPortTrndt").getValue() : tradeData.Dp1Trndt) || null,
-                "Dp1Msc": this.byId("discPortMsc") ? this.byId("discPortMsc").getValue() : tradeData.Dp1Msc || "0.00",
-                "Dp1Mscuom": this.byId("discPortMscuom") ? this.byId("discPortMscuom").getSelectedKey() : tradeData.Dp1Mscuom || "",
+                "Dp1Qtybbl": this.cleanNumberValue(this.byId("discPortQtyBbl") ? this.byId("discPortQtyBbl").getValue() : tradeData.Dp1Qtybbl || "0.00"),
+"Dp1Qtymt": this.cleanNumberValue(this.byId("discPortQtyMt") ? this.byId("discPortQtyMt").getValue() : tradeData.Dp1Qtymt || "0.00"),
+"Dp1Tmp": this.cleanNumberValue(this.byId("discPortTmp") ? this.byId("discPortTmp").getValue() : tradeData.Dp1Tmp || "0.00"),
+"Dp1Api": this.cleanNumberValue(this.byId("discPortApi") ? this.byId("discPortApi").getValue() : tradeData.Dp1Api || "0.00"),
+"Dp1Apiuom": tradeData.Dp1Apiuom || "",
+"Dp1Trndt": convertToISO(this.byId("discPortTrndt") && this.byId("discPortTrndt").getValue() ? this.byId("discPortTrndt").getValue() : tradeData.Dp1Trndt) || null,
+"Dp1Msc": this.cleanNumberValue(this.byId("discPortMsc") ? this.byId("discPortMsc").getValue() : tradeData.Dp1Msc || "0.00"),
+"Dp1Mscuom": this.byId("discPortMscuom") ? this.byId("discPortMscuom").getSelectedKey() : tradeData.Dp1Mscuom || "",
                
                 // GRN Discharge Port fields - get from view controls or fallback to data
-                "GrDp1Qtybbl": this.byId("grnQtyBbl") ? this.byId("grnQtyBbl").getValue() : tradeData.GrDp1Qtybbl || "0.00",
-                 "GrDp1Qtymt": this.byId("grnQtyMt") ? this.byId("grnQtyMt").getValue() : tradeData.GrDp1Qtymt || "0.00",
-                  "GrDp1Tmp": this.byId("grnTmp") ? this.byId("grnTmp").getValue() : tradeData.GrDp1Tmp || "0.00",
-                  "GrDp1Api": this.byId("grnApi") ? this.byId("grnApi").getValue() : tradeData.GrDp1Api || "0.00",
-                  "GrDp1Trndt": convertToISO(this.byId("grnTrndt") && this.byId("grnTrndt").getValue() ? this.byId("grnTrndt").getValue() : tradeData.GrDp1Trndt) || null,
+                "GrDp1Qtybbl": this.cleanNumberValue(this.byId("grnQtyBbl") ? this.byId("grnQtyBbl").getValue() : tradeData.GrDp1Qtybbl || "0.00"),
+               "GrDp1Qtymt": this.cleanNumberValue(this.byId("grnQtyMt") ? this.byId("grnQtyMt").getValue() : tradeData.GrDp1Qtymt || "0.00"),
+                "GrDp1Tmp": this.cleanNumberValue(this.byId("grnTmp") ? this.byId("grnTmp").getValue() : tradeData.GrDp1Tmp || "0.00"),
+                   "GrDp1Api": this.cleanNumberValue(this.byId("grnApi") ? this.byId("grnApi").getValue() : tradeData.GrDp1Api || "0.00"),
+                 "GrDp1Trndt": convertToISO(this.byId("grnTrndt") && this.byId("grnTrndt").getValue() ? this.byId("grnTrndt").getValue() : tradeData.GrDp1Trndt) || null,
 
                   //Chartering Entry Payload
                     // Chartering
                 "TrdLoc": tradeData.TrdLoc || "",
-                "TrdDemday": tradeData.TrdDemday || "0.00",
+                "TrdDemday": tradeData.TrdDemday || "",
                 "TrdDemrat": tradeData.TrdDemrat || "0.00",
                 "TrdDemuom": tradeData.TrdDemuom || "",
                 "CstType": tradeData.CstType || "",
@@ -1360,6 +1701,12 @@ sap.ui.define([
               
 
             }
+
+            // // Only add TrdApp if TnfrNum is empty/0 - otherwise omit it completely
+            // if (!tradeData.TnfrNum || tradeData.TnfrNum === "" || tradeData.TnfrNum === "0") {
+            //     oSavePayload.TrdApp = "OPERATIONS";
+            // }
+
             // this.postS4hana(oSavePayload);
             console.log("=== SAVE PAYLOAD ===", oSavePayload);
             console.log("=== FINAL PAYLOAD FOR PAYMENT DATES ===");
@@ -1374,114 +1721,59 @@ sap.ui.define([
                 return;
             }
 
+            // Operations module only updates existing trades, never creates new ones
+            if (!tradeNumber) {
+                sap.m.MessageBox.error("No trade number selected. Please select a trade to update.");
+                return;
+            }
+
             // Show busy indicator
             sap.ui.core.BusyIndicator.show(0);
 
-            if (tradeNumber) {
-                // UPDATE existing trade entry - Read-Modify-Write pattern
-                var sPath = "/ZTA_TRADE_ENTRYSet(TrdNum='" + tradeNumber + "',TrdNumP='')";
-                console.log("=== UPDATE PATH ===", sPath);
+            // Exactly like Physical - just call create() with the payload directly
+            console.log("=== CALLING CREATE (LIKE PHYSICAL) ===");
+            console.log("TnfrNum value:", tradeData.TnfrNum);
+            console.log("TrdApp value being sent:", oSavePayload.TrdApp);
+            console.log("Full payload:", oSavePayload);
 
-                // Step 1: Read the current entity using GET_ENTITYSET with filters
-                var aFilters = [
-                    new sap.ui.model.Filter("TrdNum", sap.ui.model.FilterOperator.EQ, tradeNumber),
-                    new sap.ui.model.Filter("TrdNumP", sap.ui.model.FilterOperator.EQ, "")
-                ];
+            oModel.create("/ZTA_TRADE_ENTRYSet", oSavePayload, {
+                success: function (oData) {
+                    console.log("=== CREATE SUCCESS ===", oData);
+                    sap.ui.core.BusyIndicator.hide();
 
-                console.log("=== READING ENTITY ===");
-                oModel.read("/ZTA_TRADE_ENTRYSet", {
-                    filters: aFilters,
-                    success: function (oData) {
-                        console.log("=== READ SUCCESS ===", oData);
-                        if (oData.results && oData.results.length > 0) {
-                            var oCurrentData = oData.results[0];
-                            console.log("=== CURRENT DATA ===", oCurrentData);
+                    var sMessage = status === "D"
+                        ? "Trade Entry " + tradeNumber + " saved as Draft!"
+                        : "Trade Entry " + tradeNumber + " successfully updated!";
 
-                            // Step 2: Modify only the editable fields
-                            var oUpdatePayload = Object.assign({}, oCurrentData, oSavePayload);
-                            console.log("=== FINAL UPDATE PAYLOAD ===", oUpdatePayload);
+                    sap.m.MessageBox.success(sMessage);
 
-                            // Step 3: Update with complete payload
-                            console.log("=== SENDING UPDATE ===");
-                            oModel.update(sPath, oUpdatePayload, {
-                                merge: false,
-                                success: function (oData) {
-                                    console.log("=== UPDATE SUCCESS ===", oData);
-                                    sap.ui.core.BusyIndicator.hide();
+                    const oAppModel = this.getOwnerComponent().getModel("appModel");
+                    oAppModel.setProperty("/IsEditable", false);
+                    oAppModel.setProperty("/IsEditBtnVisible", true);
+                    oAppModel.setProperty("/IsSaveBtnVisible", false);
 
-                                    var statusMessage = status === "D" ? "Trade Entry " + tradeNumber + " saved as Draft!" : "Trade Entry " + tradeNumber + " successfully updated!";
-                                    sap.m.MessageBox.success(statusMessage);
+                    // Refresh the model
+                    oModel.refresh();
 
-                                    const oAppModel = this.getOwnerComponent().getModel("appModel");
-                                    oAppModel.setProperty("/IsEditable", false);
-                                    oAppModel.setProperty("/IsEditBtnVisible", true);
-                                    oAppModel.setProperty("/IsSaveBtnVisible", false);
+                }.bind(this),
+                error: function (oError) {
+                    console.error("=== CREATE FAILED ===", oError);
+                    console.error("=== ERROR DETAILS ===", oError.responseText);
+                    sap.ui.core.BusyIndicator.hide();
 
-                                }.bind(this),
-                                error: function (oError) {
-                                    console.error("=== UPDATE FAILED ===", oError);
-                                    sap.ui.core.BusyIndicator.hide();
-                                    var errorMsg = "Error updating Trade Entry";
-                                    try {
-                                        var errorResponse = JSON.parse(oError.responseText);
-                                        console.error("=== ERROR RESPONSE ===", errorResponse);
-                                        if (errorResponse.error && errorResponse.error.message && errorResponse.error.message.value) {
-                                            errorMsg = errorResponse.error.message.value;
-                                        }
-                                    } catch (e) {
-                                        console.error("Could not parse error response", e);
-                                    }
-                                    sap.m.MessageBox.error(errorMsg);
-                                }.bind(this)
-                            });
-                        } else {
-                            console.error("=== NO RESULTS FROM READ ===");
-                            sap.ui.core.BusyIndicator.hide();
-                            sap.m.MessageBox.error("Trade Entry not found");
+                    var errorMsg = "Error updating Trade Entry";
+                    try {
+                        var errorResponse = JSON.parse(oError.responseText);
+                        console.error("=== PARSED ERROR ===", errorResponse);
+                        if (errorResponse.error && errorResponse.error.message && errorResponse.error.message.value) {
+                            errorMsg = errorResponse.error.message.value;
                         }
-                    }.bind(this),
-                    error: function (oError) {
-                        console.error("=== READ FAILED ===", oError);
-                        sap.ui.core.BusyIndicator.hide();
-                        var errorMsg = "Error reading current Trade Entry";
-                        try {
-                            var errorResponse = JSON.parse(oError.responseText);
-                            if (errorResponse.error && errorResponse.error.message && errorResponse.error.message.value) {
-                                errorMsg = errorResponse.error.message.value;
-                            }
-                        } catch (e) {
-                            console.error("Could not parse error response", e);
-                        }
-                        sap.m.MessageBox.error(errorMsg);
-                        console.error("Read failed:", oError);
-                    }.bind(this)
-                });
-            } else {
-                // CREATE new trade entry
-                oModel.create("/ZTA_TRADE_ENTRYSet", oSavePayload, {
-                    success: function (oData) {
-                        sap.ui.core.BusyIndicator.hide();
-                        var newTradeNumber = oData.TrdNum;
-                        sap.m.MessageBox.success("Trade Entry " + newTradeNumber + " successfully created!");
-                        this.onPostCost(newTradeNumber, trdNump, true);
-                        console.log("Created:", oData);
-                    }.bind(this),
-                    error: function (oError) {
-                        sap.ui.core.BusyIndicator.hide();
-                        var errorMsg = "Error creating Trade Entry";
-                        try {
-                            var errorResponse = JSON.parse(oError.responseText);
-                            if (errorResponse.error && errorResponse.error.message && errorResponse.error.message.value) {
-                                errorMsg = errorResponse.error.message.value;
-                            }
-                        } catch (e) {
-                            console.error("Could not parse error response", e);
-                        }
-                        sap.m.MessageBox.error(errorMsg);
-                        console.error("Create failed:", oError);
-                    }.bind(this)
-                });
-            }
+                    } catch (e) {
+                        console.error("Could not parse error response", e);
+                    }
+                    sap.m.MessageBox.error(errorMsg);
+                }.bind(this)
+            });
 
         },
 

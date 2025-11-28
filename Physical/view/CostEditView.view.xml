@@ -1,0 +1,582 @@
+<mvc:View controllerName="hmel.com.tradeuiapp.controller.CostEditView"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout">
+
+    <Page id="detail" title="Edit Cost (Misc Charge)">
+        <content>
+
+            <!-- ===== Panel 1: Cost Info ===== -->
+            <Panel headerText="Cost Info" expandable="false" expanded="true">
+                <f:SimpleForm
+                    id="formCostInfo"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="12"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="1"
+                    emptySpanL="1"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="3"
+                    columnsL="3"
+                    columnsM="1">
+
+                    <f:content>
+                        <!-- Group 1 -->
+                        <core:Title text=""/>
+                        <Label text="Cost Type"/>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/CTSEPERATLID}"
+                            items="{
+                            path: '/TradeEntry',
+                            sorter: { path: 'CTSEPERATLID' }
+                            }">
+                            <core:Item key="{CTSEPERATLID}" text="{CTSEPERATLID}" />
+                        </ComboBox>
+
+                        <Label/>
+                        <HBox>
+                            <CheckBox text="Secondary" selected="false"/>
+                            <!-- <CheckBox text="Pass Through"/>
+                            <CheckBox text="Internal"/> -->
+                        </HBox>
+
+                        <Label text="Pricing Type"/>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/COSTBASIS}"
+                            items="{
+                            path: '/PricingType',
+                            sorter: { path: 'PRCTYPNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PRCTYPNAME}" />
+                        </ComboBox>
+
+                        <!-- Group 2 -->
+                        <core:Title text=""/>
+                        <Label text="Based on PL"/>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/BASEDONPL}"
+                            items="{
+                            path: '/BasedOnPL',
+                            sorter: { path: 'BASDPLNAME' }
+                            }">
+                            <core:Item key="{BASDPLID}" text="{BASDPLNAME}" />
+                        </ComboBox>
+
+                        <Label text="Cost Status"/>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/COSTSTATS}"
+                            items="{
+                            path: '/CostStatus',
+                            sorter: { path: 'CSTSTSNAME' }
+                            }">
+                            <core:Item key="{CSTSTSID}" text="{CSTSTSNAME}" />
+                        </ComboBox>
+
+                        <Label text="Pricing Precision"/>
+                        <Input value="{appModel>/CostDetails/PRICEPREC}"/>
+
+                        <!-- <Label text="Operator"/>
+                        <Select>
+                            <core:Item key="Anup Kumar" text="Anup Kumar"/>
+                        </Select> -->
+
+                        <!-- Group 3 -->
+                        <core:Title text=""/>
+                        <!-- <Label text="Schedule"/> -->
+                        <!-- <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <Label text="Start Date"/>
+                        <DatePicker value="{appModel>/CostDetails/CSTSTDATE}"/>
+
+                        <Label text="End Date"/>
+                        <DatePicker value="{appModel>/CostDetails/CSTENDATE}"/>
+                    </f:content>
+                </f:SimpleForm>
+
+                <f:SimpleForm id="formPricinggroup"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="12"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="1"
+                    emptySpanL="1"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="3"
+                    columnsL="3"
+                    columnsM="1">
+
+                    <f:content>
+                        <!-- Group 1 -->
+                        <core:Title text=""/>
+                        <!-- <Label text="Delivery Cost"/>
+                        <Select>
+                            <core:Item key="No" text="No"/>
+                        </Select> -->
+
+                        <!-- <Label text="Rate Type"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- <Label text="FX Quote"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <Label text="Event"/>
+                        <ComboBox
+                                            
+                            selectedKey=""
+                            items="{
+                            path: '',
+                            sorter: { path: 'PRCTYPNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PRCTYPNAME}" />
+                        </ComboBox>
+
+                        <!-- Group 2 -->
+                        <core:Title text=""/>
+                        <Label text="Settlement CCY"/>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/STLMTCRID}"
+                            items="{
+                            path: '/SettlementCurrency',
+                            sorter: { path: 'STCURNAME' }
+                            }">
+                            <core:Item key="{STCURID}" text="{STCURNAME}" />
+                        </ComboBox>
+
+                        <Label text="Fixed Rate"/>
+                        <Input value="{appModel>/CostDetails/PRCFXDRAT}"/>
+
+                        <!-- <Label text="FX Quoting Rule"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- Group 3 -->
+                        <core:Title text=""/>
+
+                        <Label text="Cost Value"/>
+                        <Input value="{appModel>/CostDetails/COSTVALUE}"/>
+                        
+                        <Label text="Cost Currency"/>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/COSTYPECURID}"
+                            items="{
+                            path: '/CostTypeCurrency',
+                            sorter: { path: 'CSTCURNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{CSTCURNAME}" />
+                        </ComboBox>
+
+                        <Label text="Payment currency"/>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/PMTCURRID}"
+                            items="{
+                            path: '/PaymentCurrency',
+                            sorter: { path: 'PYMTCURNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PYMTCURNAME}" />
+                        </ComboBox>
+
+                        <!-- <Label/>
+                        <CheckBox text="Include in Weighted Average Pricing" selected="false"/> -->
+                    </f:content>
+                </f:SimpleForm>
+
+                <f:SimpleForm id="formOtherInfoGroup"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="12"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="1"
+                    emptySpanL="1"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="3"
+                    columnsL="3"
+                    columnsM="1">
+
+                    <f:content>
+                        <!-- Group 1 -->
+                        <core:Title text=""/>
+                        <Label text="Cost/Revenue"/>
+                        <ComboBox
+                                            
+                            selectedKey=""
+                            items="{
+                            path: '',
+                            sorter: { path: 'PYMTCURNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PYMTCURNAME}" />
+                        </ComboBox>
+
+                        <Label text="Input Date"/>
+                        <DatePicker value="{appModel>/CostDetails/INPUTDATE}"/>
+
+                        <!-- <Label text="Effective Date"/>
+                        <DatePicker value="21.08.2025"/> -->
+
+                        <!-- <Label text="P/L Allocation"/>
+                        <Select>
+                            <core:Item key="Effective Date Based" text="Effective Date Based"/>
+                        </Select> -->
+
+                        <!-- Group 2 -->
+                        <core:Title text=""/>
+                        <Label text="Company"/>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/COMPANY}"
+                            items="{
+                            path: '/Company',
+                            sorter: { path: 'COMPNAME' }
+                            }">
+                            <core:Item key="{COMPID}" text="{COMPNAME}" />
+                        </ComboBox>
+
+                        <!-- <Label text="Contract"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <Label text="Payment Due"/>
+                        <DatePicker value="{appModel>/CostDetails/PAYDUEDAT}"/>
+
+                        <Label text="Payment"/>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/PAYMNTTRM}"
+                            items="{
+                            path: '/PaymentTerm',
+                            sorter: { path: 'PMTRMNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PMTRMNAME}" />
+                        </ComboBox>
+
+                        <!-- Group 3 -->
+                        <!-- <core:Title text=""/> -->
+                        <!-- <Label text="Int. Company"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- <Label text="Trader"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- <Label text="Int. Strategy"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- <Label text="Comment"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <core:Title text=""/>
+                        <Label text="Price"/>
+                        <Input value="{appModel>/CostDetails/PRICE}">
+                            <layoutData>
+                                <l:GridData span="XL5 L4 M4 S8" />
+                            </layoutData>
+                        </Input>
+                        <ComboBox
+                                            
+                            selectedKey="{appModel>/CostDetails/PRCURRID}"
+                            items="{
+                            path: '/PriceCurrency',
+                            sorter: { path: 'PRCURNAME' }
+                            }">
+                            <core:Item key="{PRCURRID}" text="{PRCURNAME}" />
+                        </ComboBox>
+                    </f:content>
+                </f:SimpleForm>
+            </Panel>
+
+            <!-- ===== Panel 2: Pricing / Settlement ===== -->
+            <Panel headerText="Pricing / Settlement" visible="false" expandable="true" expanded="true">
+                <f:SimpleForm id="formPricing"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="12"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="1"
+                    emptySpanL="1"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="3"
+                    columnsL="3"
+                    columnsM="1">
+
+                    <f:content>
+                        <!-- Group 1 -->
+                        <core:Title text=""/>
+                        <!-- <Label text="Delivery Cost"/>
+                        <Select>
+                            <core:Item key="No" text="No"/>
+                        </Select> -->
+
+                        <!-- <Label text="Rate Type"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- <Label text="FX Quote"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <Label text="Event"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select>
+
+                        <!-- Group 2 -->
+                        <core:Title text=""/>
+                        <Label text="Settlement CCY"/>
+                        <Select>
+                            <core:Item key="USD" text="USD"/>
+                        </Select>
+
+                        <Label text="Fixed Rate"/>
+                        <Input value=""/>
+
+                        <!-- <Label text="FX Quoting Rule"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- Group 3 -->
+                        <core:Title text=""/>
+
+                        <Label text="Cost Value"/>
+                        <Label text="Cost Currency"/>
+                        <Label text="Payment currency"/>
+                        <!-- <Label/>
+                        <CheckBox text="Include in Weighted Average Pricing" selected="false"/> -->
+                    </f:content>
+                </f:SimpleForm>
+            </Panel>
+
+            <!-- ===== Panel 3: Contract / Other Info ===== -->
+            <Panel headerText="Contract / Other Info" visible="false" expandable="true" expanded="true">
+                <f:SimpleForm id="formOtherInfo"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="12"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="1"
+                    emptySpanL="1"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="3"
+                    columnsL="3"
+                    columnsM="1">
+
+                    <f:content>
+                        <!-- Group 1 -->
+                        <core:Title text=""/>
+                        <Label text="Cost/Revenue"/>
+                        <ComboBox
+                                            
+                            selectedKey=""
+                            items="{
+                            path: '',
+                            sorter: { path: 'PYMTCURNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PYMTCURNAME}" />
+                        </ComboBox>
+
+                        <Label text="Input Date"/>
+                        <DatePicker />
+
+                        <!-- <Label text="Effective Date"/>
+                        <DatePicker value="21.08.2025"/> -->
+
+                        <!-- <Label text="P/L Allocation"/>
+                        <Select>
+                            <core:Item key="Effective Date Based" text="Effective Date Based"/>
+                        </Select> -->
+
+                        <!-- Group 2 -->
+                        <core:Title text=""/>
+                        <Label text="Company"/>
+                        <ComboBox
+                                            
+                            selectedKey=""
+                            items="{
+                            path: '',
+                            sorter: { path: 'PYMTCURNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PYMTCURNAME}" />
+                        </ComboBox>
+
+                        <!-- <Label text="Contract"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <Label text="Payment Due"/>
+                        <DatePicker />
+
+                        <Label text="Payment"/>
+                        <ComboBox
+                                            
+                            selectedKey=""
+                            items="{
+                            path: '',
+                            sorter: { path: 'PYMTCURNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PYMTCURNAME}" />
+                        </ComboBox>
+
+                        <!-- Group 3 -->
+                        <core:Title text=""/>
+                        <!-- <Label text="Int. Company"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- <Label text="Trader"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- <Label text="Int. Strategy"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+
+                        <!-- <Label text="Comment"/>
+                        <Select forceSelection="false">
+                            <core:Item key="NA" text="N/A"/>
+                        </Select> -->
+                    </f:content>
+                </f:SimpleForm>
+            </Panel>
+
+            <!-- ===== Panel 4: Price Section ===== -->
+            <Panel headerText="Price Section" visible="false" expandable="true" expanded="true">
+                <f:SimpleForm id="formPrice"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="12"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="1"
+                    emptySpanL="1"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="3"
+                    columnsL="3"
+                    columnsM="1">
+
+                    <f:content>
+                        <!-- Group 1 -->
+                        <core:Title text=""/>
+                        <Label text="Index"/>
+                        <ComboBox
+                                            
+                            selectedKey=""
+                            items="{
+                            path: '',
+                            sorter: { path: 'PYMTCURNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PYMTCURNAME}" />
+                        </ComboBox>
+
+                        <!-- Group 2 -->
+                        <core:Title text=""/>
+                        <Label text="Roll Early Days"/>
+                        <Input value=""/>
+
+                        <!-- Group 3 -->
+                        <core:Title text=""/>
+                    </f:content>
+                </f:SimpleForm>
+            </Panel>
+
+            <!-- ===== Panel 5: Price Value ===== -->
+            <Panel headerText="Price Value" visible="false" expandable="true" expanded="true">
+                <f:SimpleForm id="formPrice2"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="12"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="1"
+                    emptySpanL="1"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="3"
+                    columnsL="3"
+                    columnsM="1">
+
+                    <f:content>
+                        <!-- Group 1 -->
+                        <core:Title text=""/>
+                        <Label text="Price"/>
+                        <Input >
+                            <layoutData>
+                                <l:GridData span="XL5 L4 M4 S8" />
+                            </layoutData>
+                        </Input>
+                        <ComboBox
+                                            
+                            selectedKey=""
+                            items="{
+                            path: '',
+                            sorter: { path: 'PYMTCURNAME' }
+                            }">
+                            <core:Item key="{ID}" text="{PYMTCURNAME}" />
+                        </ComboBox>
+
+                        <!-- Group 2 --> 
+                        <core:Title text=""/> 
+
+                        <!-- Group 3 --> 
+                        <core:Title text=""/>
+                    </f:content>
+                </f:SimpleForm>
+            </Panel>
+
+        </content>
+    </Page>
+</mvc:View>

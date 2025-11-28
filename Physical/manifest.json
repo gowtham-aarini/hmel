@@ -1,0 +1,227 @@
+{
+  "_version": "1.76.0",
+  "sap.app": {
+    "id": "hmel.com.tradeuiapp",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.18.5",
+      "toolsId": "c65f7104-b28c-4bc3-952e-1b9a0e716145"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/HMELTrading/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      },
+      "s4HanaService": {
+        "uri": "/sap/opu/odata/sap/ZHMELFACTMASTERTABLES_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "ctrms4HanaService": {
+        "uri": "/sap/opu/odata/sap/ZHMELTRADINGTRADEE_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "TradeObject-manage": {
+          "semanticObject": "TradeObject",
+          "action": "manage",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.139.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "hmel.com.tradeuiapp.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "s4HanaModel": {
+        "dataSource": "s4HanaService",
+        "preload": true,
+        "settings": {
+          "useBatch": true,
+          "defaultBindingMode": "TwoWay",
+          "defaultCountMode": "Inline"
+        }
+      },
+      "CTRMs4HanaModel": {
+        "dataSource": "ctrms4HanaService",
+        "preload": true,
+        "settings": {
+          "useBatch": true,
+          "defaultBindingMode": "TwoWay",
+          "defaultCountMode": "Inline"
+        }
+      },
+      "oDataTradeEntry": {
+        "dataSource": "mainService",
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+            "autoExpandSelect": true
+        }
+      },
+      "fieldExpandModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/FieldToExpand.json"
+      },
+      "appModel": {
+        "type": "sap.ui.model.json.JSONModel"
+      },
+      "SelectedTradeNumber": {
+        "type": "sap.ui.model.json.JSONModel"
+      },
+      "OtherCostModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/OtherCost.json"
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "hmel.com.tradeuiapp.view",
+        "async": true,
+        "viewPath": "hmel.com.tradeuiapp.view"
+      },
+      "routes": [
+        {
+          "name": "RouteTradeView",
+          "pattern": "tradeapp/{status}/{tradeNumber}",
+          "target": [
+            "TargetTradeView"
+          ]
+        },
+        {
+          "name": "RouteOverview",
+          "pattern": ":?query:",
+          "target": [
+            "TargetOverview"
+          ]
+        },
+        {
+          "name": "RouteCostEditView",
+          "pattern": "CostEditView/{costType}",
+          "target": [
+            "TargetCostEditView"
+          ]
+        },
+        {
+          "name": "RoutePaperTrade",
+          "pattern": "PaperTrade/{tradeNumber}",
+          "target": [
+            "TargetPaperTrade"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetTradeView": {
+          "id": "TradeView",
+          "name": "TradeView"
+        },
+        "TargetOverview": {
+          "id": "Overview",
+          "name": "Overview"
+        },
+        "TargetCostEditView": {
+          "id": "CostEditView",
+          "name": "CostEditView"
+        },
+        "TargetPaperTrade": {
+          "id": "PaperTrade",
+          "name": "PaperTrade"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "hmel.com.tradeuiapp.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "app-router"
+  }
+}

@@ -1,0 +1,20 @@
+{
+    "CostDetails":[
+        {
+            "CostType": "OSP",
+            "CostKey": "osp"
+        },
+        {
+            "CostType": "Prem/Disc",
+            "CostKey": "pd"
+        },
+        {
+            "CostType": "Other Prem/Disc",
+            "CostKey": "opd"
+        },
+        {
+            "CostType": "API Escalation/De-escalation",
+            "CostKey": "api"
+        }
+    ]
+}

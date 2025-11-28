@@ -1,0 +1,31 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
+    <Popover
+        id="draftPopover"
+        class="sapUiResponsivePadding--header sapUiResponsivePadding--footer"
+        placement="Bottom"
+        showHeader="false">
+
+        <VBox>
+            <SearchField
+                id="searchField"
+                placeholder="Search..."
+                change="onSearchTrade" />
+
+            <List
+                id="actionList"
+                items="{
+                    path: 'draftModel>/DraftTemplate'
+                }"
+                growing="true"              
+                growingThreshold="10"       
+                growingScrollToLoad="true"   
+                >
+                <ActionListItem
+                    class="sapUiTinyMarginLeft"
+                    type="Active" 
+                    text="{draftModel>TrdNum}"
+                    press="onTemplatePress" />
+            </List>
+        </VBox>
+    </Popover>
+</core:FragmentDefinition>

@@ -1,0 +1,3125 @@
+<mvc:View
+    xmlns:networkgraph="sap.suite.ui.commons.networkgraph"
+    controllerName="hmel.com.tradeuiapp.controller.PaperTrade"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:ui="sap.ui.table"
+    xmlns:upload="sap.m.upload"
+    xmlns:Tool="sap.m.Toolbar"
+>
+    <Page
+        id="Paperpage"
+        title="Paper Trade #{appModel>/TradeNo} is being edited"
+    >
+        <HBox
+            binding="{osmModel>/osm/0}"
+            alignItems="Center"
+            justifyContent="Center"
+            renderType="Bare"
+            width="100%"
+        >
+            <Label
+                text="Trade Number:"
+                class="sapUiSmallMarginBeginEnd"
+                labelFor="tradeNumber"
+            />
+            <Input
+                id="tradeNumberPaper"
+                value = "{appModel>/TradeNo}" enabled="{appModel>/IsTradeNumberEnabled}"
+                width="12rem"
+                class="sapUiSmallMarginEnd"
+            />
+            
+            <Label
+                text="Trade Type:"
+                class="sapUiSmallMarginEnd"
+                labelFor="tradeType"
+            />
+            <ComboBox
+                id="tradeTypecb1"
+                width="12rem"
+                selectedKey="{appModel>/TradeDetails/TRADTYPID}"
+                enabled="{appModel>/IsCreateEnabled}"
+                items="{ path: '/TradingType', sorter: { path: 'TRADENAME' } }"
+            >
+                <core:Item
+                    key="{ID}"
+                    text="{TRADENAME}"
+                />
+            </ComboBox>
+
+            <Label
+                                            text="Buy/Sell"
+                                            labelFor="buyorsellcb"
+                                        />
+                                        <ComboBox
+                                            id="sellorbuycb"
+                                            selectedKey="{appModel>/TradeDetails/BUYSELLID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/BuyOrSell', sorter: { path: 'BOSNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{BOSNAME}"
+                                            />
+                                        </ComboBox>
+
+            <Label
+                text="Trade Date:"
+                class="sapUiSmallMarginBeginEnd"
+                labelFor="dealDate"
+            />
+            <DatePicker
+                id="Datedeal"
+                placeholder="Trade Date"
+                value="{ path: 'appModel>/TradeDetails/DEAL_DATE', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: { style: 'long', UTC: true } }"
+                valueFormat="yyyy-MM-dd"
+                displayFormat="long"
+                change=".handleChange"
+                enabled="{appModel>/IsCreateEnabled}"
+                width="12rem"
+            />
+           
+        </HBox>
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Panel
+                    expandable="true"
+                    expanded="true"
+                    headerText="Seller and Buyer"
+                    width="auto"
+                    class="sapUiResponsiveMargin"
+                >
+                    <f:SimpleForm
+                        id="SellerAndBuyerSimpleFormFor"
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="4"
+                        labelSpanL="4"
+                        labelSpanM="12"
+                        labelSpanS="12"
+                        adjustLabelSpan="false"
+                        emptySpanXL="0"
+                        emptySpanL="0"
+                        emptySpanM="0"
+                        emptySpanS="0"
+                        columnsXL="2"
+                        columnsL="2"
+                        columnsM="6"
+                    >
+                        <f:content>
+                            <f:SimpleForm
+                                id="sellerBuyerForm"
+                                layout="ResponsiveGridLayout"
+                                columnsM="2"
+                                columnsL="2"
+                                columnsXL="2"
+                                editable="true"
+                            >
+                                <!--  Seller Section  -->
+                                <core:Title text="Seller" />
+                                <Label
+                                    text="Counter Party"
+                                    required="true"
+                                    labelFor="counterpartcb"
+                                />
+                                <ComboBox
+                                    id="partcountercb"
+                                    width="400px"
+                                   selectedKey="{appModel>/TradeDetails/CNTRPRTID}"
+                                enabled="{appModel>/IsCreateEnabled}"
+                                items="{
+                                    path: '/Counterpart',
+                                    sorter: { path: 'CTPRTNAME' },
+                                    filters: [
+                                        { path: 'CTPRTSTAT', operator: 'EQ', value1: 'Active' }
+                                    ]
+                                }"> 
+                                <layoutData>
+                                    <l:GridData span="L6 M6 S12"/>
+                                </layoutData>
+                                <core:Item key="{ID}" text="{CTPRTNAME}" />
+                            </ComboBox>
+                            <Button width="2rem" icon="sap-icon://add" press=".onAddDialog" enabled="{appModel>/IsCreateEnabled}">
+                                <customData>
+                                    <core:CustomData key="fieldName" value="Counter Part"/>
+                                    <core:CustomData key="modelPath" value="ZTM_COUNTERPARTSet"/>
+                                    <core:CustomData key="fieldId" value="Counter Part ID"/>
+                                    <core:CustomData key="fieldActName" value="Counter Part Name"/>
+                                    <core:CustomData key="fieldStatus" value="Counter Part Status"/>
+                                    <core:CustomData key="idKey" value="Id"/>
+                                    <core:CustomData key="nameKey" value="Ctprtname"/>
+                                    <core:CustomData key="statusKey" value="Ctprtstat"/>
+                                </customData>
+                            </Button>
+                            </f:SimpleForm>
+                            <!--  <Label text="Contact" />
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                            </ComboBox>
+                            <Label text="Affiliation" />
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                            </ComboBox>
+                            <Label text="" />
+                            <CheckBox text="Internal" valueState="Information" enabled="false" selected="true">
+                                <layoutData>
+                                    <l:GridData span="XL2 L3 M4 S4" />
+                                </layoutData>
+                            </CheckBox>
+                            <CheckBox text="Hedge" enabled="true" selected="false">
+                                <layoutData>
+                                    <l:GridData span="XL2 L3 M4 S4" />
+                                </layoutData>
+                            </CheckBox>  -->
+                            <!--  2nd section  -->
+                            <f:SimpleForm
+                                id="Formbuyer"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                columnsM="2"
+                                columnsL="2"
+                                columnsXL="2"
+                            >
+                                <core:Title text="Buyer" />
+                                <Label
+                                    text="Internal Co."
+                                    labelFor="internalcoCb"
+                                />
+                                <ComboBox
+                                    id="cointernal"
+                                    width="400px"
+                                    selectedKey="{appModel>/TradeDetails/INTERCOMP}"
+                                    enabled="{appModel>/IsCreateEnabled}"
+                                    items="{ path: '/InterCompany', sorter: { path: 'INTCOMPNAME' } }"
+                                >
+                                    <core:Item
+                                        key="{INTERCOMPID}"
+                                        text="{INTCOMPNAME}"
+                                    />
+                                </ComboBox>
+                                <Label
+                                    text="Trader"
+                                    labelFor="tradercb"
+                                />
+                                <ComboBox
+                                    id="cbtrader"
+                                    width="400px"
+                                    selectedKey="{appModel>/TradeDetails/TRADER_ID}"
+                                    enabled="{appModel>/IsCreateEnabled}"
+                                    items="{ path: '/Trader', sorter: { path: 'TRDRNAME' } }"
+                                >
+                                    <core:Item
+                                        key="{ID}"
+                                        text="{TRDRNAME}"
+                                    />
+                                </ComboBox>
+                                <Label
+                                    text="Strategy"
+                                    labelFor="strategyCombo"
+                                />
+                                <ComboBox
+                                    id="Combostrategy"
+                                    width="400px"
+                                    selectedKey="{appModel>/TradeDetails/STRATEGYID}"
+                                    enabled="{appModel>/IsCreateEnabled}"
+                                    items="{ path: '/Strategy', sorter: { path: 'STRGYNAME' } }"
+                                >
+                                    <core:Item
+                                        key="{ID}"
+                                        text="{STRGYNAME}"
+                                    />
+                                </ComboBox>
+                            </f:SimpleForm>
+                            <!--  <Label text="Venture" />
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                            </ComboBox>
+
+                            <Label text="Accounting" />
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                            </ComboBox>  -->
+                            <!--  3rd section  -->
+                            <!--  <core:Title text="" />
+
+                            <Label text="Broker" />
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                            </ComboBox>
+
+                            <Label text="Contact" />
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                            </ComboBox>
+
+                            <Label text="Type" />
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                            </ComboBox>
+
+                            <Label text="Fee" />
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                            </ComboBox>
+                            
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                        
+                            </ComboBox>
+                            <ComboBox
+                                
+                                selectedKey=""
+                                items="{
+                                    path: 'model>/test',
+                                    sorter: { path: 'Name' }
+                                }">
+                                <core:Item key="{ProductId}" text="{Name}" />
+                            
+                            </ComboBox>  -->
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+                <IconTabBar
+                    id="idIconTabBarNoIconsPaper"
+                    expanded="{device>/isNoPhone}"
+                    class="sapUiResponsiveContentPadding"
+                >
+                    <items>
+                        <IconTabFilter
+                            text="Details"
+                            key="buyselltab"
+                        >
+                            <Panel
+                                headerText="Buy/Sell"
+                                expandable="true"
+                                expanded="true"
+                            >
+                                <f:SimpleForm
+                                    id="SimpleFormForBuysellDetailsTabPaper"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="3"
+                                    columnsL="3"
+                                    columnsM="6"
+                                >
+                                    <f:content>
+                                        <!--  1st section  -->
+                                        <!-- <core:Title text="Buy/Sell" /> -->
+                                        <!--  <Label text="" />
+                                        <RadioButtonGroup id="rbggroup" columns="2" class="sapUiMediumMarginBottom">
+                                            <RadioButton id="RB3-buy" text="Buy" />
+                                            <RadioButton id="RB3-sell" text="Sell" />
+                                        </RadioButtonGroup>  -->
+                                        <!-- <Label
+                                            text="Buy/Sell"
+                                            labelFor="buyorsellcb"
+                                        />
+                                        <ComboBox
+                                            id="sellorbuycb"
+                                            width="400px"
+                                            selectedKey="{appModel>/TradeDetails/BUYSELLID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/BuyOrSell', sorter: { path: 'BOSNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{BOSNAME}"
+                                            />
+                                        </ComboBox> -->
+                                        <core:Title text="Dates" />
+                                        <Label text="Period" />
+                                        <ComboBox
+                                            id="cbperiod"
+                                            selectedKey="{appModel>/TradeDetails/ZPERIODID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/Period', sorter: { path: 'PERIDNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ZPERIODID}"
+                                                text="{PERIDNAME}"
+                                            />
+                                        </ComboBox>
+                                        <Label text="From" />
+                                        <DatePicker
+                                            id="fromdatebuy"
+                                            value="{ 'path': 'appModel>/TradeDetails/BUYFRMDAT', 'type': 'sap.ui.model.odata.type.DateTimeOffset', 'formatOptions': { style: 'long' , UTC :true } }"
+                                            valueFormat="dd-MM-yyyy"
+                                            displayFormat="long"
+                                            change=".handleChange"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            width="14rem"
+                                        />
+                                        <Label text="To" />
+                                        <DatePicker
+                                            id="todatebuy"
+                                            value="{ 'path': 'appModel>/TradeDetails/BUYTODATE', 'type': 'sap.ui.model.odata.type.DateTimeOffset', 'formatOptions': { style: 'long' , UTC :true } }"
+                                            valueFormat="dd-MM-yyyy"
+                                            displayFormat="long"
+                                            change=".handleChange"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            width="14rem"
+                                        />
+                                        <Label text="Span" />
+                                        <ComboBox
+                                            id="cbspan"
+                                            selectedKey="{appModel>/TradeDetails/ZSPANID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/Span', sorter: { path: 'SPANNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ZSPANID}"
+                                                text="{SPANNAME}"
+                                            />
+                                        </ComboBox>
+                                        <!--  2nd section  -->
+                                        <!--  3rd section  -->
+                                        <core:Title text="Tolerance" />
+                                        <Label text="Below Pct" />
+                                        <Input
+                                            id="PctInpbelow"
+                                            value="{appModel>/TradeDetails/TOLERNBPCT}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Text text=" %" />
+                                        <Label text="Above Pct" />
+                                        <Input
+                                            id="PctInpabove"
+                                            value="{appModel>/TradeDetails/TOLERNAPCT}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Text text=" %" />
+                                        <Label text="Options" />
+                                        <ComboBox
+                                            id="Cboptions"
+                                            selectedKey="{appModel>/TradeDetails/TRADE_NO}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/TradeEntry', sorter: { path: 'TOLERNOPTN' } }"
+                                        >
+                                            <core:Item
+                                                key="{TRADE_NO}"
+                                                text="{TOLERNOPTN}"
+                                            />
+                                        </ComboBox>
+                                        <!--  4th section  -->
+                                        <core:Title text="Units" />
+                                        <Label text="Commodity" />
+                                        <ComboBox
+                                            id="cbcommodity"
+                                            selectedKey="{appModel>/TradeDetails/COMMDTID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/Commodity', sorter: { path: 'CMDTYNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{CMDTYNAME}"
+                                            />
+                                        </ComboBox>
+                                        <Label text="Mean Qty" />
+                                        <Input
+                                            id="InpmeanQty"
+                                            value="{appModel>/TradeDetails/MEANQUANT}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <ComboBox
+                                            id="cbmeanQty"
+                                            selectedKey="{appModel>/TradeDetails/UOMID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/UOM', sorter: { path: 'UOMNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{UOMNAME}"
+                                            />
+                                        </ComboBox>
+                                        <Label text="Minimum Qty" />
+                                        <Input
+                                            id="InpmeanimumQty"
+                                            value="{appModel>/TradeDetails/MINQUANT}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Label text="Maximum Qty" />
+                                        <Input
+                                            id="InpmaximumQty"
+                                            value="{appModel>/TradeDetails/MAXQUANT}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Label text="Declared By" />
+                                        <ComboBox
+                                            id="CbdeclaredBy"
+                                            selectedKey="{appModel>/TradeDetails/TRADE_NO}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/TradeEntry', sorter: { path: 'DECLAREDBY' } }"
+                                        >
+                                            <core:Item
+                                                key="{TRADE_NO}"
+                                                text="{DECLAREDBY}"
+                                            />
+                                        </ComboBox>
+                                        <Label text="Declared Date" />
+                                        <DatePicker
+                                            id="Datedeclare"
+                                            placeholder="Declared Date"
+                                            value="{ path: 'appModel>/TradeDetails/DECLAREDAT', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: { style: 'long', UTC: true } }"
+                                            valueFormat="yyyy-MM-dd"
+                                            displayFormat="long"
+                                            change=".handleChange"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            width="14rem"
+                                        />
+                                        <Label text="Schedule" />
+                                        <ComboBox
+                                            id="cb1schedule"
+                                            selectedKey="{appModel>/TradeDetails/TRADE_NO}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/TradeEntry', sorter: { path: 'ZSCHEDULE' } }"
+                                        >
+                                            <core:Item
+                                                key="{TRADE_NO}"
+                                                text="{ZSCHEDULE}"
+                                            />
+                                        </ComboBox>
+                                    </f:content>
+                                </f:SimpleForm>
+                            </Panel>
+                            <Panel
+                                headerText="Delivery"
+                                expandable="true"
+                                expanded="true"
+                                class="sapUiMediumMarginTop"
+                            >
+                                <f:SimpleForm
+                                    id="ForDeliveryDetailsTabSimpleForm"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="3"
+                                    columnsL="3"
+                                    columnsM="6"
+                                >
+                                    <f:content>
+                                        <!--  1st section  -->
+                                        <core:Title text="Delivery" />
+                                        <Label text="Terms" />
+                                        <ComboBox
+                                            id="cbdeliveryterm"
+                                            selectedKey="{appModel>/TradeDetails/DELVTRMSID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/DeliveryTerms', sorter: { path: 'DLVTRMNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{DLVTRMID}"
+                                                text="{DLVTRMNAME}"
+                                            />
+                                        </ComboBox>
+                                        <!--  <Label text="Title Terms" />
+                                        <ComboBox
+                                            id="titletermcb"
+                                            selectedKey=""
+                                            items="{
+                                                path: '/TitleTerms',
+                                                sorter: { path: 'name' }
+                                            }">
+                                            <core:Item key="{ID}" text="{name}" />
+                                        </ComboBox>  -->
+                                        <!--  <Label text="Location" />
+                                        <ComboBox
+                                            id="locationcb"
+                                            selectedKey=""
+                                            items="{
+                                                path: '/Location',
+                                                sorter: { path: 'name' }
+                                            }">
+                                            <core:Item key="{ID}" text="{name}" />
+                                        </ComboBox>  -->
+                                        <Label text="Load Port" />
+                                        <ComboBox
+                                            id="CbloadPort"
+                                            selectedKey="{appModel>/TradeDetails/DELVLOADID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/DeliveryLoad', sorter: { path: 'DLVLOADNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{DLVLOADID}"
+                                                text="{DLVLOADNAME}"
+                                            />
+                                        </ComboBox>
+                                        <Label text="Discharge" />
+                                        <ComboBox
+                                            id="Cbdischarge"
+                                            selectedKey="{appModel>/TradeDetails/DELVDCHRID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/DeliveryDischarge', sorter: { path: 'DLVDSCHNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{DLVDSCHID}"
+                                                text="{DLVDSCHNAME}"
+                                            />
+                                        </ComboBox>
+                                        <!--  2nd section  -->
+                                        <core:Title text="Country of Origin" />
+                                        <!--  <Label text="Point" />
+                                        <ComboBox
+                                            selectedKey="{oDataTradeEntry>TRADE_NO}"
+                                            items="{
+                                                path: '/TradeEntry',
+                                                sorter: { path: 'ORIGPOINT' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{TRADE_NO}"
+                                                text="{ORIGPOINT}"
+                                            />
+                                        </ComboBox>  -->
+                                        <Label text="Country" />
+                                        <ComboBox
+                                            id="Cbcountry"
+                                            selectedKey="{appModel>/TradeDetails/TRADE_NO}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/TradeEntry', sorter: { path: 'COUNTRY' } }"
+                                        >
+                                            <core:Item
+                                                key="{TRADE_NO}"
+                                                text="{COUNTRY}"
+                                            />
+                                        </ComboBox>
+                                        <!--  <Label text="Location" />
+                                        <ComboBox
+                                            
+                                            selectedKey=""
+                                            items="{
+                                                path: 'model>/test',
+                                                sorter: { path: 'Name' }
+                                            }">
+                                            <core:Item key="{ProductId}" text="{Name}" />
+                                        </ComboBox>  -->
+                                        <!--  3rd section  -->
+                                        <core:Title text="Delivery Schedule" />
+                                        <Label text="Schedule" />
+                                        <ComboBox
+                                            id="cbschedule"
+                                            selectedKey="{appModel>/TradeDetails/TRADE_NO}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/TradeEntry', sorter: { path: 'ZSCHEDULE' } }"
+                                        >
+                                            <core:Item
+                                                key="{TRADE_NO}"
+                                                text="{ZSCHEDULE}"
+                                            />
+                                        </ComboBox>
+                                        <!--  <Label text="" />
+                                        <CheckBox text="Evergreen"></CheckBox>  -->
+                                        <!--  <Label text="Period" />
+                                        <ComboBox
+                                            
+                                            selectedKey=""
+                                            items="{
+                                                path: 'model>/test',
+                                                sorter: { path: 'Name' }
+                                            }">
+                                            <core:Item key="{ProductId}" text="{Name}" />
+                                        </ComboBox>  -->
+                                        <Label text="Start Date" />
+                                        <DatePicker
+                                            id="dpstartdate"
+                                            placeholder="Start Date"
+                                            value="{ 'path': 'appModel>/TradeDetails/START_DAT', 'type': 'sap.ui.model.odata.type.DateTimeOffset', 'formatOptions': { style: 'long' , UTC :true } }"
+                                            valueFormat="dd-MM-yyyy"
+                                            displayFormat="long"
+                                            change=".handleChange"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            width="14rem"
+                                        />
+                                        <Label text="End Date" />
+                                        <DatePicker
+                                            id="dpenddate"
+                                            placeholder="End Date"
+                                            value="{ 'path': 'appModel>/TradeDetails/END_DATE', 'type': 'sap.ui.model.odata.type.DateTimeOffset', 'formatOptions': { style: 'long' , UTC :true } }"
+                                            valueFormat="dd-MM-yyyy"
+                                            displayFormat="long"
+                                            change=".handleChange"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            width="14rem"
+                                        />
+                                        <!--  <Label text="Span" />
+                                        <ComboBox
+                                            
+                                            selectedKey=""
+                                            items="{
+                                                path: 'model>/test',
+                                                sorter: { path: 'Name' }
+                                            }">
+                                            <core:Item key="{ProductId}" text="{Name}" />
+                                        </ComboBox>  -->
+                                    </f:content>
+                                </f:SimpleForm>
+                            </Panel>
+                            <Panel
+                                headerText="Price"
+                                expandable="true"
+                                expanded="true"
+                                class="sapUiMediumMarginTop"
+                            >
+                                <f:SimpleForm
+                                    id="SimpleFormForPriceDetailsTabPaper"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="2"
+                                    columnsL="2"
+                                    columnsM="4"
+                                >
+                                    <f:content>
+                                        <!--  1st section  -->
+                                        <core:Title text="Price" />
+                                        <Label text="Type" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey="{appModel>/TradeDetails/PRCGTPID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/PricingType', sorter: { path: 'PRCTYPNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{PRCTYPNAME}"
+                                            />
+                                        </Select>
+                                        <Label text="Formulla" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey="{appModel>/TradeDetails/TRADE_NO}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/TradeEntry', sorter: { path: 'PRCFRML1' } }"
+                                        >
+                                            <core:Item
+                                                key="{TRADE_NO}"
+                                                text="{PRCFRML1}"
+                                            />
+                                        </Select>
+                                        <Label text="Prem/Disc" />
+                                        <Input
+                                            id="DISCPRICE"
+                                            value="{appModel>/TradeDetails/PRICEDISC}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Select
+                                            selectedKey="{appModel>/TradeDetails/PRCURRID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/PriceCurrency', sorter: { path: 'PRCURNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{PRCURRID}"
+                                                text="{PRCURNAME}"
+                                            />
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL2 L3 M4 S4"
+                                                />
+                                            </layoutData>
+                                        </Select>
+                                        <Select
+                                            selectedKey="{appModel>/TradeDetails/PRCUOMID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/PricingUOM', sorter: { path: 'PRCUOMNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{PRCUOMNAME}"
+                                            />
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL2 L3 M4 S4"
+                                                />
+                                            </layoutData>
+                                        </Select>
+                                        <Label text="Schedule" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey="{appModel>/TradeDetails/TRADE_NO}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/TradeEntry', sorter: { path: 'PRCSDATLAG1' } }"
+                                        >
+                                            <core:Item
+                                                key="{TRADE_NO}"
+                                                text="{PRCSDATLAG1}"
+                                            />
+                                        </Select>
+                                        <Label text="Pricing Rule" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey="{appModel>/TradeDetails/PRCGRLID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/PricingRule', sorter: { path: 'PRCRLNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{PRCRLNAME}"
+                                            />
+                                        </Select>
+                                        <Label text="Pricing Term" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey="{appModel>/TradeDetails/PYMTRMSID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/PaymentTerm', sorter: { path: 'PMTRMNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{PMTRMNAME}"
+                                            />
+                                        </Select>
+                                        <!--  2nd section  -->
+                                        <core:Title text="MTM" />
+                                        <Label text="Curve" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey="{appModel>/TradeDetails/MTMCRVEID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/MTMCurve', sorter: { path: 'MTMCRVNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{MTMCRVNAME}"
+                                            />
+                                        </Select>
+                                        <Label text="MTM Factor" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/MTMFACTOR}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Text text=" %" />
+                                         	<CheckBox enabled="{appModel>/IsMTMCheckboxEnabled}"  select=".onRoundSelect"/>
+                                        <!--  <Label text="MTM Period" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey=""
+                                            items="{
+                                                path: '',
+                                                sorter: { path: 'Name' }
+                                            }">
+                                            <core:Item key="{ProductId}" text="{Name}" />
+                                        </Select>  -->
+                                        <!--  3rd section  -->
+                                        <core:Title text="Settlement" />
+                                        <Label text="Payment due days" />
+                                        <DatePicker
+                                            id="duedayspaymentdp"
+                                            placeholder="Payment due days"
+                                            value="{ 'path': 'appModel>/TradeDetails/PAYDUEDAT', 'type': 'sap.ui.model.odata.type.DateTimeOffset', 'formatOptions': { style: 'long' , UTC :true } }"
+                                            valueFormat="dd-MM-yyyy"
+                                            displayFormat="long"
+                                            change=".handleChange"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            width="13rem"
+                                        />
+                                        <Label text="Days Linked with Event" />
+                                        <DatePicker
+                                            id="linkedwitheventdaysdp"
+                                            placeholder="Days Linked with Event"
+                                            value="{ 'path': 'appModel>/TradeDetails/PAYDUEDAT', 'type': 'sap.ui.model.odata.type.DateTimeOffset', 'formatOptions': { style: 'long' , UTC :true } }"
+                                            valueFormat="dd-MM-yyyy"
+                                            displayFormat="long"
+                                            change=".handleChange"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            width="13rem"
+                                        />
+                                        <Label text="Currency" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey="{appModel>/TradeDetails/PRCURRID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/PriceCurrency', sorter: { path: 'PRCURNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{PRCURRID}"
+                                                text="{PRCURNAME}"
+                                            />
+                                        </Select>
+                                        <!--  4th section  -->
+                                        <core:Title
+                                            text="Provisional Payment Rule"
+                                        />
+                                        <Label text="Nos Of Quotes" />
+                                        <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/AQUANTITY}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Label text="Qty" />
+                                        <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/CQUANTITY}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Text text="%" />
+                                        <Label text="Nos of days" />
+                                        <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/STLMTNDAY}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Label text="Linked with Event" />
+                                        <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/STLMNTLEV}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <!--  <Label text="Agreement Form" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey=""
+                                            items="{
+                                                path: '',
+                                                sorter: { path: 'Name' }
+                                            }">
+                                            <core:Item key="{ProductId}" text="{Name}" />
+                                        </Select>  -->
+                                    </f:content>
+                                </f:SimpleForm>
+                            </Panel>
+                            <Panel
+                                headerText="Contractual"
+                                expandable="true"
+                                expanded="true"
+                                class="sapUiMediumMarginTop"
+                            >
+                                <f:SimpleForm
+                                    id="ContractualDetailsSimpleFormForTab"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="3"
+                                    columnsL="3"
+                                    columnsM="6"
+                                >
+                                    <f:content>
+                                        <!--  1st section  -->
+                                        <core:Title text="Settlement" />
+                                        <Label text="Ccy" />
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/STLMTCRID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/SettlementCurrency', sorter: { path: 'STCURNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{STCURID}"
+                                                text="{STCURNAME}"
+                                            />
+                                        </ComboBox>
+                                        <Label text="UOM" />
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/STLMTUUM}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/SettlementUOM', sorter: { path: 'STLUUMNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{STLMTUUM}"
+                                                text="{STLUUMNAME}"
+                                            />
+                                        </ComboBox>
+                                        <Label text="Payment" />
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/TRADE_NO}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/TradeEntry', sorter: { path: 'STLMNTPAY' } }"
+                                        >
+                                            <core:Item
+                                                key="{TRADE_NO}"
+                                                text="{STLMNTPAY}"
+                                            />
+                                        </ComboBox>
+                                        <Label text="Nos of Days" />
+                                        <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/STLMTNDAY}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <!--  <ComboBox
+                                            selectedKey="{oDataTradeEntry>STLMTCRID}"
+                                            items="{
+                                                path: '',
+                                                sorter: { path: 'STCURNAME' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{STCURID}"
+                                                text="{STCURNAME}"
+                                            />
+                                        </ComboBox>  -->
+                                        <Label text="Linked with Event date" />
+                                        <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/STLMNTLEV}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <!--  <ComboBox
+                                            selectedKey="{oDataTradeEntry>}"
+                                            items="{
+                                                path: '',
+                                                sorter: { path: '' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{}"
+                                                text="{}"
+                                            />
+                                        </ComboBox>  -->
+                                        <Label text="Payment Assignment" />
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/PAMTASIGN}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/PaymentAssignment', sorter: { path: 'PAYASNNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{PAYASNID}"
+                                                text="{PAYASNNAME}"
+                                            />
+                                        </ComboBox>
+                                        <!--  2nd section  -->
+                                        <core:Title
+                                            text="Governing Law and GTC"
+                                        />
+                                        <Label text="Applicable law" />
+                                        <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/APPLAWID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Label text="GTC" />
+                                        <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/GTCID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <!--  3rd section  -->
+                                        <core:Title text="Letter Of Credit" />
+                                        <Label text="Credit Terms" />
+                                        <ComboBox
+                                            id="cbcreditterms"
+                                            selectedKey="{appModel>/TradeDetails/CRDTRMSID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{ path: '/CreditTerms', sorter: { path: 'CRDTRMNAME' } }"
+                                        >
+                                            <core:Item
+                                                key="{ID}"
+                                                text="{CRDTRMNAME}"
+                                            />
+                                        </ComboBox>
+                                        <Label text="Open Credit" />
+                                        <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/OPENCREDIT}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <Label text="LC" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/LCVALUE}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                    </f:content>
+                                </f:SimpleForm>
+                            </Panel>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Buy/Sell"
+                            visible="false"
+                            key="buyselltab"
+                        >
+                            <f:SimpleForm
+                                id="BuySellSimpleFormFor"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="4"
+                                labelSpanL="4"
+                                labelSpanM="12"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="2"
+                                columnsL="2"
+                                columnsM="5"
+                            >
+                                <f:content>
+                                    <!--  1st section  -->
+                                    <core:Title text="Buy/Sell" />
+                                    <!--  <Label text="" />
+                                    <RadioButtonGroup id="rbggroup" columns="2" class="sapUiMediumMarginBottom">
+                                        <RadioButton id="RB3-buy" text="Buy" />
+                                        <RadioButton id="RB3-sell" text="Sell" />
+                                    </RadioButtonGroup>  -->
+                                    <!--  <Label text="Buy/Sell" />
+                                    <ComboBox
+                                        id="buyorsellcb"
+                                        selectedKey=""
+                                        items="{
+                                            path: '/BuyOrSell',
+                                            sorter: { path: 'name' }
+                                        }">
+                                        <core:Item key="{ID}" text="{name}" />
+                                    </ComboBox>  -->
+                                    <!--  2nd section  -->
+                                    <!--  <core:Title text="Units" />
+                                    <Label text="Commodity" />
+                                    <ComboBox
+                                        id="commoditycb"
+                                        selectedKey=""
+                                        items="{
+                                            path: '/Commodity',
+                                            sorter: { path: 'name' }
+                                        }">
+                                        <core:Item key="{ID}" text="{name}" />
+                                    </ComboBox>
+
+                                    <Label text="Mean Qty" />
+                                    <Input id="meanQtyInp"></Input>
+                                    <ComboBox
+                                        id="meanQtycb"
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Minimum Qty" />
+                                    <Input id="meanimumQtyInp"></Input>
+
+                                    <Label text="Maximum Qty" />
+                                    <Input id="maximumQtyInp"></Input>
+
+                                    <Label text="Declared By" />
+                                    <ComboBox
+                                        id="declaredByCb"
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Declared Date" />
+                                    <DatePicker id="declaredDateDp"></DatePicker>  -->
+                                    <!--  3rd section  -->
+                                    <!--  <core:Title text="Tolerance" />
+
+                                    <Label text="Below Pct" />
+                                    <Input id="belowPctInp"></Input>
+                                    <Text text=" %"></Text>
+
+                                    <Label text="Above Pct" />
+                                    <Input id="abovePctInp"></Input>
+                                    <Text text=" %"></Text>
+
+                                    <Label text="Options" />
+                                    <ComboBox
+                                        id="optionsCb"
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                </f:content>
+                            </f:SimpleForm>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Delivery"
+                            visible="false"
+                            key="deliverytab"
+                        >
+                            <f:SimpleForm
+                                id="ForDeliverySimpleForm"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="4"
+                                labelSpanL="4"
+                                labelSpanM="12"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="3"
+                                columnsL="3"
+                                columnsM="6"
+                            >
+                                <f:content>
+                                    <!--  1st section  -->
+                                    <core:Title text="Delivery" />
+                                    <!--  <Label text="Terms" />
+                                    <ComboBox
+                                        id="deliverytermcb"
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                    <!--  <Label text="Title Terms" />
+                                    <ComboBox
+                                        id="titletermcb"
+                                        selectedKey=""
+                                        items="{
+                                            path: '/TitleTerms',
+                                            sorter: { path: 'name' }
+                                        }">
+                                        <core:Item key="{ID}" text="{name}" />
+                                    </ComboBox>  -->
+                                    <!--  <Label text="Location" />
+                                    <ComboBox
+                                        id="locationcb"
+                                        selectedKey=""
+                                        items="{
+                                            path: '/Location',
+                                            sorter: { path: 'name' }
+                                        }">
+                                        <core:Item key="{ID}" text="{name}" />
+                                    </ComboBox>  -->
+                                    <!--  <Label text="Load Port" />
+                                    <ComboBox
+                                        id="loadPortCb"
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Discharge" />
+                                    <ComboBox
+                                        id="dischargeCb"
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                    <!--  2nd section  -->
+                                    <!--  <core:Title text="Country of Origin" />
+                                    <Label text="Point" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+                                    <Label text="Country" />
+                                    <ComboBox
+                                        id="countryCb"
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                    <!--  <Label text="Location" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                    <!--  3rd section  -->
+                                    <!--  <core:Title text="Delivery Schedule" />
+
+                                    <Label text="Schedule" />
+                                    <ComboBox
+                                        id="schedulecb"
+                                        selectedKey=""
+                                        items="{
+                                            path: 'appModel>/ScheduleDetails',
+                                            sorter: { path: 'appModel>ZSCHEDULE' }
+                                        }">
+                                        <core:Item key="{appModel>ZSCHEDULE}" text="{appModel>ZSCHEDULE}" />
+                                    </ComboBox>  -->
+                                    <!--  <Label text="" />
+                                    <CheckBox text="Evergreen"></CheckBox>  -->
+                                    <!--  <Label text="Period" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                    <!--  <Label text="Start Date" />
+                                    <DatePicker 
+                                        id="startdatedp"
+                                        value="{
+                                            'path': 'model/valueDP10',
+                                            'type': 'sap.ui.model.type.Date',
+                                            'formatOptions': {
+                                                'pattern': 'dd/MM/y'
+                                            }
+                                        }">
+                                    </DatePicker>
+
+                                    <Label text="End Date" />
+                                    <DatePicker 
+                                        id="enddatedp"
+                                        value="{
+                                            'path': 'model/valueDP11',
+                                            'type': 'sap.ui.model.type.Date',
+                                            'formatOptions': {
+                                                'pattern': 'dd/MM/y'
+                                            }
+                                        }">
+                                    </DatePicker>  -->
+                                    <!--  <Label text="Span" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                </f:content>
+                            </f:SimpleForm>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Price - old"
+                            visible="false"
+                            key="pricetab"
+                        >
+                            <f:SimpleForm
+                                id="ForPriceSimpleForm"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="4"
+                                labelSpanL="4"
+                                labelSpanM="12"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="4"
+                                columnsL="4"
+                                columnsM="6"
+                            >
+                                <f:content>
+                                    <!--  1st section  -->
+                                    <core:Title text="Price" />
+                                    <Label text="Price Marker" />
+                                    <ComboBox
+                                        id="cbpricemarker"
+                                        selectedKey=""
+                                        items="{ path: '/PriceMarker', sorter: { path: 'PRCMRKNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{PRCMRKNAME}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Rounding Rule" />
+                                    <ComboBox
+                                        id="cbroundingrule"
+                                        selectedKey=""
+                                        items="{ path: '/RoundingRule', sorter: { path: 'RNDRULNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{RNDRULNAME}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Rounding Number" />
+                                    <Input
+                                        id="inproundingnumber"
+                                        type="Number"
+                                    />
+                                    <!--  <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                        <layoutData>
+                                            <l:GridData span="XL2 L3 M4 S4" />
+                                        </layoutData>
+                                    </ComboBox>  -->
+                                    <!--  <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                        <layoutData>
+                                            <l:GridData span="XL2 L3 M4 S4" />
+                                        </layoutData>
+                                    </ComboBox>  -->
+                                    <Label text="Pricing Type" />
+                                    <ComboBox
+                                        id="cbpricingtype"
+                                        selectedKey=""
+                                        items="{ path: '/PricingType', sorter: { path: 'PRCTYPNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{PRCTYPNAME}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Pricing Rule" />
+                                    <ComboBox
+                                        id="cbpricingrule"
+                                        selectedKey=""
+                                        items="{ path: '/PricingRule', sorter: { path: 'PRCRLNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{PRCRLNAME}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Price Period Start Date" />
+                                    <DatePicker
+                                        id="dppriceperiodsdate"
+                                        value="{ 'path': 'model/valueDP10', 'type': 'sap.ui.model.type.Date', 'formatOptions': { 'pattern': 'dd/MM/y' } }"
+                                    />
+                                    <Label text="Price Period Start End" />
+                                    <DatePicker
+                                        id="dppriceperiodenddate"
+                                        value="{ 'path': 'model/valueDP10', 'type': 'sap.ui.model.type.Date', 'formatOptions': { 'pattern': 'dd/MM/y' } }"
+                                    />
+                                    <!--  2nd section  -->
+                                    <core:Title text="Pricing Formula" />
+                                    <!--  <Label text="Curve" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                    <Label text="Pricing Formula1" />
+                                    <Input
+                                        id="inppricingformula1"
+                                        type="Number"
+                                    />
+                                    <Label text="Pricing Formula2" />
+                                    <Input
+                                        id="inppricingformula2"
+                                        type="Number"
+                                    />
+                                    <Label text="Pricing Formula3" />
+                                    <Input
+                                        id="inppricingformula3"
+                                        type="Number"
+                                    />
+                                    <!--  <Label text="MTM Period" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                    <!--  3rd section  -->
+                                    <core:Title text="Price UOM" />
+                                    <Label text="Price UOM" />
+                                    <ComboBox
+                                        id="cbpriceuom"
+                                        selectedKey=""
+                                        items="{ path: '/PricingUOM', sorter: { path: 'PRCUOMNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{PRCUOMNAME}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Primary Payment Term" />
+                                    <ComboBox
+                                        id="cbprimarypaymentterm"
+                                        placeholder="Nos of Days Credit Linked"
+                                        selectedKey=""
+                                        items="{ path: '/PaymentTerm', sorter: { path: 'PMTRMNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{PMTRMNAME}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Primary Payment Term" />
+                                    <Input
+                                        id="inpprimarypaymentterm"
+                                        type="Number"
+                                        placeholder="Nos of Days "
+                                    />
+                                    <Label text="Primary Payment Term" />
+                                    <ComboBox
+                                        id="cbprimarypaymenttermdaysrule"
+                                        placeholder="Days Rule"
+                                        selectedKey=""
+                                        items="{ path: '/PaymentTermsRule', sorter: { path: 'NAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{NAME}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Payment Currency" />
+                                    <ComboBox
+                                        id="cbpaymentcurrency"
+                                        selectedKey=""
+                                        items="{ path: '/PaymentCurrency', sorter: { path: 'PYMTCURNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{PYMTCURNAME}"
+                                        />
+                                    </ComboBox>
+                                    <!--  <Label text="Agreement Form" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>  -->
+                                    <core:Title text="MTM" />
+                                    <Label text="MTM Curve" />
+                                    <ComboBox
+                                        id="curvemtm"
+                                        selectedKey=""
+                                        items="{ path: '/MTMCurve', sorter: { path: 'MTMCRVNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{MTMCRVNAME}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="GTC" />
+                                    <ComboBox
+                                        id="cbgtc"
+                                        selectedKey=""
+                                        items="{ path: '/GTC', sorter: { path: 'GTCNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{GTCNAME}"
+                                        />
+                                    </ComboBox>
+                                </f:content>
+                            </f:SimpleForm>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Price"
+                            visible="false"
+                            key="pricetab"
+                        >
+                            <f:SimpleForm
+                                id="ForPricetabSimpleForm"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="4"
+                                labelSpanL="4"
+                                labelSpanM="12"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="4"
+                                columnsL="4"
+                                columnsM="6"
+                            >
+                                <f:content>
+                                    <!--  1st section  -->
+                                    <core:Title text="Price" />
+                                    <Label text="Type" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="Formulla" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="Prem/Disc" />
+                                    <Input />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                        <layoutData>
+                                            <l:GridData span="XL2 L3 M4 S4" />
+                                        </layoutData>
+                                    </Select>
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                        <layoutData>
+                                            <l:GridData span="XL2 L3 M4 S4" />
+                                        </layoutData>
+                                    </Select>
+                                    <Label text="Schedule" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="Pricing Rule" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="Pricing Term" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <!--  2nd section  -->
+                                    <core:Title text="MTM" />
+                                    <Label text="Curve" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="MTM Factor" />
+                                    <Input />
+                                    <Text text=" %" />
+                                    <!--  <Label text="MTM Period" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{
+                                            path: '',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </Select>  -->
+                                    <!--  3rd section  -->
+                                    <core:Title text="Settlement" />
+                                    <Label text="Payment due days" />
+                                    <DatePicker />
+                                    <Label text="Days Linked with Event" />
+                                    <DatePicker />
+                                    <Label text="Currency" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <!--  4th section  -->
+                                    <core:Title
+                                        text="Provisional Payment Rule"
+                                    />
+                                    <Label text="Nos Of Quotes" />
+                                    <Input type="Number" />
+                                    <Label text="Qty" />
+                                    <Input type="Number" />
+                                    <Text text="%" />
+                                    <Label text="Nos of days" />
+                                    <Input type="Number" />
+                                    <Label text="Linked with Event" />
+                                    <Input type="Number" />
+                                    <!--  <Label text="Agreement Form" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{
+                                            path: '',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </Select>  -->
+                                </f:content>
+                            </f:SimpleForm>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Settlement"
+                            visible="false"
+                            key="settlementtab"
+                        >
+                            <f:SimpleForm
+                                id="ForSettlementSimpleForm"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="4"
+                                labelSpanL="4"
+                                labelSpanM="12"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="2"
+                                columnsL="2"
+                                columnsM="6"
+                            >
+                                <f:content>
+                                    <!--  1st section  -->
+                                    <core:Title text="Price" />
+                                    <Label text="Type" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="Formulla" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="Prem/Disc" />
+                                    <Input />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                        <layoutData>
+                                            <l:GridData span="XL2 L3 M4 S4" />
+                                        </layoutData>
+                                    </Select>
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                        <layoutData>
+                                            <l:GridData span="XL2 L3 M4 S4" />
+                                        </layoutData>
+                                    </Select>
+                                    <Label text="Schedule" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="Pricing Rule" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="Pricing Term" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <!--  2nd section  -->
+                                    <core:Title text="MTM" />
+                                    <Label text="Curve" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </Select>
+                                    <Label text="MTM Factor" />
+                                    <Input />
+                                    <Text text=" %" />
+                                    <!--  <Label text="MTM Period" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{
+                                            path: '',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </Select>  -->
+                                    <!--  3rd section  -->
+                                    <!--  <core:Title text="Contract" />  -->
+                                    <!--  <Label text="Agreement Type" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{
+                                            path: '',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </Select>
+
+                                    <Label text="Agreement Form" />
+                                    <Select
+                                        forceSelection="false"
+                                        selectedKey=""
+                                        items="{
+                                            path: '',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </Select>  -->
+                                </f:content>
+                            </f:SimpleForm>
+                        </IconTabFilter>
+                        <!--  <IconTabFilter text="Details" key="tradedetailstab">
+                            <f:SimpleForm id="SimpleFormForDetails"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="4"
+                                labelSpanL="4"
+                                labelSpanM="12"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="3"
+                                columnsL="3"
+                                columnsM="6" >
+                                <f:content>
+                                    
+                                    <core:Title text="Buy/Sell" />
+                                    <Label text="" />
+                                    <RadioButtonGroup id="rbg3" columns="2" class="sapUiMediumMarginBottom">
+                                        <RadioButton id="RB3-1" text="Buy" />
+                                        <RadioButton id="RB3-2" text="Sell" />
+                                    </RadioButtonGroup>
+                                    <Label text="Category" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    
+                                    <core:Title text="Delivery" />
+                                    <Label text="Terms" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+                                    <Label text="Location" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Load" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Discharge" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                   
+                                    <core:Title text="Price" />
+                                    <Label text="Type" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Formulla" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Prem/Disc" />
+                                    <Input ></Input>
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                        <layoutData>
+                                            <l:GridData span="XL2 L3 M4 S4" />
+                                        </layoutData>
+                                    </ComboBox>
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                        <layoutData>
+                                            <l:GridData span="XL2 L3 M4 S4" />
+                                        </layoutData>
+                                    </ComboBox>
+
+                                    <Label text="Schedule" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Pricing Rule" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Pricing Term" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    
+                                    <core:Title text="Units" />
+                                    <Label text="Commodity" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+                                    <Label text="Crop Year" />
+                                    <Input ></Input>
+
+                                    <Label text="Mean Qty" />
+                                    <Input ></Input>
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Minimum Qty" />
+                                    <Input ></Input>
+
+                                    <Label text="Maximum Qty" />
+                                    <Input ></Input>
+
+                                    <Label text="Declared By" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Declared Date" />
+                                    <DatePicker ></DatePicker>
+
+                                    <Label text="Package Qty" />
+                                    <Input ></Input>
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Periodicity" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    
+                                    <core:Title text="Origin and Planning" />
+                                    <Label text="Point" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+                                    <Label text="Country" />
+                                    <Input ></Input>
+
+                                    <Label text="Location" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    
+                                    <core:Title text="MTM And Contract" />
+                                    <Label text="Curve" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+                                    <Label text="MTM Factor" />
+                                    <Input ></Input>
+                                    <Text text=" %"></Text>
+
+                                    <Label text="MTM Period" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Agreement Type" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Agreement Form" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    
+                                    <core:Title text="Tolerance" />
+
+                                    <Label text="Below Pct" />
+                                    <Input ></Input>
+                                    <Text text=" %"></Text>
+
+                                    <Label text="Above Pct" />
+                                    <Input ></Input>
+                                    <Text text=" %"></Text>
+
+                                    <Label text="Options" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    
+                                    <core:Title text="Delivery Schedule" />
+
+                                    <Label text="Schedule" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="" />
+                                    <CheckBox text="Evergreen"></CheckBox>
+
+                                    <Label text="Period" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+                                    
+                                    <Label text="From" />
+                                    <DatePicker ></DatePicker>
+
+                                    <Label text="To" />
+                                    <DatePicker ></DatePicker>
+
+                                    <Label text="Span" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                </f:content>
+                            </f:SimpleForm>
+                        </IconTabFilter>  -->
+                        <IconTabFilter text="Costs" visible="true" key="tradecoststab">
+                            <ui:Table
+                                id="costTable_Id"
+                                rows="{
+                                    path: 'costModel>/'
+                                }"
+                                selectionMode="Multi"
+                                selectionBehavior="Row"
+                                rowSelectionChange=".onRowSelectionChange"
+                                enableColumnReordering="false">
+
+                                <!-- Header Toolbar -->
+                                <ui:extension>
+                                    <OverflowToolbar>
+                                        <content>
+                                            <ToolbarSpacer />
+                                            <Button
+                                                id="toggleAddBtnn"
+                                                text="Add"
+                                                icon="sap-icon://add"
+                                                press=".onToggleAdd" />
+
+                                            <Button
+                                                id="toggleSaveBtnn"
+                                                text="Save"
+                                                icon="sap-icon://save"
+                                                press=".onToggleSave"
+                                                enabled="false" />
+
+                                            <Button
+                                                id="toggleEditBtnn"
+                                                text="Edit"
+                                                icon="sap-icon://edit"
+                                                visible="{appModel>/IsEditEnabled}"
+                                                press=".onToggleEdit"
+                                                enabled="false" />
+                                            <Button
+                                                id="toggleDeleteBtnn"
+                                                text="Delete"
+                                                icon="sap-icon://delete"
+                                                press=".onToggleDel"/>
+                                        </content>
+                                    </OverflowToolbar>
+                                </ui:extension>
+
+                                <!-- Columns -->
+                                <ui:columns>
+
+                                    <!-- Trade No (always read-only) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>TRADE_NO}" />
+                                        <ui:template>
+                                            <Text text="{costModel>TRADE_NO}" />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Cost Type (editable ComboBox) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_TYPE}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>COSTTYPE}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: '/Cost' }">
+                                                <core:Item key="{COSTTYPE}" text="{COSTTYPE}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Cost ID (always read-only) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_ID}" />
+                                        <ui:template>
+                                            <Text text="{costModel>COSTID}" />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Trade Type (read-only from association) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>TRADE_TYPE}" />
+                                        <ui:template>
+                                            <Text text="{costModel>tradetype/TRADENAME}" />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Price Type (editable ComboBox) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PRICE_TYPE}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>PRICETYPE}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: '/PricingType' }">
+                                                <core:Item key="{ID}" text="{PRCTYPNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Price Prem (editable Input) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PRICE_PREM}" />
+                                        <ui:template>
+                                            <Input value="{costModel>PRICEPREM}" enabled="{costModel>isRowEditable}" />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Cost Currency (editable ComboBox) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_CURR}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>COSTCURR}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: '/CostTypeCurrency' }">
+                                                <core:Item key="{CSTCURNAME}" text="{CSTCURNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Cost UOM (editable ComboBox) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_UOM}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>COSTUOM}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: '/UOM' }">
+                                                <core:Item key="{UOMNAME}" text="{UOMNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Based on Qty -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>BASED_ON_QTY}" />
+                                        <ui:template>
+                                           <ComboBox
+                                                selectedKey="{costModel>BASDQTYID}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: '/BasedQuantity' }">
+                                                <core:Item key="{BASDQTYID}" text="{BASQTYNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Cost Status -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_STATUS}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>COSTSTATS}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: '/CostStatus' }">
+                                                <core:Item key="{CSTSTSID}" text="{CSTSTSNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Pricing Precision -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PRICING_PRECISION}" />
+                                        <ui:template>
+                                            <Input value="{costModel>PRICEPREC}" enabled="{costModel>isRowEditable}" />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Operator -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>OPERATOR}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CSTOPRATR}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : '/CostOperator' }">
+                                                <core:Item key="{CSTOPRATR}" text="{COPERNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Settlement Currency -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>SETTLEMENT_CURR}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>STLMTCRID}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : '/SettlementCurrency' }">
+                                                <core:Item key="{STCURID}" text="{STCURNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Cost/Revenue -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_REVE}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>COST_REVE}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : '/CostRevision' }">
+                                                <core:Item key="{CSTREVID}" text="{CSTREVNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Company -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COMPANY}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>COMPANY}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : '/Company' }">
+                                                <core:Item key="{COMPID}" text="{COMPNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Payment Due  -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PAYMENT_DUE}"/>
+                                        <ui:template>
+                                            <DatePicker value="{costModel>PAYMNTDUE}" displayFormat="dd-MM-yyyy" enabled="{costModel>isRowEditable}"/>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Payment -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PAYMENT}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CPAYMNTID}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : '/CostPayment' }">
+                                                <core:Item key="{CPAYMNTID}" text="{CPYMTNAME}" />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+                                </ui:columns>
+                            </ui:Table>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Contract - Settlement"
+                            visible="false"
+                            key="tradesettlementtab"
+                        >
+                            <f:SimpleForm
+                                visible="true"
+                                id="SimpleFormForContractSettlementPaper"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="4"
+                                emptySpanL="4"
+                                emptySpanM="4"
+                                emptySpanS="0"
+                                columnsXL="3"
+                                columnsL="3"
+                                columnsM="1"
+                                singleContainerFullSize="false"
+                            >
+                                <f:content>
+                                    <!--  1st section  -->
+                                    <core:Title text="Settlement" />
+                                    <!--  <Label text="Qty UOM" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: '/QuantityUnit',
+                                            sorter: { path: 'name' }
+                                        }">
+                                        <core:Item key="{ID}" text="{name}" />
+                                    </ComboBox>
+
+                                    <Label text="Qty" />
+                                    <Input type="Number"></Input>
+
+                                    <Label text="Qty Above Tollerance" />
+                                    <Input type="Number"></Input>
+                                    <Text text=" %"></Text>
+
+                                    <Label text="Qty Below Tollerance" />
+                                    <Input type="Number"></Input>
+                                    <Text text=" %"></Text>  -->
+                                    <Label text="Cost type" />
+                                    <ComboBox
+                                        selectedKey=""
+                                        items="{ path: 'model>/test', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Ccy" />
+                                    <ComboBox
+                                        selectedKey=""
+                                        items="{ path: 'model>/test', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="UOM" />
+                                    <ComboBox
+                                        selectedKey=""
+                                        items="{ path: 'model>/test', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Payment" />
+                                    <ComboBox
+                                        selectedKey=""
+                                        items="{ path: 'model>/test', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </ComboBox>
+                                    <!--  2nd section  -->
+                                    <core:Title
+                                        text="Settlement - Payment due date"
+                                    />
+                                    <Label text="Nos of days" />
+                                    <Input type="Number" />
+                                    <Label text="Linked with Event" />
+                                    <Input type="Number" />
+                                    <!--  <Label text="Rate" />
+                                    <HBox justifyContent="Start">
+                                        <Input/>
+                                        <ComboBox class="sapUiTinyMarginBegin" 
+                                            selectedKey=""
+                                            items="{
+                                                path: 'model>/test',
+                                                sorter: { path: 'Name' }
+                                            }">
+                                            <core:Item key="{ProductId}" text="{Name}" />
+                                        </ComboBox>
+
+                                        <Text text="/" width="0.5rem" textAlign="Center" />
+
+                                        <ComboBox 
+                                            selectedKey=""
+                                            items="{
+                                                path: 'model>/test',
+                                                sorter: { path: 'Name' }
+                                            }">
+                                            <core:Item key="{ProductId}" text="{Name}" />
+                                        </ComboBox>
+                                    </HBox>  -->
+                                    <!--  3rd section  -->
+                                    <core:Title text="Governing Law and GTC" />
+                                    <Label text="Applicable law" />
+                                    <Input type="Number" />
+                                    <Label text="GTC" />
+                                    <Input type="Number" />
+                                    <!--  <Label text="Qty" />
+                                    <Input ></Input>
+
+                                    <Label text="Option Prem" />
+                                    <Input ></Input>
+
+                                    <Label text="Code" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                                    </ComboBox>
+
+                                    <Label text="Contract Comment" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: 'model>/test',
+                                            sorter: { path: 'Name' }
+                                        }">
+                                        <core:Item key="{ProductId}" text="{Name}" />
+                            
+                                    </ComboBox>  -->
+                                </f:content>
+                            </f:SimpleForm>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Contract - Confirmation"
+                            visible="false"
+                            key="tradeconfirmationstab"
+                        >
+                            <f:SimpleForm
+                                visible="true"
+                                id="ForContractualConfirmationSimpleForm"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="4"
+                                emptySpanL="4"
+                                emptySpanM="4"
+                                emptySpanS="0"
+                                columnsXL="2"
+                                columnsL="2"
+                                columnsM="1"
+                            >
+                                <f:content>
+                                    <!--  1st section  -->
+                                    <core:Title text="Confirmation" />
+                                    <Label text="Trader" />
+                                    <ComboBox
+                                        selectedKey=""
+                                        items="{ path: 'model>/test', sorter: { path: 'Name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ProductId}"
+                                            text="{Name}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Confirmation" />
+                                    <TextArea />
+                                    <Label text="Confirm Approval" />
+                                    <CheckBox />
+                                    <!--  2nd section  -->
+                                    <core:Title text="Letter Of Credit" />
+                                    <!--  <Label text="Credit Terms" />
+                                    <ComboBox
+                                        
+                                        selectedKey=""
+                                        items="{
+                                            path: '/CreditTerms',
+                                            sorter: { path: 'name' }
+                                        }">
+                                        <core:Item key="{ID}" text="{name}" />
+                                    </ComboBox>  -->
+                                    <!--  <Label text="Open Credit" />
+                                    <Input type="Number"></Input>  -->
+                                    <Label text="LC Code" />
+                                    <ComboBox
+                                        selectedKey=""
+                                        items="{ path: '', sorter: { path: 'name' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{name}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="LC Value" />
+                                    <Input type="Number" />
+                                    <Label text="LC Opening Date" />
+                                    <DatePicker />
+                                </f:content>
+                            </f:SimpleForm>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Contract - Event Dates"
+                            visible="false"
+                            key="tradeeventdatestab"
+                        >
+                            <ui:Table
+                                id="Tableevent"
+                                rows="{eventModel>/Events}"
+                                visibleRowCount="2"
+                                selectionMode="None"
+                                class="sapUiSizeCompact"
+                            >
+                                <ui:columns>
+                                    <ui:Column>
+                                        <Label text="Event" />
+                                        <ui:template>
+                                            <Text text="{eventModel>Event}" />
+                                        </ui:template>
+                                    </ui:Column>
+                                    <ui:Column>
+                                        <Label text="Start Date" />
+                                        <ui:template>
+                                            <Text
+                                                text="{eventModel>StartDate}"
+                                            />
+                                        </ui:template>
+                                    </ui:Column>
+                                    <ui:Column>
+                                        <Label text="End Date" />
+                                        <ui:template>
+                                            <Text text="{eventModel>EndDate}" />
+                                        </ui:template>
+                                    </ui:Column>
+                                    <ui:Column>
+                                        <Label text="Estimated Date" />
+                                        <ui:template>
+                                            <Text
+                                                text="{eventModel>EstimatedDate}"
+                                            />
+                                        </ui:template>
+                                    </ui:Column>
+                                    <ui:Column>
+                                        <Label text="Pricing" />
+                                        <ui:template>
+                                            <CheckBox
+                                                selected="{eventModel>Pricing}"
+                                                enabled="true"
+                                            />
+                                        </ui:template>
+                                    </ui:Column>
+                                    <ui:Column>
+                                        <Label text="Payment" />
+                                        <ui:template>
+                                            <CheckBox
+                                                selected="{eventModel>Payment}"
+                                                enabled="true"
+                                            />
+                                        </ui:template>
+                                    </ui:Column>
+                                    <ui:Column>
+                                        <Label text="Title Transfer" />
+                                        <ui:template>
+                                            <CheckBox
+                                                selected="{eventModel>TitleTransfer}"
+                                                enabled="true"
+                                            />
+                                        </ui:template>
+                                    </ui:Column>
+                                </ui:columns>
+                            </ui:Table>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Contractual"
+                            visible="false"
+                            key="contractualtab"
+                        >
+                            <f:SimpleForm
+                                visible="true"
+                                id="ForContractualSimpleForm"
+                                editable="true"
+                                layout="ResponsiveGridLayout"
+                                labelSpanXL="4"
+                                labelSpanL="4"
+                                labelSpanM="12"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="0"
+                                emptySpanL="0"
+                                emptySpanM="0"
+                                emptySpanS="0"
+                                columnsXL="2"
+                                columnsL="2"
+                                columnsM="6"
+                            >
+                                <f:content>
+                                    <!--  1st section  -->
+                                    <core:Title text="Settlement" />
+                                    <Label text="Qty UOM" />
+                                    <ComboBox
+                                        id="cbqtyuom"
+                                        selectedKey=""
+                                        items="{ path: '/QuantityUnit', sorter: { path: 'QTYUNTNAME' } }"
+                                    >
+                                        <core:Item
+                                            key="{ID}"
+                                            text="{QTYUNTNAME}"
+                                        />
+                                    </ComboBox>
+                                    <Label text="Qty" />
+                                    <Input
+                                        id="qtyinp"
+                                        type="Number"
+                                    />
+                                    <Label text="Qty Above Tollerance" />
+                                    <Input
+                                        id="inpqtyabovetoll"
+                                        type="Number"
+                                    />
+                                    <Text text=" %" />
+                                    <Label text="Qty Below Tollerance" />
+                                    <Input
+                                        id="inpqtybelowtoll"
+                                        type="Number"
+                                    />
+                                    <Text text=" %" />
+                                    <!--  2nd section  -->
+                                    <core:Title text="Letter Of Credit" />
+                                    <!--  <Label text="Credit Terms" />
+                                    <ComboBox
+                                        id="credittermscb"
+                                        selectedKey=""
+                                        items="{
+                                            path: '/CreditTerms',
+                                            sorter: { path: 'name' }
+                                        }">
+                                        <core:Item key="{ID}" text="{name}" />
+                                    </ComboBox>
+
+                                    <Label text="Open Credit" />
+                                    <Input id="opencreditinp" type="Number"></Input>
+
+                                    <Label text="LC" />
+                                    <Input id="lcinp" type="Number"></Input>  -->
+                                </f:content>
+                            </f:SimpleForm>
+                        </IconTabFilter>
+                        <IconTabFilter
+                            text="Attachments"
+                            key="attachmentstab"
+                            visible="false"
+                        >
+                            <Panel>
+                                <VBox>
+                                    <!--  Note section  -->
+                                    <HBox>
+                                        <Text
+                                            text="Note"
+                                            class="note sapUiSmallMarginBottom"
+                                        />
+                                        <!--  <Button icon="sap-icon://refresh" type="Transparent" class="sapUiSmallMarginBottom note" />  -->
+                                    </HBox>
+                                    <Text
+                                        text="Please think to use new templates CAF and PROF'. Links are below:"
+                                        class="customRedText sapUiSmallMarginBottom sapUiSmallMarginTop"
+                                    />
+                                    <VBox
+                                        items="{mainModel>/masterAttachments}"
+                                    >
+                                        <items>
+                                            <Link
+                                                text="{path: 'mainModel>name', targetType: 'any'}"
+                                                href="{path: 'mainModel>webViewLink', targetType: 'any'}"
+                                                target="_blank"
+                                                class="customRedLink sapUiSmallMarginBottom"
+                                            />
+                                        </items>
+                                    </VBox>
+                                    <Table
+                                        id="attachmentTable"
+                                        sticky="ColumnHeaders,HeaderToolbar"
+                                        width="auto"
+                                        mode="MultiSelect"
+                                        fixedLayout="false"
+                                        inset="true"
+                                        autoPopinMode="true"
+                                        hiddenInPopin="None"
+                                        items="{path: 'appModel>/attachments', templateShareable: false}"
+                                        selectionChange="onSelectionChange"
+                                    >
+                                        <headerToolbar>
+                                            <OverflowToolbar>
+                                                <Title
+                                                    text="Attachments"
+                                                    level="H2"
+                                                />
+                                                <ToolbarSpacer />
+                                                <SearchField
+                                                    width="20%"
+                                                    liveChange="onSearch"
+                                                >
+                                                    <layoutData>
+                                                        <OverflowToolbarLayoutData
+                                                            priority="NeverOverflow"
+                                                        />
+                                                    </layoutData>
+                                                </SearchField>
+                                                <ToolbarSeparator />
+                                                <upload:ActionsPlaceholder
+                                                    id="Buttondetailupload"
+                                                    placeholderFor="UploadButtonPlaceholder"
+                                                />
+                                                <Button
+                                                    id="ButtondetaildownloadSelected"
+                                                    text="Download"
+                                                    press="onDownloadFiles"
+                                                    enabled="{appModel>/editAccess}"
+                                                />
+                                            </OverflowToolbar>
+                                        </headerToolbar>
+                                        <dependents>
+                                            <plugins.UploadSetwithTable
+                                                multiple="true"
+                                                beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
+                                                beforeUploadStarts="onBeforeUploadStarts"
+                                                itemRenamed="onDocumentRenamedSuccess"
+                                                uploadCompleted="onUploadCompleted"
+                                                onActivated="onPluginActivated"
+                                                cloudFilePickerEnabled="true"
+                                                actions="uploadButtondetail"
+                                                editable="{appModel>/editAccess}"
+                                                uploadEnabled="{appModel>/editAccess}"
+                                            >
+                                                <rowConfiguration>
+                                                    <upload.UploadItemConfiguration
+                                                        fileNamePath="fileName"
+                                                        mediaTypePath="mediaType"
+                                                        urlPath="url"
+                                                        previewablePath="previewable"
+                                                        fileSizePath="fileSize"
+                                                        isTrustedSourcePath="trustedSource"
+                                                    />
+                                                </rowConfiguration>
+                                            </plugins.UploadSetwithTable>
+                                        </dependents>
+                                        <columns>
+                                            <Column
+                                                id="detailfileName"
+                                                importance="High"
+                                            >
+                                                <header>
+                                                    <Label text="File Name" />
+                                                </header>
+                                            </Column>
+                                            <Column id="Atdetailcreated">
+                                                <header>
+                                                    <Label text="Created At" />
+                                                </header>
+                                            </Column>
+                                            <Column
+                                                id="Buttonremoveaction"
+                                                importance="High"
+                                            />
+                                        </columns>
+                                        <items>
+                                            <ColumnListItem
+                                                type="Active"
+                                                press="onItemPress"
+                                            >
+                                                <cells>
+                                                    <Link
+                                                        text="{appModel>FILE_NAME}"
+                                                        href="{appModel>FILE_URL}"
+                                                        target="_blank"
+                                                    />
+                                                    <Text
+                                                        text="{path: 'appModel>createdAt', formatter: '.formatDate'}"
+                                                    />
+                                                    <Button
+                                                        class="sapUiTinyMarginBegin"
+                                                        type="Transparent"
+                                                        icon="sap-icon://decline"
+                                                        press="onRemoveHandler"
+                                                        enabled="{appModel>/editAccess}"
+                                                    />
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+                                </VBox>
+                            </Panel>
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
+            </VBox>
+        </content>
+        <footer>
+            <OverflowToolbar id="otbFooterPaper">
+                <ToolbarSpacer />
+                <Button type="Accept" text="Edit" icon="sap-icon://edit" press="onPressEdit" visible="{appModel>/IsEditEnabled}">
+                    <layoutData><OverflowToolbarLayoutData priority="NeverOverflow" /></layoutData>
+                </Button>
+                <Button type="Default" text="Draft" visible="{appModel>/IsSaveAsDraftEnabled}" icon="sap-icon://save" press="onPressSave" >
+                    <customData>
+                        <core:CustomData key="action" value="draft" />
+                    </customData>
+                    <layoutData><OverflowToolbarLayoutData priority="NeverOverflow" /></layoutData>
+                </Button>
+                <Button type="Accept" text="Save" visible="{appModel>/IsSaveEnabled}" icon="sap-icon://save" press="onPressSave">
+                    <customData>
+                        <core:CustomData key="action" value="save" />
+                    </customData>
+                    <layoutData><OverflowToolbarLayoutData priority="NeverOverflow" /></layoutData>
+                </Button>
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

@@ -1,0 +1,1923 @@
+<mvc:View
+    controllerName="hmel.com.tradeuiapp.controller.TradeView"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:ui="sap.ui.table"
+    xmlns:upload="sap.m.upload"
+>
+    <Page
+        id="page"
+        title="Phys Term Contract #{appModel>/TradeNo} is being edited"
+    >
+        <HBox
+            alignItems="Center"
+            justifyContent="Center"
+            renderType="Bare"
+            width="100%"
+        >
+            <!-- <Label text="Trade Number:" class="sapUiSmallMarginBeginEnd" labelFor="tradeNumber"/>
+            <Input id="tradeNumber" value="{appModel>/TradeNo}" enabled="{appModel>/IsTradeNumberEnabled}" width="15rem" class="sapUiSmallMarginEnd"/> -->
+
+            <!-- <Label text="Date:" class="sapUiSmallMarginBeginEnd" labelFor="Date"/>
+            <DatePicker 
+                id="date" 
+                value="{osmModel>tradedate}" 
+                displayFormat="dd-MM-yyyy" 
+                valueFormat="yyyy-MM-dd" 
+                width="15rem" 
+                class="sapUiSmallMarginEnd"/> -->
+
+            <!-- <Label text="Deal Date:" class="sapUiSmallMarginBeginEnd" labelFor="dealDate"/>
+            <DatePicker 
+                id="dealDate" 
+                value="{osmModel>tradedate}" 
+                displayFormat="dd-MM-yyyy" 
+                valueFormat="yyyy-MM-dd" 
+                width="15rem" 
+                class="sapUiSmallMarginEnd"/> -->
+
+            <!-- <Label text="Trade Type:" class="sapUiSmallMarginEnd" labelFor="tradeType" />
+            <ComboBox
+                id="tradeType"
+                selectedKey="{appModel>/TradeDetails/TRADTYPID}"
+                enabled="{appModel>/IsCreateEnabled}"
+                items="{
+                    path: '/TradingType',
+                    sorter: { path: 'TRADENAME' },
+                    filters: [
+                        { path: 'ID', operator: 'NE', value1: '4' }
+                    ]
+                }">
+                <core:Item key="{ID}" text="{TRADENAME}" />
+            </ComboBox> -->
+
+            <Label
+                class="sapUiSmallMarginBeginEnd"
+                text="Buy/Sell:"
+                labelFor="buyorsellcb"
+            />
+            <ComboBox
+                selectedKey="{appModel>/TradeDetails/TrdBysl}"
+                enabled="{appModel>/IsCreateEnabled}"
+                items="{ path: 's4HanaModel>/ZTA_BUY_SELLSet', sorter: { path: 'TrdByslD' } }"
+                change=".onBuySellChange"
+            >
+                <core:Item
+                    key="{s4HanaModel>TrdBysl}"
+                    text="{s4HanaModel>TrdByslD}"
+                />
+            </ComboBox>
+            <Label
+                text="Trade Execution Date:"
+                class="sapUiSmallMarginBeginEnd"
+                labelFor="tradeExecutionDate"
+            />
+            <DatePicker
+                id="tradeExecutionDate"
+                width="15rem"
+                class="sapUiSmallMarginEnd"
+                placeholder="Trade Execution Date"
+                enabled="{appModel>/IsCreateEnabled}"
+                value="{
+                    path: 'appModel>/TradeDetails/TrdExedt',
+                    type: 'sap.ui.model.type.Date',
+                    formatOptions: {
+                            pattern: 'MMM dd, yyyy'}
+                }"
+                displayFormat="MMM dd, yyyy"
+                valueFormat="yyyy-MM-dd"
+            />
+            <Label
+                text="Trade Creation Date:"
+                class="sapUiSmallMarginBeginEnd"
+                labelFor="dealDate"
+            />
+            <DatePicker
+                id="phyTradeDate"
+                width="15rem"
+                class="sapUiSmallMarginEnd"
+                placeholder="Trade Creation Date"
+                enabled="false"
+                value="{
+                    path: 'appModel>/TradeCreationDate', formatter: '.formatter.formatDate'
+                }"
+            />
+        </HBox>
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Panel
+                    expandable="true"
+                    expanded="true"
+                    headerText="Seller and Buyer"
+                    width="auto"
+                    class="sapUiResponsiveMargin"
+                >
+                    <f:SimpleForm
+                        id="SimpleFormForSellerAndBuyer"
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanXL="4"
+                        labelSpanL="4"
+                        labelSpanM="12"
+                        labelSpanS="12"
+                        adjustLabelSpan="false"
+                        emptySpanXL="0"
+                        emptySpanL="0"
+                        emptySpanM="0"
+                        emptySpanS="0"
+                        columnsXL="2"
+                        columnsL="2"
+                        columnsM="6"
+                    >
+                        <f:content>
+                            <!-- 1st section -->
+                            <core:Title text="Seller" id="sellerId" />
+
+                            <Label
+                                text="Counter Party"
+                                required="false"
+                            />
+                            <ComboBox
+                                id="counterpartcb"
+                                selectedKey="{appModel>/TradeDetails/TrdCnpty}"
+                                enabled="{appModel>/IsCreateEnabled}"
+                                items="{
+                                    path: 's4HanaModel>/ZTA_CNTRPRTYSet',
+                                    sorter: { path: 'Name1' },
+                                    filters: [
+                                        { path: 'Status', operator: 'EQ', value1: 'A' }
+                                    ]
+                                }"
+                            >
+                                <!-- <layoutData>
+                                    <l:GridData span="L6 M6 S12" />
+                                </layoutData> -->
+                                <core:Item
+                                    key="{s4HanaModel>TrdCnpty}"
+                                    text="{s4HanaModel>Name1}"
+                                />
+                            </ComboBox>
+                            <!-- <Button
+                                visible="false"
+                                width="2rem"
+                                icon="sap-icon://add"
+                                press=".onAddDialog"
+                                enabled="{appModel>/IsCreateEnabled}"
+                            >
+                                <customData>
+                                    <core:CustomData
+                                        key="fieldName"
+                                        value="Counter Part"
+                                    />
+                                    <core:CustomData
+                                        key="modelPath"
+                                        value="ZTM_COUNTERPARTSet"
+                                    />
+                                    <core:CustomData
+                                        key="fieldId"
+                                        value="Counter Part ID"
+                                    />
+                                    <core:CustomData
+                                        key="fieldActName"
+                                        value="Counter Part Name"
+                                    />
+                                    <core:CustomData
+                                        key="fieldStatus"
+                                        value="Counter Part Status"
+                                    />
+                                    <core:CustomData
+                                        key="idKey"
+                                        value="Id"
+                                    />
+                                    <core:CustomData
+                                        key="nameKey"
+                                        value="Ctprtname"
+                                    />
+                                    <core:CustomData
+                                        key="statusKey"
+                                        value="Ctprtstat"
+                                    />
+                                </customData>
+                            </Button> -->
+
+                            <!-- 2nd section -->
+                            <core:Title text="Buyer" id="buyerId" />
+                            <Label text="Internal Co." />
+                            <ComboBox
+                                selectedKey="{appModel>/TradeDetails/TrdIntcmp}"
+                                enabled="{appModel>/IsCreateEnabled}"
+                                items="{
+                                    path: 's4HanaModel>/ZTA_COMPANYSet'
+                                }"
+                            >
+                                <core:Item
+                                    key="{s4HanaModel>TrdIntcmp}"
+                                    text="{s4HanaModel>Butxt}"
+                                />
+                            </ComboBox>
+                            <Label text="Trader" />
+                            <ComboBox
+                                id="tradercb"
+                                selectedKey="{appModel>/TradeDetails/TrdTrdr}"
+                                enabled="{appModel>/IsCreateEnabled}"
+                                items="{
+                                    path: 's4HanaModel>/ZTA_TRADERSet',
+                                    sorter: { path: 'TrdTrdrD' }
+                                }"
+                            >
+                                <core:Item
+                                    key="{s4HanaModel>TrdTrdr}"
+                                    text="{s4HanaModel>TrdTrdrD}"
+                                />
+                            </ComboBox>
+                        </f:content>
+                    </f:SimpleForm>
+                </Panel>
+
+                <IconTabBar
+                    id="idIconTabBarNoIcons"
+                    expanded="{device>/isNoPhone}"
+                    class="sapUiResponsiveContentPadding"
+                    select=".onTabSelect"
+                >
+                    <items>
+                        <IconTabFilter
+                            text="Details"
+                            key="tradedetailstab"
+                        >
+                            <Panel
+                                headerText="Buy/Sell"
+                                expandable="true"
+                                expanded="true"
+                            >
+                                <f:SimpleForm
+                                    id="SimpleFormForBuysellDetailsTab"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="2"
+                                    columnsL="2"
+                                    columnsM="6"
+                                >
+                                    <f:content>
+                                        <!-- 1st section -->
+                                        
+                                        <core:Title/>
+
+                                        <Label text="Commodity" />
+                                        <ComboBox
+                                            id="productTypecb"
+                                            selectedKey="{appModel>/TradeDetails/TrdPrdtyp}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_PRODUCTSet',
+                                                sorter: { path: 'Mtbez' }
+                                            }"
+                                            change=".onProductTypeChange"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>Mtart}"
+                                                text="{path: 's4HanaModel>Mtbez'}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="Grade" />
+                                        <ComboBox
+                                            id="commoditycb"
+                                            selectedKey="{appModel>/TradeDetails/TrdCmdty}"
+                                            change=".onCommodityChange"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZCDS_COMMODITY',
+                                                sorter: { path: 'Maktx' }
+                                            }"
+                                            
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdCmdty}"
+                                                text="{s4HanaModel>Maktx}"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- <Label text="PIMS Code" />
+                                        <ComboBox
+                                            id="pimsCodecb"
+                                            selectedKey="{appModel>/TradeDetails/PimsCode}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZCDS_COMMODITY',
+                                                sorter: { path: 'Pimscode' }
+                                            }"
+                                            
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>Pimscode}"
+                                                text="{s4HanaModel>Pimscode}"
+                                            />
+                                        </ComboBox> -->
+
+                                        <Label text="Trade Qty" />
+                                        <Input
+                                            id="meanQtyInp"
+                                            value="{appModel>/TradeDetails/TrdQtymn}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            liveChange=".onMeanQtyChange"
+                                        >
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L6 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </Input>
+                                        <ComboBox
+                                            id="meanQtycb"
+                                            selectedKey="{appModel>/TradeDetails/TrdQtymuom}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_UOMSet',
+                                                sorter: { path: 'UomDec' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>Uomid}"
+                                                text="{s4HanaModel>UomDec}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="Minimum Qty" />
+                                        <Input
+                                            id="meanimumQtyInp"
+                                            value="{appModel>/TradeDetails/TrdQtymin}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            liveChange=".onMinQtyManualChange"
+                                        />
+
+                                        <Label text="Maximum Qty" />
+                                        <Input
+                                            id="maximumQtyInp"
+                                            value="{appModel>/TradeDetails/TrdQtymax}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            liveChange=".onMaxQtyManualChange"
+                                        />
+
+                                        <Label text="Declared By" />
+                                        <ComboBox
+                                            id="declaredByCb"
+                                            selectedKey="{appModel>/TradeDetails/TrdDclby}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_DECLAREDBYSet',
+                                                sorter: { path: 'TrdDclbyD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdDclby}"
+                                                text="{s4HanaModel>TrdDclbyD}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="Declared Date" />
+                                        <DatePicker
+                                            id="declaredDateDp"
+                                            value="{path: 'appModel>/TradeDetails/TrdDcldt', 
+                                            type: 'sap.ui.model.type.Date',
+                                            formatOptions: {
+                                                    pattern: 'MMM dd, yyyy'}
+                                            }"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                        />
+
+                                        <!-- 3rd section -->
+
+                                        <core:Title/>
+
+                                        <Label text="Tolerance Below %" />
+                                        <Input
+                                            id="belowPctInp"
+                                            value="{appModel>/TradeDetails/TrdBlpct}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            liveChange=".onCalculateMinQty"
+                                        >
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L6 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </Input>
+                                        <Text text=" %" />
+
+                                        <Label text="Tolerance Above %" />
+                                        <Input
+                                            id="abovePctInp"
+                                            value="{appModel>/TradeDetails/TrdAbpct}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            liveChange=".onCalculateMaxQty"
+                                        >
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L6 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </Input>
+                                        <Text text=" %" />
+
+                                        <Label text="Option" />
+                                        <ComboBox
+                                            id="optionsCb"
+                                            selectedKey="{appModel>/TradeDetails/TrdOptn}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_OPTIONSSet',
+                                                sorter: { path: 'TrdOptnD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdOptn}"
+                                                text="{s4HanaModel>TrdOptnD}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="Actual Qty in MT" class="sapUiSmallMarginTop" />
+                                        <Input
+                                            class="sapUiSmallMarginTop"
+                                            id="actQtyMT"
+                                            value="{appModel>/TradeDetails/TrdQtymt}"
+                                            enabled="false"
+                                        />
+                                        <Label text="Actual Qty in bbl" />
+                                        <Input
+                                            id="actQtyBBL"
+                                            value="{appModel>/TradeDetails/TrdQtybbl}"
+                                            enabled="false"
+                                        />
+                                        <Label text="Actual/Settled Price"  />
+                                        <Input
+                                            id="actPrice"
+                                            value="{appModel>/TradeDetails/TrdStprc}"
+                                            enabled="false"
+                                        >
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L6 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </Input>
+
+                                        <ComboBox 
+                                            id="actPrc"
+                                            selectedKey="{appModel>/TradeDetails/TrdStpcuom}"
+                                            enabled="false"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_UOMSet',
+                                                sorter: { path: 'UomDec' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>Uomid}"
+                                                text="{s4HanaModel>UomDec}"
+                                            />
+                                        </ComboBox>
+                                    </f:content>
+                                </f:SimpleForm>
+                            </Panel>
+
+                            <Panel
+                                headerText="Delivery"
+                                expandable="true"
+                                expanded="true"
+                            >
+                                <f:SimpleForm
+                                    id="SimpleFormForDeliveryDetailsTab"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="2"
+                                    columnsL="2"
+                                    columnsM="6"
+                                >
+                                    <f:content>
+                                        <!-- 1st section -->
+                                        <core:Title/>
+                                        <Label text="Incoterm" />
+                                        <ComboBox
+                                            id="deliverytermcb"
+                                            selectedKey="{appModel>/TradeDetails/TrdDlvtrm}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_DLV_TRMSSet',
+                                                sorter: { path: 'TrdDlvtrmD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdDlvtrm}"
+                                                text="{s4HanaModel>TrdDlvtrmD}"
+                                            />
+                                        </ComboBox>
+                
+                                        <Label text="Load Port" />
+                                        <ComboBox
+                                            id="loadPortCb"
+                                            selectedKey="{appModel>/TradeDetails/TrdLdprt}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectionChange=".onLoadPortSelectionChange"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_LOAD_PORTSet',
+                                                length: 1000,
+                                                sorter: { path: 'TrdLdprtD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdLdprt}"
+                                                text="{s4HanaModel>TrdLdprtD}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="Country" />
+                                        <ComboBox
+                                            id="countryCb"
+                                            selectedKey="{appModel>/TradeDetails/TrdCntry}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/T005TSet',
+                                                length: 1000,     
+                                                sorter: { path: 'Landx50' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>Land1}"
+                                                text="{s4HanaModel>Landx50}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="Discharge Port" />
+                                        <ComboBox
+                                            id="dischargePortCb"
+                                            selectedKey="{appModel>/TradeDetails/TrdDsprt}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_DSCH_PORTSet',
+                                                sorter: { path: 'TrdDsprtD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdDsprt}"
+                                                text="{s4HanaModel>TrdDsprtD}"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- 2nd section -->
+                                        
+                                        <core:Title/>
+
+                                        <Label text="Delivery Date from" />
+                                        <DatePicker
+                                            id="startdatedp"
+                                            value="{path: 'appModel>/TradeDetails/TrdDlvsdt', formatter: '.formatter.formatDate'}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                            change=".onStartDateChange"
+                                        />
+
+                                        <Label text="Delivery Date to" />
+                                        <DatePicker
+                                            id="enddatedp"
+                                            value="{path: 'appModel>/TradeDetails/TrdDlvedt', formatter: '.formatter.formatDate'}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                            change=".onEndDateChange"
+                                        />
+
+                                        <Label text="Window Start Date" />
+                                        <DatePicker
+                                            id="wstartdatedp"
+                                            value="{path: 'appModel>/TradeDetails/TrdWsdt', formatter: '.formatter.formatDate'}"
+                                            enabled="false"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                        />
+
+                                        <Label text="Window End Date" />
+                                        <DatePicker
+                                            id="wenddatedp"
+                                            value="{path: 'appModel>/TradeDetails/TrdWedt', formatter: '.formatter.formatDate'}"
+                                            enabled="false"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                        />
+
+                                    </f:content>
+                                </f:SimpleForm>
+                            </Panel>
+
+                            <Panel
+                                headerText="Price"
+                                expandable="true"
+                                expanded="true"
+                            >
+                                <f:SimpleForm
+                                    id="SimpleFormForPriceDetailsTab"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="3"
+                                    columnsL="3"
+                                    columnsM="6"
+                                >
+                                    <f:content>
+                                        <!-- 1st section -->
+                                        <core:Title/>
+                                        <Label text="Price Type" />
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/TrdPrctyp}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            change=".handleFormulaChange"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_PRICE_TYPESet',
+                                                sorter: { path: 'TrdPrctypD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdPrctyp}"
+                                                text="{s4HanaModel>TrdPrctypD}"
+                                            />
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L6 M6 S6"
+                                            />
+                                        </layoutData>
+                                        </ComboBox>
+                                        <Button class="sapUiSmallMarginEnd" width="1rem" icon="sap-icon://create-form" press="onCustomFormulaPress" ></Button>
+
+                                        <Label text="Benchmark" />
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/TrdForm}"
+                                            id="formulacb"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 'uniqueFormulaModel>/items',
+                                                sorter: { path: 'TrdPrcfnam' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{uniqueFormulaModel>TrdPrcfnam}"
+                                                text="{uniqueFormulaModel>TrdPrcfnam}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="Other Primary Cost" />
+                                        <MultiComboBox
+                                            selectedKeys="{appModel>/TradeDetails/TrdOthcst}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectionChange="handleSelectionChange"
+                                            selectionFinish="handleSelectionFinish"
+                                            width="350px"
+                                            items="{
+                                                path: 'OtherCostModel>/CostDetails'
+                                            }">
+                                            <core:Item key="{OtherCostModel>CostKey}" text="{OtherCostModel>CostType}"/>
+                                        </MultiComboBox>
+
+                                        <Label text="OSP" visible="{appModel>/isOSPAvailable}"/>
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isOSPAvailable}"
+                                            selectedKey="{appModel>/TradeDetails/TrdOspdrp}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_OSP_CURVESet',
+                                                sorter: { path: 'TrdOspdrp' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdOspdrp}"
+                                                text="{s4HanaModel>TrdOspdrp}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="Prem/Disc" visible="{appModel>/isPremDiscAvailable}" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/TrdPrdisc}"
+                                            visible="{appModel>/isPremDiscAvailable}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isPremDiscAvailable}"
+                                            selectedKey="{appModel>/TradeDetails/TrdPrdiscr}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_CURRENCYSet',
+                                                sorter: { path: 'CurrencyD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>CurrencyId}"
+                                                text="{s4HanaModel>CurrencyD}"
+                                            />
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL2 L3 M4 S4"
+                                                />
+                                            </layoutData>
+                                        </ComboBox>
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isPremDiscAvailable}"
+                                            selectedKey="{appModel>/TradeDetails/TrdPrduom}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_UOMSet',
+                                                sorter: { path: 'UomDec' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>Uomid}"
+                                                text="{s4HanaModel>UomDec}"
+                                            />
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL2 L3 M4 S4"
+                                                />
+                                            </layoutData>
+                                        </ComboBox>
+
+                                        <Label text="Other Prem/Disc" visible="{appModel>/isOtherPremDiscAvailable}"/>
+                                        <Input
+                                            value="{appModel>/TradeDetails/TrdOpdisc}"
+                                            visible="{appModel>/isOtherPremDiscAvailable}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isOtherPremDiscAvailable}"
+                                            selectedKey="{appModel>/TradeDetails/TrdOpdisccr}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_CURRENCYSet',
+                                                sorter: { path: 'CurrencyD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>CurrencyId}"
+                                                text="{s4HanaModel>CurrencyD}"
+                                            />
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL2 L3 M4 S4"
+                                                />
+                                            </layoutData>
+                                        </ComboBox>
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isOtherPremDiscAvailable}"
+                                            selectedKey="{appModel>/TradeDetails/TrdOpdiscuom}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_UOMSet',
+                                                sorter: { path: 'UomDec' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>Uomid}"
+                                                text="{s4HanaModel>UomDec}"
+                                            />
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL2 L3 M4 S4"
+                                                />
+                                            </layoutData>
+                                        </ComboBox>
+
+                                        <Label text="API" visible="{appModel>/isAPIAvailable}" />
+                                        <Input value="{appModel>/TradeDetails/TrdApicn}"  enabled="{appModel>/IsCreateEnabled}" visible="{appModel>/isAPIAvailable}" >
+                                        </Input>
+
+                                        <Label text="Load Port API" visible="{appModel>/isAPIAvailable}" />
+                                        <Input value="{appModel>/TradeDetails/Lp1Api}" enabled="false" visible="{appModel>/isAPIAvailable}" ></Input>
+
+                                        <Label text="" width="5rem" visible="{appModel>/isAPIAvailable}"/>
+                                        <Title
+                                            class="sapUiMediumMarginBegin"
+                                            text="Lower"
+                                            visible="{appModel>/isAPIAvailable}"
+                                        />
+                                        <Title
+                                            class="sapUiMediumMarginBegin"
+                                            text="Upper"
+                                            visible="{appModel>/isAPIAvailable}"
+                                        />
+
+                                        <Label text="" visible="{appModel>/isAPIAvailable}" />
+                                        <Input value="{appModel>/TradeDetails/TrdApilw}" enabled="{appModel>/IsCreateEnabled}" visible="{appModel>/isAPIAvailable}" ></Input>
+                                        <Input value="{appModel>/TradeDetails/TrdApiup}" enabled="{appModel>/IsCreateEnabled}" visible="{appModel>/isAPIAvailable}" ></Input>
+
+                                        <Label text="" width="5rem" visible="{appModel>/isAPIAvailable}"/>
+                                        <Title
+                                            text="Limit"
+                                            class="sapUiMediumMarginBegin"
+                                            visible="{appModel>/isAPIAvailable}"
+                                        />
+                                        <Title
+                                            text="Factor"
+                                            class="sapUiMediumMarginBegin"
+                                            visible="{appModel>/isAPIAvailable}"
+                                        />
+
+                                        <Label text="" visible="{appModel>/isAPIAvailable}" />
+                                        <Input value="{appModel>/TradeDetails/TrdApidsl}" enabled="{appModel>/IsCreateEnabled}" visible="{appModel>/isAPIAvailable}" ></Input>
+                                        <Input value="{appModel>/TradeDetails/TrdApidsf}" enabled="{appModel>/IsCreateEnabled}" visible="{appModel>/isAPIAvailable}" ></Input>
+
+                                        
+
+                                        <Label text="Schedule" />
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectedKey="{appModel>/TradeDetails/TrdSchd}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_SCHEDULESet',
+                                                sorter: { path: 'TrdSchdD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdSchd}"
+                                                text="{s4HanaModel>TrdSchdD}"
+                                            />
+                                        </ComboBox>
+                                        
+                                        <Label text="Pricing Rule" />
+                                        
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectedKey="{appModel>/TradeDetails/TrdPrrul}"
+                                            selectionChange=".handlePricingRuleChange"
+                                            items= "{ path : 's4HanaModel>/ZTA_PRCNG_RULESet',
+                                                      sorter : {path: 'TrdPrrulD'}
+                                            }"
+                                        >
+                                            <items>
+                                            <core:Item
+                                                    key="{s4HanaModel>TrdPrrul}"
+                                                    text="{s4HanaModel>TrdPrrulD}"
+                                                />
+                                            </items>
+                                        </ComboBox>
+
+                                        <Label text="Start Date" visible="{appModel>/isSpecificDateRange}" />
+                                        <DatePicker
+                                            id="prcStartDt"
+                                            value="{path: 'appModel>/TradeDetails/TrdPrcsdt', formatter: '.formatter.formatDate'}"
+                                            visible="{appModel>/isSpecificDateRange}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                            change="onStartDatePrcChange"
+                                        />
+
+                                        <Label text="End Date" visible="{appModel>/isSpecificDateRange}" />
+                                        <DatePicker
+                                            id="prcEndDt"
+                                            value="{path: 'appModel>/TradeDetails/TrdPrcedt', formatter: '.formatter.formatDate'}"
+                                            visible="{appModel>/isSpecificDateRange}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                            change="onEndDatePrcChange"
+                                        />
+
+                                        <Label text="Tentative Date" visible="{appModel>/isTentativeDate}" />
+                                        <DatePicker
+                                            value="{path: 'appModel>/TradeDetails/TentDate',
+                                            type: 'sap.ui.model.type.Date',
+                                            formatOptions: {
+                                                    pattern: 'MMM dd, yyyy'}
+                                            }"
+                                            visible="{appModel>/isTentativeDate}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                        />
+
+                                        <Label text="Before Days" visible="{appModel>/isTentativeDate}" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/NdysBefore}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isTentativeDate}"
+                                        />
+
+                                        <Label text="After Days" visible="{appModel>/isTentativeDate}" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/NdaysAfter}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isTentativeDate}"
+                                        />
+
+                                        <Label text="{= 'Cargo Value in ' + ${appModel>/ValueInCurrency}}" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/TrdCargovl}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        ></Input>
+
+                                        <!-- 2nd section -->
+                                        <core:Title/>
+                                        <!-- <FlexBox direction="Row" alignItems="Center" wrap="Wrap">
+                                        <items> -->
+                                            <Label text="Forward Curve" class="sapUiTinyMarginBegin" />
+                                            <ComboBox
+                                                id="curveCb"
+                                                width="10rem" 
+                                                enabled="{appModel>/IsCreateEnabled}"
+                                                selectedKey="{appModel>/TradeDetails/TrdMtmcv}"
+                                                items="{
+                                                    path: 'uniqueFormulaModel>/items',
+                                                    sorter: { path: 'TrdPrcfnam' },
+                                                    events: {
+                                                        dataReceived: '.onCurveDataReceived'
+                                                    }
+                                                }"
+                                            >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL3 L3 M4 S12"
+                                                />
+                                            </layoutData>
+                                                <core:Item
+                                                    key="{uniqueFormulaModel>TrdPrcfnam}"
+                                                    text="{uniqueFormulaModel>TrdPrcfnam}"
+                                                />
+                                            </ComboBox>
+                                            <!-- <Label text="Factor:" class="sapUiTinyMarginBegin"/> -->
+                                            <Input
+                                                placeholder="Factor"
+                                                width="30rem"
+                                                value="{appModel>/TradeDetails/TrdMtmfc}"
+                                                enabled="{appModel>/IsCreateEnabled}"
+                                            >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL3 L4 M4 S12"
+                                                />
+                                            </layoutData>
+                                            </Input>
+                                            <Text text=" %" />
+                                            <!-- </items>
+                                        </FlexBox> -->
+
+                                       <Label text="Pricing Currency" />
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectionChange=".onPricingCurrencyChange"
+                                            selectedKey="{appModel>/TradeDetails/TrdMtmcr}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_CURRENCYSet',
+                                                sorter: { path: 'CurrencyD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>CurrencyId}"
+                                                text="{s4HanaModel>CurrencyD}"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- <Label/>
+                                        <Text text="Rounding" class="rounding">
+                                        <layoutData>
+                                            <l:GridData span="L12 M12 S12" />
+                                        </layoutData>
+                                        </Text>
+                                        <Label text="No of Decimals" />
+                                        <ComboBox
+                                            id="totalRound"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectedKey="{appModel>/TradeDetails/TotalRound}"
+                                            items="{
+                                                path: 'appModel>/DecimalOptions'
+                                            }"
+                                        >
+                                            <core:Item key="{appModel>key}" text="{appModel>text}" />
+                                        </ComboBox> -->
+
+                                        <Label/>
+                                        <Text text="Price Rounding Rule" class="rounding">
+                                        <layoutData>
+                                            <l:GridData span="L12 M12 S12" />
+                                        </layoutData>
+                                        </Text>
+                                        <!-- <Label text=""></Label>
+                                        <FlexBox alignItems="Start"
+                                                 wrap="Wrap"
+                                                 direction="Row"
+                                                 fitContainer="true"
+                                                 gap="2rem"
+                                                 rowGap="1rem">
+                                            <CheckBox text="Round 1" selected="{appModel>/CeilOption1}" class="sapUiFlexWidthHalf" />
+                                            <CheckBox text="Round 2" selected="{appModel>/CeilOption2}" class="sapUiFlexWidthHalf" />
+                                            <CheckBox text="Round 3" selected="{appModel>/CeilOption3}" class="sapUiFlexWidthHalf" />
+                                            <CheckBox text="Round 4" selected="{appModel>/CeilOption4}" class="sapUiFlexWidthHalf" />
+                                        </FlexBox> -->
+                                        <Label text="Daily Quotes"></Label>
+                                        <ComboBox
+                                            id="dateRound"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectedKey="{appModel>/TradeDetails/DateRound}"
+                                            items="{
+                                                path: 'appModel>/RoundingOptions'
+                                            }"
+                                        >
+                                            <core:Item key="{appModel>key}" text="{appModel>text}" />
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L7 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </ComboBox>
+                                        <CheckBox id="dateCeil" 
+                                        enabled="{appModel>/IsCreateEnabled}"
+                                                   
+                                                  class="sapUiFlexWidthHalf" />
+
+                                        <Label text="Average Quotes"></Label>
+                                        <ComboBox
+                                            id="curveRound"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectedKey="{appModel>/TradeDetails/CurveRound}"
+                                            items="{
+                                                path: 'appModel>/RoundingOptions'
+                                            }"
+                                        >
+                                            <core:Item key="{appModel>key}" text="{appModel>text}" />
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L7 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </ComboBox>
+                                        <CheckBox id="curveCeil" 
+                                        enabled="{appModel>/IsCreateEnabled}"
+                                                  
+                                                  class="sapUiFlexWidthHalf" />
+
+                                        <Label text="Unit Price"></Label>
+                                        <ComboBox
+                                            id="avgRound"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectedKey="{appModel>/TradeDetails/AverageRound}"
+                                            items="{
+                                                path: 'appModel>/RoundingOptions'
+                                            }"
+                                        >
+                                            <core:Item key="{appModel>key}" text="{appModel>text}" />
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L7 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </ComboBox>
+                                        <CheckBox id="avgCeil"
+                                        enabled="{appModel>/IsCreateEnabled}"
+                                                   
+                                                  class="sapUiFlexWidthHalf" />
+
+                                        <Label text="Final Price"></Label>
+                                        <ComboBox
+                                            id="totalRound"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectedKey="{appModel>/TradeDetails/TotalRound}"
+                                            items="{
+                                                path: 'appModel>/RoundingOptions'
+                                            }"
+                                        >
+                                            <core:Item key="{appModel>key}" text="{appModel>text}" />
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L7 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </ComboBox>
+                                        <CheckBox id="totalCeil"
+                                        enabled="{appModel>/IsCreateEnabled}"
+                                                  
+                                                  class="sapUiFlexWidthHalf" />
+
+                                        <!-- 3rd section -->
+                                        
+                                        <core:Title
+                                            text="Provisional Payment Rule"
+                                        />
+                                        
+                                        <Label text="Start Date" />
+                                        <DatePicker
+                                            id="provStartDateDP"
+                                            value="{path: 'appModel>/TradeDetails/TrdPpstdt', formatter: '.formatter.formatDate'}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                            change="onStartDatesChange"
+                                        />
+
+                                        <Label text="End Date" />
+                                        <DatePicker
+                                            id="provEndDateDP"
+                                            value="{path: 'appModel>/TradeDetails/TrdPpendt', formatter: '.formatter.formatDate'}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                            change="onEndDatesChange"
+                                        />
+                                        
+                                        <!-- <Label text="Nos Of Quotes" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/AQUANTITY}"
+                                            type="Number"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        /> -->
+
+                                        <Label text="Qty" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/TrdQty}"
+                                            type="Number"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        >
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L6 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </Input>
+                                        <Text text="%" />
+
+                                        <Label text="{= 'Provisional Value in ' + ${appModel>/ValueInCurrency}}" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/TrdValusd}"
+                                            type="Number"
+                                            enabled="false"
+                                        />
+
+                                        <Label text="Differential Balance/Actual" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/TrdDffval}"
+                                            type="Number"
+                                            enabled="false"
+                                        />
+
+                                        <Label text="Provisional Payment Due Date"/>
+                                        <DatePicker
+                                            value="{path: 'appModel>/TradeDetails/TrdFinpdt', formatter: '.formatter.formatDate'}"
+                                            enabled="false"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                        />
+
+                                        <Label text="Provisional Price Calculation Date"/>
+                                        <DatePicker
+                                            value="{path: 'appModel>/TradeDetails/TrdPcalcdt', formatter: '.formatter.formatDate'}"
+                                            enabled="false"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                        />
+
+                                        <!-- <Label text="Linked with Event" />
+                                        <Input
+                                            value="{appModel>/TradeDetails/STLMNTLEV}"
+                                            type="Number"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        /> -->
+
+                                        <!-- <Label text="Agreement Form" />
+                                        <Select
+                                            forceSelection="false"
+                                            selectedKey=""
+                                            items="{
+                                                path: '',
+                                                sorter: { path: 'Name' }
+                                            }">
+                                            <core:Item key="{ProductId}" text="{Name}" />
+                                        </Select> -->
+                                    </f:content>
+                                </f:SimpleForm>
+                            </Panel>
+
+                            <Panel
+                                headerText="Contractual"
+                                expandable="true"
+                                expanded="true"
+                            >
+                                <f:SimpleForm
+                                    id="SimpleFormForContractualDetailsTab"
+                                    editable="true"
+                                    layout="ResponsiveGridLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="4"
+                                    labelSpanM="12"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="3"
+                                    columnsL="3"
+                                    columnsM="6"
+                                >
+                                    <f:content>
+                                        <!-- 1st section -->
+                                        <core:Title text="Settlement" />
+
+                                        <Label text="Payment Currency" />
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectedKey="{appModel>/TradeDetails/TrdStcur}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_CURRENCYSet',
+                                                sorter: { path: 'CurrencyD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>CurrencyId}"
+                                                text="{s4HanaModel>CurrencyD}"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- <Label text="UOM" />
+                                        <ComboBox
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectedKey="{appModel>/TradeDetails/TrdStuom}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_UOMSet',
+                                                sorter: { path: 'UomDec' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>Uomid}"
+                                                text="{s4HanaModel>UomDec}"
+                                            />
+                                        </ComboBox> -->
+
+                                        <Label text="Payment Term" />
+                                        <ComboBox
+                                            id="paymentTermCB"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            change=".onPaymentTermChange"
+                                            selectionChange=".onPaymentTermSelectionChange"
+                                            selectedKey="{appModel>/TradeDetails/TrdPaytrm}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_PAYMT_TRMSSet',
+                                                sorter: { path: 'TrdPaytrmD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdPaytrm}"
+                                                text="{s4HanaModel>TrdPaytrmD}"
+                                            />
+                                      <layoutData>
+                                            <l:GridData
+                                                span="XL3 L3 M2 S1"
+                                            />
+                                        </layoutData>
+                                        </ComboBox>
+                                        <Text text="Base Date:" wrapping="true"></Text>
+                                        <Input
+                                            id="paymentDaysInput"
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/TrnPtndaysc}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            liveChange=".onPaymentDaysChange"
+                                        />
+                                        <Text class="sapUiTinyMarginBegin sapUiSmallMarginEnd" text="+" width="1rem" />
+                                        <Input
+                                            id="paymentDays"
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/TrdPtndays}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            liveChange=".onPaymentDayChange"
+                                        />
+
+                                        <Label text="Payment Due Date" />
+                                        <DatePicker
+                                            id="paymentDueDP"
+                                            value="{path: 'appModel>/TradeDetails/TrdPaydt', formatter: '.formatter.formatDate'}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"
+                                        />
+
+                                        <!-- <Label text="Nos of Days" />
+                                        <Input
+                                            type="Number"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            value="{appModel>/TradeDetails/STLMTNDAY}"
+                                        />
+
+                                        <Label text="Linked with Event date" />
+                                        <Input
+                                            type="Number"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            value="{appModel>/TradeDetails/STLMNTLEV}"
+                                        /> -->
+
+                                        <Label text="Days" />
+                                        <ComboBox
+                                            id="days"
+                                            selectedKey="{appModel>/TradeDetails/Pymntdays}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectionChange=".onDaysChange"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_PYMNT_DAYSSet'
+                                            }"
+                                        >
+                                            <core:Item key="{s4HanaModel>Pymntdays}" text="{s4HanaModel>Pymntdays}" />
+                                        <!-- <layoutData>
+                                            <l:GridData
+                                                span="XL3 L4 M2 S4"
+                                            />
+                                        </layoutData> -->
+                                        </ComboBox>
+
+                                        <Label text="Split Weekend Applicable" />
+                                        <ComboBox
+                                            selectedKey=""
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/IsSplitEnabled}"
+                                            items="{
+                                                path: 'appModel>/ConfirmationSplitWeekend/splitWeekend'
+                                            }"
+                                        >
+                                            <core:Item key="{appModel>confirmationKey}" text="{appModel>confirmationValue}" />
+                                        </ComboBox>
+
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/TrdSpwknd}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/IsSplitEnabled}"
+                                            placeholder="Split Weekend"
+                                            items="{
+                                                path: 'appModel>/SplitWeekend/splits'
+                                            }"
+                                        >
+                                            <core:Item key="{appModel>splitKey}" text="{appModel>splitName}" />
+                                        </ComboBox>
+
+                                        <Label text="Holiday Calendar" visible="{appModel>/ShowHolidayPayment}" />
+                                        <ComboBox
+                                            id="holidayCalPayment"
+                                            selectedKey="{appModel>/TradeDetails/HolidayPaymnt}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/ShowHolidayPayment}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_HOL_PYMTSet'
+                                            }"
+                                        >
+                                           <core:Item key="{s4HanaModel>Countrycal}" text="{s4HanaModel>Countrycal}" />
+                                        </ComboBox>
+
+                                        <!-- <Label text="Holiday Calendar" visible="{appModel>/ShowHolidayPrice}" />
+                                        <ComboBox
+                                            id="holidayCalPrice"
+                                            selectedKey="{appModel>/TradeDetails/HolidayPrice}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/ShowHolidayPrice}"
+                                            items=""
+                                        >
+                                            <core:Item key="" text="" />
+                                        </ComboBox> -->
+
+                                        <Label text="Payment Assignment" />
+                                        <ComboBox
+                                            id="paymentassignementcb"
+                                            selectedKey="{appModel>/TradeDetails/TrdPayasg}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectionChange=".onPaymentAssignmentChange"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_PAYTASNMTSet',
+                                                sorter: { path: 'TrdPayasgD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdPayasg}"
+                                                text="{s4HanaModel>TrdPayasgD}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="Other Counter Party"  visible="{appModel>/isOtherCounterPty}"/>
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/TrdCnpty2}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isOtherCounterPty}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_CNTRPRTYSet',
+                                                sorter: { path: 'Name1' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdCnpty}"
+                                                text="{s4HanaModel>Name1}"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- 2nd section -->
+                                        <core:Title
+                                            text="Governing Law and GTC"
+                                        />
+
+                                        <Label text="Applicable law" />
+                                        <!-- <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/APPLAWID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        /> -->
+
+                                        <ComboBox
+                                            id="applicableLawcb"
+                                            selectedKey="{appModel>/TradeDetails/TrdAlaw}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_APPLLAWSet',
+                                                sorter: { path: 'TrdAlawD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdAlaw}"
+                                                text="{s4HanaModel>TrdAlawD}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="GTC" />
+                                        <!-- <Input
+                                            type="Number"
+                                            value="{appModel>/TradeDetails/GTCID}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        /> -->
+
+                                        <ComboBox
+                                            id="gtccb"
+                                            selectedKey="{appModel>/TradeDetails/TrdGtc}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_GTCSet',
+                                                sorter: { path: 'TrdGtcD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdGtc}"
+                                                text="{s4HanaModel>TrdGtcD}"
+                                            />
+                                        </ComboBox>
+
+
+
+                                        <!-- 3rd section -->
+                                        <core:Title text="Letter Of Credit" />
+
+                                        <Label text="Credit Terms" />
+
+                                        <ComboBox
+                                            id="credittermscb"
+                                            selectedKey="{appModel>/TradeDetails/TrdCrtrm}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            selectionChange=".handleCreditTermsChange"
+                                            items = "{ path : 's4HanaModel>/ZTA_CRED_TRMSet',
+                                                       sorter : { path: 'TrdCrtrmD'}
+                                            }"
+                                        >
+                                            <core:Item key="{s4HanaModel>TrdCrtrm}"
+                                                       text="{s4HanaModel>TrdCrtrmD}"></core:Item>
+                                        </ComboBox>
+
+                                        <Label text="Open Credit" visible="{appModel>/isOpenCreditFieldVisible}"/>
+                                        <Input
+                                            id="opencreditinp"
+                                            value="{appModel>/TradeDetails/TrdOpcrd}"
+                                            type="Number"
+                                            visible="{appModel>/isOpenCreditFieldVisible}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+
+                                        <Label text="Total Value" visible="{appModel>/isOpenCreditVisible}"></Label>
+                                        <Input type="Number" 
+                                               visible="{appModel>/isOpenCreditVisible}" 
+                                               enabled="{appModel>/IsCreateEnabled}" 
+                                               value="{appModel>/TradeDetails/TrdTotval}"
+                                        >
+                                        <layoutData>
+                                            <l:GridData
+                                                span="XL5 L5 M2 S4"
+                                            />
+                                        </layoutData>
+                                        </Input>
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/TrdTvlcur}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isOpenCreditVisible}"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_CURRENCYSet',
+                                                sorter: { path: 'CurrencyD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>CurrencyId}"
+                                                text="{s4HanaModel>CurrencyD}"
+                                            />
+                                        </ComboBox>
+
+                                        <Label text="LC" visible="{appModel>/isLCVisible}"/>
+                                        <Input
+                                            id="lcinp"
+                                            value="{appModel>/TradeDetails/TrdLc}"
+                                            type="Number"
+                                            visible="{appModel>/isLCVisible}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+
+                                        <Label text="LC Event" visible="{appModel>/isLCVisible}"></Label>
+                                        <ComboBox
+                                            id="lcEventComboBox"
+                                            selectedKey="{appModel>/TradeDetails/LcPaytrm}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isLCVisible}"
+                                            selectionChange=".onLCEventChange"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_PAYMT_TRMSSet',
+                                                sorter: { path: 'TrdPaytrmD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdPaytrm}"
+                                                text="{s4HanaModel>TrdPaytrmD}"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- <Label text="No of Days" visible="{appModel>/isLCVisible}"></Label> -->
+                                        <Input type="Number" 
+                                               enabled="{appModel>/IsCreateEnabled}" 
+                                               visible="{appModel>/isLCVisible}" 
+                                               value="{appModel>/TradeDetails/TrdLcdays}"
+                                               liveChange="onLCOpeningDateCalculate"
+                                        ></Input>
+
+                                        <!-- Calculate based on LC event date + no. of days -->
+                                        <Label text="LC Opening Date" visible="{appModel>/isLCVisible}" /> 
+                                        <DatePicker
+                                            id="lcOpeningDP"
+                                            value="{path: 'appModel>/TradeDetails/TrdLcopdt', formatter: '.formatter.formatDate'}"
+                                            visible="{appModel>/isLCVisible}"
+                                            enabled="false"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd"  
+                                        />
+
+                                        <Label text="BG" visible="{appModel>/isBGVisible}" />
+                                        <Input
+                                            id="bginp"
+                                            value="{appModel>/TradeDetails/TrdBg}"
+                                            type="Number"
+                                            visible="{appModel>/isBGVisible}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                        />
+
+                                        <Label text="BG Event" visible="{appModel>/isBGVisible}"></Label>
+                                        <ComboBox
+                                            selectedKey="{appModel>/TradeDetails/BgPaytrm}"
+                                            enabled="{appModel>/IsCreateEnabled}"
+                                            visible="{appModel>/isBGVisible}"
+                                            selectionChange=".onBGEventChange"
+                                            items="{
+                                                path: 's4HanaModel>/ZTA_PAYMT_TRMSSet',
+                                                sorter: { path: 'TrdPaytrmD' }
+                                            }"
+                                        >
+                                            <core:Item
+                                                key="{s4HanaModel>TrdPaytrm}"
+                                                text="{s4HanaModel>TrdPaytrmD}"
+                                            />
+                                        </ComboBox>
+
+                                        <!-- <Label text="No of Days" visible="{appModel>/isBGVisible}"></Label> -->
+                                        <Input type="Number" visible="{appModel>/isBGVisible}" enabled="{appModel>/IsCreateEnabled}" value="{appModel>/TradeDetails/TrdBgdays}"></Input>
+
+                                        <!-- Calculate based on BG event date + no. of days -->
+                                        <Label text="BG Opening Date" visible="{appModel>/isBGVisible}" /> 
+                                        <DatePicker
+                                            id="bgOpeningDP"
+                                            value="{path: 'appModel>/TradeDetails/TrdBgopdt',
+                                                type: 'sap.ui.model.type.Date',
+                                                formatOptions: {
+                                                        pattern: 'MMM dd, yyyy'}}"
+                                            visible="{appModel>/isBGVisible}"
+                                            enabled="false"
+                                            displayFormat="MMM dd, yyyy"
+                                            valueFormat="yyyy-MM-dd" 
+                                        />
+
+                                    </f:content>
+                                </f:SimpleForm>
+                            </Panel>
+                        </IconTabFilter>
+
+                        <IconTabFilter
+                            id="costTab"
+                            text="Costs"
+                            visible="{appModel>/showCostTab}"
+                            key="tradecoststab"
+                        >
+                            <ui:Table
+                                id="costTableId"
+                                rows="{
+                                    path: 'costModel>/'
+                                }"
+                                selectionMode="Multi"
+                                selectionBehavior="Row"
+                                rowSelectionChange=".onRowSelectionChange"
+                                enableColumnReordering="false"
+                            >
+                                <!-- Header Toolbar -->
+                                <ui:extension>
+                                    <OverflowToolbar>
+                                        <content>
+                                            <ToolbarSpacer />
+                                            <Button
+                                                id="toggleAddBtn"
+                                                text="Add"
+                                                icon="sap-icon://add"
+                                                press=".onToggleAdd"
+                                            />
+
+                                            <Button
+                                                id="toggleSaveBtn"
+                                                text="Save"
+                                                icon="sap-icon://save"
+                                                press=".onToggleSave"
+                                                enabled="false"
+                                                visible="{appModel>/IsCOSTSaveActive}"
+                                            />
+
+                                            <Button
+                                                id="toggleEditBtn"
+                                                text="Edit"
+                                                icon="sap-icon://edit"
+                                                press=".onToggleEdit"
+                                                enabled="{appModel>/IsCOSTSelectionActive}"
+                                            />
+                                            <Button
+                                                id="toggleDeleteBtn"
+                                                text="Delete"
+                                                enabled="{appModel>/IsCOSTSelectionActive}"
+                                                icon="sap-icon://delete"
+                                                press=".onToggleDel"
+                                            />
+                                        </content>
+                                    </OverflowToolbar>
+                                </ui:extension>
+
+                                <!-- Columns -->
+                                <ui:columns>
+                                    <!-- Cost Type (editable ComboBox) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_TYPE}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstType}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: 's4HanaModel>/ZTA_CST_TYPESet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CstType}"
+                                                    text="{s4HanaModel>CstTypeD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+                                    
+                                    <!-- Cost Status -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COST_STATUS}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstEstfn}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: 's4HanaModel>/ZTA_CST_ESTFINSet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CstEstfn}"
+                                                    text="{s4HanaModel>CstEstfnD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Price Type (editable ComboBox) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PRICE_TYPE}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstPrctyp}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path: 's4HanaModel>/ZTA_PRC_TYPESet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CstPrctyp}"
+                                                    text="{s4HanaModel>CstPrctypD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Price Type (editable ComboBox) -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>TOTAL_VALUE}" />
+                                        <ui:template>
+                                            <Input 
+                                                value="{costModel>CstTotval}"
+                                                enabled="{costModel>isRowEditable}" />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Expense Currency -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>EXPENSE_CURR}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstExpcur}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : 's4HanaModel>/ZTA_CURRENCYSet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CurrencyId}"
+                                                    text="{s4HanaModel>CurrencyD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Settlement Currency -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>SETTLEMENT_CURR}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstStcur}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : 's4HanaModel>/ZTA_CURRENCYSet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CurrencyId}"
+                                                    text="{s4HanaModel>CurrencyD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Exchange Rate -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>EXCHNG_RATE}" />
+                                        <ui:template>
+                                            <Input 
+                                                value="{costModel>CstExrt}"
+                                                enabled="{costModel>isRowEditable}" />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Payment Due  -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PAYMENT_DUE}" />
+                                        <ui:template>
+                                            <DatePicker
+                                                value="{path: 'costModel>CstPaydt', 
+                                                        type: 'sap.ui.model.type.Date',
+                                                        formatOptions: {
+                                                            pattern: 'MMM dd, yyyy'
+                                                        }}"
+                                                displayFormat="MMM dd, yyyy"
+                                                valueFormat="yyyy-MM-dd"
+                                                enabled="{costModel>isRowEditable}"
+                                            />
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Company -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>COMPANY}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey="{costModel>CstComp}"
+                                                enabled="{costModel>isRowEditable}"
+                                                items="{ path : 's4HanaModel>/ZTA_CST_VENDSet' }"
+                                            >
+                                                <core:Item
+                                                    key="{s4HanaModel>CstComp}"
+                                                    text="{s4HanaModel>CstCompD}"
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+
+                                    <!-- Payment -->
+                                    <ui:Column width="12rem">
+                                        <Label text="{i18n>PRICING_FORMULA}" />
+                                        <ui:template>
+                                            <ComboBox
+                                                selectedKey=""
+                                                enabled="{costModel>isRowEditable}"
+                                                items=""
+                                            >
+                                                <core:Item
+                                                    key=""
+                                                    text=""
+                                                />
+                                            </ComboBox>
+                                        </ui:template>
+                                    </ui:Column>
+                                </ui:columns>
+                            </ui:Table>
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
+            </VBox>
+        </content>
+
+        <footer>
+            <OverflowToolbar id="otbFooter">
+                <ToolbarSpacer />
+                <Button
+                    type="Default"
+                    text="Calculate"
+                    icon="sap-icon://accounting-document-verification"
+                    press="onPressCal"
+                    visible="{appModel>/showCaluculateButton}"
+                >
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+                <Button
+                    type="Accept"
+                    text="Edit"
+                    icon="sap-icon://edit"
+                    press="onPressEdit"
+                    visible="{appModel>/IsEditEnabled}"
+                >
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+                <Button
+                    type="Default"
+                    text="Draft"
+                    visible="{appModel>/IsSaveAsDraftEnabled}"
+                    icon="sap-icon://save"
+                    press="onPressSave"
+                >
+                    <customData>
+                        <core:CustomData
+                            key="action"
+                            value="draft"
+                        />
+                    </customData>
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+                <Button
+                    type="Accept"
+                    text="Save"
+                    visible="{appModel>/IsSaveEnabled}"
+                    icon="sap-icon://save"
+                    press="onPressSave"
+                >
+                    <customData>
+                        <core:CustomData
+                            key="action"
+                            value="save"
+                        />
+                    </customData>
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+            </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

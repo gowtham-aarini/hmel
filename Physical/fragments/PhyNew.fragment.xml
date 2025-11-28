@@ -1,0 +1,38 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
+    <Popover
+        id="newPopover"
+        class="sapUiResponsivePadding--header sapUiResponsivePadding--footer"
+        placement="Bottom"
+        showHeader="false">
+
+        <VBox>
+            <!-- <SearchField
+                id="newSearchField"
+                placeholder="Search..."
+                change="onSearchTerm" /> -->
+
+            <List
+                id="newactionList"
+                growing="true"              
+                growingThreshold="10"       
+                growingScrollToLoad="true"   
+                >
+                <ActionListItem
+                    class="sapUiTinyMarginLeft"
+                    type="Active" 
+                    text="Term"
+                    press="onActionPress" />
+                <ActionListItem
+                    class="sapUiTinyMarginLeft"
+                    type="Active" 
+                    text="Lift from Term"
+                    press="onActionPress" />
+                <ActionListItem
+                    class="sapUiTinyMarginLeft"
+                    type="Active" 
+                    text="Spot"
+                    press="onActionPress" />
+            </List>
+        </VBox>
+    </Popover>
+</core:FragmentDefinition>

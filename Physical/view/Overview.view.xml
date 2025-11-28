@@ -1,0 +1,62 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+	xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns:core="sap.ui.core"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	controllerName="hmel.com.tradeuiapp.controller.Overview"
+	height="100%">
+    <Page id="overviewPage" showHeader="false">
+		<!-- use this to make the table occupy the available screen height -->
+		<!-- <VBox fitContainer="true"> -->
+		    <Toolbar>
+                <!-- Left content: can be empty or put something here -->
+                <ToolbarSpacer/>
+                <!-- Right-aligned buttons -->
+                <Button 
+                    id="newBtn"
+                    text="New" 
+                    type="Emphasized" 
+                    class="sapUiSmallMarginEnd sapUiPositive" 
+                    press=".onCreate"/> 
+                <Button 
+                    id="draftBtn"
+                    text="Show Drafts" 
+                    type="Emphasized" 
+                    class="sapUiSmallMarginEnd" 
+                    press=".onShowDraftPressed">
+                    <dependents>
+                        <core:Fragment
+                            fragmentName="hmel.com.tradeuiapp.fragments.DraftSheet"
+                            type="XML" />
+                    </dependents>
+                </Button>
+            </Toolbar>
+
+            <smartFilterBar:SmartFilterBar
+                id="smartFilterBar"
+                entitySet="zcds_trade_entry_ma"
+                persistencyKey="SmartFilter_Trade"
+                enableBasicSearch="false">
+
+                <smartFilterBar:controlConfiguration>
+                    <smartFilterBar:ControlConfiguration key="TrdNum" visibleInAdvancedArea="true" />
+                    <smartFilterBar:ControlConfiguration key="TrdCnpty" label="Counter Party" visibleInAdvancedArea="false" />
+                    <smartFilterBar:ControlConfiguration key="TrdIntcmp" visibleInAdvancedArea="false" />
+                    <smartFilterBar:ControlConfiguration key="TrdCmdty" visibleInAdvancedArea="true" />
+                    <smartFilterBar:ControlConfiguration key="TrdPrdtyp" visibleInAdvancedArea="true" />
+                </smartFilterBar:controlConfiguration>
+            </smartFilterBar:SmartFilterBar>
+
+			<smartTable:SmartTable id="smartTable" entitySet="zcds_trade_entry_ma" 
+            initiallyVisibleFields="TrdNum,TrdCmdty,TrdCnpty,TrdIntcmp,TrdMtype,TrdStat,TrdDlvsdt,TrdDlvedt,TrdTrdr,TrdPaytrm"
+            smartFilterId="smartFilterBar" tableType="ResponsiveTable" enableExport="true" beforeExport="onBeforeExport" useVariantManagement="true" useTablePersonalisation="true" header="Trade Details" showRowCount="true" persistencyKey="SmartTableAnalytical_Trade" enableAutoBinding="true" class="sapUiResponsiveContentPadding" enableAutoColumnWidth="true" editTogglable="false" app:useSmartToggle="true"
+                                   beforeRebindTable=".onBeforeRebindTable" enableCopy="false">
+                                   
+				<Table id="idResponsiveTable" mode="SingleSelectMaster" selectionChange="handleSelectionChange" ></Table>
+			</smartTable:SmartTable>
+		<!-- </VBox> -->
+    </Page>
+</mvc:View>
